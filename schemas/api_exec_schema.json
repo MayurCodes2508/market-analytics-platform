@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["pipeline_name", "job_name", "job_type", "metadata", "exec", "destination"],
+
+
+  "properties": {
+    "pipeline_name": {
+        "type": "string",
+        "const": "market_analytics_platform"
+    },
+    "job_name": {
+        "type": "string",
+        "pattern": "^(dev_|prod_)[a-z0-9_]+$",
+        "minLength": 7,
+        "maxLength": 50
+    },
+
+
+    "job_type": {
+        "type": "string",
+        "const": "ingestion"
+    },
+
+    "metadata": {
+      "type": "object",
+      "required": ["source", "dataset", "entity"],
+      "properties": {
+        "source": { "type": "string" },
+        "dataset": { "type": "string" },
+        "entity": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+
+    "exec": {
+      "type": "object",
+      "required": ["type", "base_url", "path", "pagination", "page_size", "query_params"],
+      "properties": {
+        "type": { "const": "ApiReadExecCommand" },
+        "base_url": {
+          "type": "string",
+          "format": "uri",
+          "minimum": 1,
+          "maximum": 50   
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50
+        },
+        "pagination": {
+          "type": "object",
+          "required": ["strategy"],
+          "properties": {
+            "strategy": {
+              "type": "string",
+              "const": "page"
+            },
+            "page_param": {
+              "type": "string",
+              "default": "page",
+              "pattern": "^[a-z0-9_]+$",
+              "minLength": 3,
+              "maxLength": 50
+            }   
+          },
+          "additionalProperties": false
+        },
+        "page_size": {
+            "type": "object",
+            "required": ["param", "value"],
+            "properties": {
+                "param": {
+                    "type": "string",
+                    "const": "per_page"
+                },
+                "value": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 250
+            }
+          },
+          "additionalProperties": false
+        },
+        "query_params": {
+          "type": "object",
+          "required": ["vs_currency"],
+          "properties": {
+            "vs_currency": {
+              "type": "string",
+              "enum": ["usd", "eur", "inr"]
+            }
+          },
+          "additionalProperties": { "type": "string" }
+        },
+        "auth": {
+          "type": "object",
+          "required": ["type", "key_env", "location", "name"],
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "api_key"
+            },
+            "key_env": {
+              "type": "string",
+              "pattern": "^[A-Z0-9_]+$",
+              "minLength": 1,
+              "maxLength": 50
+            },
+            "location": { "type": "string", "const": "header" },
+            "name": { "type": "string" }
+          },
+          "additionalProperties": false
+        }           
+      },
+      "additionalProperties": false
+    },
+
+    "destination": {
+        "type": "object",
+        "required": ["type", "bucket", "layer", "format", "path_template"],
+    
+
+        "properties": {
+            "type": { "type": "string" },
+            "bucket": { "type": "string" },
+            "layer": {
+                "type": "string",
+                "enum": ["dev", "staging", "prod"]
+            },
+            "format": {
+                "type": "string",
+                "const": "parquet"
+            },
+            "path_template": {
+                "type": "string",
+                "const":"{layer}/{source}/{dataset}/{entity}/ingestion_dt={ingestion_dt}/ingestion_ts={ingestion_ts}.{format}"
+            }
+        },
+        "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
