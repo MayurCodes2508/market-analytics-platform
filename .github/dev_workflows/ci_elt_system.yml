@@ -1,0 +1,67 @@
+name: CI - ELT CONFIG SYSTEM
+
+on:
+  push:
+    branches: [main, dev]
+
+    paths:
+      - 'configs/**'
+      - 'docs/**'
+      - 'orchestrator/**'
+      - 'pipeline/**'
+      - 'schemas/**'
+      - 'terraform/**'
+      - '.dockerignore'
+      - '.gcloudignore'
+      - 'Dockerfile'
+      - 'requirements.txt'
+  
+  pull_request:
+    branches: [main, dev]
+
+    paths:
+      - 'configs/**'
+      - 'docs/**'
+      - 'orchestrator/**'
+      - 'pipeline/**'
+      - 'schemas/**'
+      - 'terraform/**'
+      - '.dockerignore'
+      - '.gcloudignore'
+      - 'Dockerfile'
+      - 'requirements.txt'  
+jobs:
+  validate_elt:
+    name: Test System and Scan For Vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up python 3.14.5
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14.5'
+          cache: 'pip'
+          cache-dependency-path: './requirements.txt'
+
+      - name: Install System Dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install flake8
+
+      - name: Test System Python Code
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Run System Python Code
+        run: |
+          python -u -m orchestrator.runner --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+
+      - name: Build System Container Image
+        run: |
+          docker build -t market-analytics-platform:latest .
+          

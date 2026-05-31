@@ -11,6 +11,8 @@ dev.env
 example.env
 README.md
 __init__.py
+metadata_pipeline/
+logs/
 
 !configs/
 !orchestrator/
@@ -18,3 +20,5 @@ __init__.py
 !schemas/
 !.Dockerfile
 !requirements.txt
+!.dockerignore
+!gcloud

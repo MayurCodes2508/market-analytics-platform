@@ -1,15 +1,16 @@
 from loguru import logger
 import json
-from jsonschema import validate, ValidationError
+import jsonschema_rs
+from pathlib import Path
 import argparse
 from dotenv import load_dotenv
 import os
 import psycopg2
 import uuid
 from datetime import datetime, timezone
-from pipeline.exec_cmds.api_exec import ApiReadExecCommand
-from pipeline.destinations.gcs import Gcs
-import json
+from pipeline.exec_cmds.api_exec import ApiExecCommand
+from pipeline.destinations.gcs import GCS
+
 
 class Runner:
     def __init__(self, file_path, schema_path):
@@ -20,56 +21,53 @@ class Runner:
 
     def load_config(self):
         
-        try:
-            with open(self.file_path, 'r') as f:
-                job_config = json.load(f)
+        with open(self.file_path, 'r') as f:
+            job_config = json.load(f)
             logger.info(f"Successfully loaded job configuration from {self.file_path}")
             return job_config
-        
-        except Exception as e:
-            logger.error(f"Error loading job configuration from {self.file_path}: {e}")
-            raise
 
     def load_schema(self):
 
-        try:
-            with open(self.schema_path, 'r') as f:
-                schema = json.load(f)
+        with open(self.schema_path, 'r') as f:
+            schema = json.load(f)
             logger.info(f"Successfully loaded JSON schema from {self.schema_path}")
             return schema
-        
-        except Exception as e:
-            logger.error(f"Error loading JSON schema from {self.schema_path}: {e}")
-            raise
 
     def validate_config(self, job_config, schema):
 
         try:
-            validate(instance=job_config, schema=schema)
+
+            path_replace = self.schema_path.replace("\\", "/")
+            full_uri = Path(self.schema_path).resolve().as_uri()
+
+            validator = jsonschema_rs.validator_for(schema, base_uri=full_uri)
+
+            validator.validate(job_config)
             logger.info(f"Config validation successful")
 
-        except ValidationError as e:
-            logger.error(f"Validation error: {e.message}")
+        except jsonschema_rs.ValidationError as e:
+            logger.error(f"Config validation failed: {e}")
             raise
 
     def load_env_credentials(self, job_config):
-        try:
+
             load_dotenv(dotenv_path="dev.env")
             db_url = os.getenv("DB_URL")
+
             if not db_url:
-                raise ValueError(f"DB_URL not found in environment variables")
+                raise ValueError(f"DB_URL not found")
 
             auth_config = job_config['exec'].get('auth')
-            if auth_config:
-                api_key = os.getenv(auth_config['key_env'])
-            else:
-                api_key = None
-                    
-            return db_url, api_key
+
+            if not auth_config:
+                logger.info(f"No auth_config configured for job: {job_config['job_name']}, skipping auth_config")
+                return db_url, None
         
-        except Exception as e:
-            logger.error(f"Error loading database credentials: {e}")
-            raise
+            api_key = os.getenv(auth_config['key_env'])
+
+            if not api_key:
+                raise ValueError(f"{auth_config['key_env']} not found")
+            return db_url, api_key 
 
     def insert_run_metadata(self, job_config, db_url):
 
@@ -95,32 +93,33 @@ class Runner:
             logger.error(f"Error inserting run metadata for job {job_config['job_name']}: {e}")
             raise
 
-    def execute_execcmd(self, job_config, api_key):
+    def execute_execcmd(self, job_config, api_key, db_url):
         
         exec_cfg = job_config['exec']
         job_name = job_config['job_name']
 
-        try:
-            execcmd = ApiReadExecCommand(exec_cfg, job_name, api_key)
-            logger.info(f"Successfully created an instance: {execcmd} from class: {ApiReadExecCommand}")
-            return execcmd
-        except Exception as e:
-            logger.error(f"Error creating execution command for job {job_name}: {e}")
-            raise
+        if exec_cfg["type"] == "ApiExecCommand":
+            return ApiExecCommand(exec_cfg, job_name, api_key)
+            
+        else:
+            raise ValueError(f"Unsupported exec type: {exec_cfg["type"]}")
 
     def execute_destination(self, job_config, data):
 
-        metadata_cfg = job_config['metadata']
-        destination_cfg = job_config['destination']
         job_name = job_config['job_name']
+        destination_cfg = job_config.get('destination')
+
+        if not destination_cfg:
+            logger.info(f"No destination configured for job: {job_name}, skipping destination")
+            return None
         
-        try:
-            destination = Gcs(metadata_cfg, destination_cfg, data)
-            logger.info(f"Successfully created an instance: {destination} from class {Gcs}")
-            return destination
-        except Exception as e:
-            logger.error(f"Error creating destination for job {job_name}: {e}") 
-            raise
+        metadata_cfg = job_config['metadata']
+        
+        if destination_cfg["type"] == 'GCS':
+            return GCS(metadata_cfg, destination_cfg, data)
+            
+        else:
+            raise ValueError(f"Unsupported destination type: {destination_cfg['type']}")
 
     def update_run_metadata(self, job_config, run_id, status, db_url, total_records=None, error_message=None,):
 
@@ -163,11 +162,12 @@ class Runner:
         error_message = None
         total_records = 0
         try:
-            execcmd = self.execute_execcmd(job_config=job_config, api_key=api_key)
+            execcmd = self.execute_execcmd(job_config=job_config, api_key=api_key, db_url=db_url)
             logger.info(f"Executing job {job_config['job_name']} with run ID: {run_id}")
             data, total_records = execcmd.run()
             destination = self.execute_destination(job_config=job_config, data=data)
-            destination.run()
+            if destination:
+                destination.run()
             logger.info(f"Job {job_config['job_name']} with run ID: {run_id} completed successfully")
             status = "SUCCESS"
 

@@ -1,0 +1,60 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+
+    "type": "object",
+
+    "required": ["pipeline_name", "job_name", "job_type", "exec"],
+
+    "properties": {
+        "pipeline_name": {
+            "type": "string",
+            "const": "market_analytics_platform"
+        },
+
+        "job_name": {
+            "type": "string",
+            "pattern": "^(dev_|prod_)[a-z0-9_]+$",
+            "minLength": 7,
+            "maxLength": 50
+        },
+
+        "job_type": {
+            "type": "string",
+            "const": "ingestion"
+        },
+
+        "metadata": {
+            "type": "object",
+            "required": ["source", "dataset", "entity"],
+            "properties": {
+                "source": {"type": "string"},
+                "dataset": {"type": "string"},
+                "entity": {"type": "string"}
+            },
+            "additionalProperties": false
+        },
+
+        "exec": {
+            "$ref": "exec_schemas/api_exec_schema.json"
+        },
+
+        "destination": {
+            "$ref": "dest_schemas/gcs_dest_schema.json"
+        }
+    },
+
+    "allOf": [
+        {
+            "if": {
+                "properties": {
+                    "job_type": {"const": "ingestion"}
+                }
+            },
+            "then": {
+                "required": ["metadata"]
+            }
+        }
+    ],
+    
+    "additionalProperties": false
+}

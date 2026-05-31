@@ -3,7 +3,6 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
-dbt_project/
 dev_testing/
 *.terraform*
 LICENSE.txt
@@ -14,6 +13,11 @@ LICENSE.txt
 gcloud
 dev.env
 __init__.py
+logs/
+target/
+package-lock.yml
+dbt_project/
+metadata_pipeline/
 
 !configs/
 !docs/
@@ -22,7 +26,10 @@ __init__.py
 !schemas/
 !terraform/
 !.gitignore
+!.dockerignore
+!.gcloudignore
 !Dockerfile
 !example.env
 !README.md
 !requirements.txt
+

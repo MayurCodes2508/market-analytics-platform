@@ -4,7 +4,7 @@ from google.cloud import storage
 import io
 import pandas as pd
 
-class Gcs:
+class GCS:
     def __init__(self, metadata_cfg, destination_cfg, data):
         
         self.data = data
@@ -36,19 +36,20 @@ class Gcs:
             }
             formatted_path = self.path_template.format(**path_context)
             logger.info(f"Successfully created and formatted path: {formatted_path}")
-            return formatted_path
+            return formatted_path, now
         except Exception as e:
-            logger.error(f"Error creating path_context: {e}") 
+            logger.error(f"Error creating formatted_path: {e}") 
             raise 
 
-    def upload_to_gcs(self, path_context, data):
-
-        now = datetime.now(timezone.utc)
+    def upload_to_gcs(self, path, data, now):
 
         try:
             storage_client = storage.Client()
             bucket = storage_client.bucket(self.bucket)
-            blob = bucket.blob(path_context)
+            blob = bucket.blob(path)
+
+            if not data:
+                raise ValueError(f"No data received to upload")
             df = pd.DataFrame(data)
             df["ingestion_timestamp"] = now
             logger.info(f"Successfully converted the raw JSON data to Pandas DataFrame and added ingestion metadata(ingestion_timestamp)")
@@ -67,6 +68,6 @@ class Gcs:
 
     def run(self):
 
-        path_context = self.build_path()
+        path, now = self.build_path()
 
-        self.upload_to_gcs(path_context= path_context, data=self.data)
+        self.upload_to_gcs(path=path, data=self.data, now=now)

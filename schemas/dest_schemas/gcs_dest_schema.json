@@ -1,0 +1,26 @@
+{
+        "type": "object",
+        "required": ["type", "bucket", "layer", "format", "path_template"],
+    
+
+        "properties": {
+            "type": {
+              "type": "string",
+              "const": "GCS"
+            },
+            "bucket": { "type": "string" },
+            "layer": {
+                "type": "string",
+                "enum": ["dev", "staging", "prod"]
+            },
+            "format": {
+                "type": "string",
+                "const": "parquet"
+            },
+            "path_template": {
+                "type": "string",
+                "const":"{layer}/{source}/{dataset}/{entity}/ingestion_dt={ingestion_dt}/ingestion_ts={ingestion_ts}.{format}"
+            }
+        },
+        "additionalProperties": false
+    }

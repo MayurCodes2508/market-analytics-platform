@@ -1,7 +1,7 @@
 from loguru import logger
 import requests
 
-class ApiReadExecCommand:
+class ApiExecCommand:
     def __init__(self, exec_cfg, job_name, api_key=None):
 
         self.job_name = job_name
@@ -56,7 +56,7 @@ class ApiReadExecCommand:
             if self.api_key:
                 if self.location == "header":
                     headers[self.name] = self.api_key
-                    logger.info(f"Added API key to headers: {headers}")
+                    logger.info(f"Added API key to headers")
                 else:
                     logger.warning(f"Unsupported auth location: {self.location}. API key will not be included in headers.")
             return headers
@@ -81,7 +81,7 @@ class ApiReadExecCommand:
 
     def make_request(self, url, headers, params):
 
-        logger.info(f"Making request started with: url={url} | headers={headers} | params={params}")
+        logger.info(f"Making request started with: url={url} | headers=Headers | params={params}")
         try:
             response = requests.get(url=url, headers=headers, params=params)
             logger.info(f"Request made: {response}")
@@ -108,6 +108,8 @@ class ApiReadExecCommand:
            raise
 
     def run(self):
+
+        logger.info(f"Running API job: {self.job_name}")
         
         url = self.build_url()
 

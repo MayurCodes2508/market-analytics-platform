@@ -1,7 +1,7 @@
 {
     "pipeline_name": "market_analytics_platform",
 
-    "job_name": "dev_coingecko_market_price",
+    "job_name": "prod_coingecko_market_price",
 
     "job_type": "ingestion",
 
@@ -12,7 +12,7 @@
     },
 
     "exec": {
-        "type": "ApiReadExecCommand",
+        "type": "ApiExecCommand",
         "base_url": "https://api.coingecko.com/api/v3",
         "path": "/coins/markets",
         "pagination": {
@@ -21,7 +21,7 @@
         },
         "page_size": {
             "param": "per_page",
-            "value": 50
+            "value": 250
         },
         "query_params": {
             "vs_currency": "inr"
@@ -35,9 +35,9 @@
     },
 
     "destination": {
-        "type": "gcs",
-        "bucket": "dev-market-analytics-platform-bucket",
-        "layer": "dev",
+        "type": "GCS",
+        "bucket": "prod-market-analytics-platform-bucket",
+        "layer": "staging",
         "format": "parquet",
         "path_template": "{layer}/{source}/{dataset}/{entity}/ingestion_dt={ingestion_dt}/ingestion_ts={ingestion_ts}.{format}"
     }
