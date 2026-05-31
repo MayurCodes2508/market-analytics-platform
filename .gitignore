@@ -32,4 +32,4 @@ metadata_pipeline/
 !example.env
 !README.md
 !requirements.txt
-
+!.github/
