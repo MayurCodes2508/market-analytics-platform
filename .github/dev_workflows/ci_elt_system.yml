@@ -29,7 +29,7 @@ on:
       - '**/.dockerignore'
       - '**/.gcloudignore'
       - '**/Dockerfile'
-      - '**/requirements.txt'  
+      - '**/requirements.txt'   
 jobs:
   validate_elt:
     name: Test System and Scan For Vulnerabilities
