@@ -5,31 +5,31 @@ on:
     branches: [main, dev]
 
     paths:
-      - 'configs/**'
-      - 'docs/**'
-      - 'orchestrator/**'
-      - 'pipeline/**'
-      - 'schemas/**'
-      - 'terraform/**'
-      - '.dockerignore'
-      - '.gcloudignore'
-      - 'Dockerfile'
-      - 'requirements.txt'
+      - '**/configs/**'
+      - '**/docs/**'
+      - '**/orchestrator/**'
+      - '**/pipeline/**'
+      - '**/schemas/**'
+      - '**/terraform/**'
+      - '**/.dockerignore'
+      - '**/.gcloudignore'
+      - '**/Dockerfile'
+      - '**/requirements.txt'
   
   pull_request:
     branches: [main, dev]
 
     paths:
-      - 'configs/**'
-      - 'docs/**'
-      - 'orchestrator/**'
-      - 'pipeline/**'
-      - 'schemas/**'
-      - 'terraform/**'
-      - '.dockerignore'
-      - '.gcloudignore'
-      - 'Dockerfile'
-      - 'requirements.txt'  
+      - '**/configs/**'
+      - '**/docs/**'
+      - '**/orchestrator/**'
+      - '**/pipeline/**'
+      - '**/schemas/**'
+      - '**/terraform/**'
+      - '**/.dockerignore'
+      - '**/.gcloudignore'
+      - '**/Dockerfile'
+      - '**/requirements.txt'  
 jobs:
   validate_elt:
     name: Test System and Scan For Vulnerabilities
