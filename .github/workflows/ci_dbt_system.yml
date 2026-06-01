@@ -38,12 +38,35 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'dbt_project/requirements.txt'
 
+      - name: Create dbt profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat <<EOF > ~/.dbt/profiles.yml
+          market-analytics-platform:
+            target: dev
+            outputs:
+              dev:
+                type: bigquery
+                method: oauth
+                project: instant-medium-491107-t6
+                dataset: dev_metadata
+                threads: 4
+                location: asia-south1
+                timeout_seconds: 300
+          EOF
+
       - name: Install System Dependencies
         run: |
           pip install -r requirements.txt
 
       - name: Install dbt Packages
         run: dbt deps
+
+      - name: Parse dbt profiles
+        run: dbt parse
+      
+      - name: dbt Compile
+        run: dbt compile
       
       - name: Build dbt Models in Dev
         run: dbt build --target dev 
