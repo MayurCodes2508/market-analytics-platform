@@ -9,9 +9,11 @@ models:
       data supports monitoring and analysis of task performance.
     tests:
       - dbt_utils.expression_is_true:
-          expression: "is_runtime_anomaly IS TRUE OR is_runtime_anomaly IS FALSE"
+          arguments:
+            expression: "is_runtime_anomaly IS TRUE OR is_runtime_anomaly IS FALSE"
       - dbt_utils.expression_is_true:
-          expression: "is_runtime_anomaly IS FALSE OR is_runtime_anomaly IS TRUE AND runtime_seconds > 60"
+          arguments:
+            expression: "is_runtime_anomaly IS FALSE OR is_runtime_anomaly IS TRUE AND runtime_seconds > 60"
 
     columns:
       - name: pipeline_name

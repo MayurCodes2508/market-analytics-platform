@@ -8,15 +8,20 @@ models:
       to performance targets, and supports analysis of pipeline health and reliability.
     tests:
       - dbt_utils.expression_is_true:
-          expression: "is_slo_threshold_breached IS TRUE OR is_slo_threshold_breached IS FALSE"  
+          arguments:
+            expression: "is_slo_threshold_breached IS TRUE OR is_slo_threshold_breached IS FALSE"  
       - dbt_utils.expression_is_true:
-          expression: "is_slo_threshold_breached IS FALSE OR is_slo_threshold_breached IS TRUE AND avg_runtime_seconds > 60"
+          arguments:
+            expression: "is_slo_threshold_breached IS FALSE OR is_slo_threshold_breached IS TRUE AND avg_runtime_seconds > 60"
       - dbt_utils.expression_is_true:
-          expression: "rolling_30_day_slo_percentage >= 0.00 AND rolling_30_day_slo_percentage <= 100.00"
+          arguments:
+            expression: "rolling_30_day_slo_percentage >= 0.00 AND rolling_30_day_slo_percentage <= 100.00"
       - dbt_utils.expression_is_true:
-          expression: "is_slo_met_for_day IS TRUE OR is_slo_met_for_day IS FALSE"
+          arguments:
+            expression: "is_slo_met_for_day IS TRUE OR is_slo_met_for_day IS FALSE"
       - dbt_utils.expression_is_true:
-          expression: "is_slo_met_for_day IS FALSE OR is_slo_met_for_day IS TRUE AND rolling_30_day_slo_percentage >= 99.00"
+          arguments:
+            expression: "is_slo_met_for_day IS FALSE OR is_slo_met_for_day IS TRUE AND rolling_30_day_slo_percentage >= 99.00"
 
     columns:
       - name: pipeline_name

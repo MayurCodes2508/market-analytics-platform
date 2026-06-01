@@ -10,9 +10,11 @@ models:
       available within acceptable timeframes.
     tests:
       - dbt_utils.expression_is_true:
-          expression: "is_freshness_anomaly IS TRUE OR is_freshness_anomaly IS FALSE"
+          arguments:
+            expression: "is_freshness_anomaly IS TRUE OR is_freshness_anomaly IS FALSE"
       - dbt_utils.expression_is_true:
-          expression: "is_freshness_anomaly IS FALSE OR is_freshness_anomaly IS TRUE AND freshness_minutes > 90"
+          arguments:
+            expression: "is_freshness_anomaly IS FALSE OR is_freshness_anomaly IS TRUE AND freshness_minutes > 90"
 
     columns:
       - name: pipeline_name

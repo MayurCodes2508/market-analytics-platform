@@ -6,8 +6,8 @@ sources:
     schema: "{{ target.schema }}"
     tables:
       - name: raw_pipeline_runs
-        loaded_at_field: created_at
-        freshness:
-          warn_after: {count: 3, period: hour}
-          error_after: {count: 6, period: hour}
-
+        config:
+          loaded_at_field: created_at
+          freshness:
+            warn_after: {count: 3, period: hour}
+            error_after: {count: 6, period: hour}
