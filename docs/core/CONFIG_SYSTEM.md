@@ -24,8 +24,8 @@ A config includes:
 
 ## Current config examples
 
-- `configs/coingecko_sources/dev_market_price.json`
-- `configs/coingecko_sources/prod_market_price.json`
+- `configs/coingecko_sources/dev/market_price.json`
+- `configs/coingecko_sources/prod/market_price.json`
 
 Both configs use the same schema and differ mainly by environment-specific bucket and runtime settings.
 

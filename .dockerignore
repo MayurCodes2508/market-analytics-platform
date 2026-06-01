@@ -15,6 +15,7 @@ gcloud
 __init__.py
 metadata_pipeline/
 logs/
+file_list.txt
 
 !configs/
 !orchestrator/
