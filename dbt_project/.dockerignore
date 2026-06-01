@@ -3,8 +3,8 @@ logs/
 target/
 .gcloudignore
 package-lock.yml
+dbt_packages/
 
-!dbt_packages/
 !macros/
 !models/
 !snapshots/
