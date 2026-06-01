@@ -43,7 +43,8 @@ models:
         tests:
           - not_null
           - dbt_utils.expression_is_true:
-              expression: ">= 0"
+              arguments:
+                expression: ">= 0"
 
       - name: error_message
         description: "This column stores any error messages generated if a pipeline job failed or encountered issues."
@@ -55,7 +56,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ["RUNNING", "SUCCESS", "FAILED"]
+              arguments:
+                values: ["RUNNING", "SUCCESS", "FAILED"]
 
       - name: start_time
         description: "This column records the timestamp when a pipeline job began its execution."

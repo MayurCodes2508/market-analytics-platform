@@ -10,17 +10,23 @@ models:
       operational efficiency.
     tests:
       - dbt_utils.expression_is_true:
-          expression: "success_rate >= 0.00 AND success_rate <= 100.00"
+          arguments:
+            expression: "success_rate >= 0.00 AND success_rate <= 100.00"
       - dbt_utils.expression_is_true:
-          expression: "is_slo_threshold_breached IS TRUE OR is_slo_threshold_breached IS FALSE"
+          arguments:
+            expression: "is_slo_threshold_breached IS TRUE OR is_slo_threshold_breached IS FALSE"
       - dbt_utils.expression_is_true:
-          expression: "is_slo_threshold_breached IS FALSE OR is_slo_threshold_breached IS TRUE AND success_rate < 95.00"
+          arguments:  
+            expression: "is_slo_threshold_breached IS FALSE OR is_slo_threshold_breached IS TRUE AND success_rate < 95.00"
       - dbt_utils.expression_is_true:
-          expression: "rolling_30_day_slo_percentage >= 0.00 AND rolling_30_day_slo_percentage <= 100.00"
+          arguments:
+            expression: "rolling_30_day_slo_percentage >= 0.00 AND rolling_30_day_slo_percentage <= 100.00"
       - dbt_utils.expression_is_true:
-          expression: "is_slo_met_for_day IS TRUE OR is_slo_met_for_day IS FALSE"
+          arguments:
+            expression: "is_slo_met_for_day IS TRUE OR is_slo_met_for_day IS FALSE"
       - dbt_utils.expression_is_true:
-          expression: "is_slo_met_for_day IS FALSE OR is_slo_met_for_day IS TRUE AND rolling_30_day_slo_percentage >= 99.00"
+          arguments:
+            expression: "is_slo_met_for_day IS FALSE OR is_slo_met_for_day IS TRUE AND rolling_30_day_slo_percentage >= 99.00"
 
     columns:
       - name: pipeline_name
