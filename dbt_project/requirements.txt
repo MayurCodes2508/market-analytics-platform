@@ -12,7 +12,7 @@ db-dtypes==1.6.0
 dbt-bigquery==1.7.9
 dbt-core==1.7.19
 dbt-extractor==0.5.1
-dbt-semantic-interfaces==0.4.4
+dbt-semantic-interfaces==0.4.4 
 google-api-core==2.30.3
 google-auth==2.53.0
 google-auth-oauthlib==1.4.0

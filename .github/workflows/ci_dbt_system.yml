@@ -49,7 +49,7 @@ jobs:
         run: dbt compile --target dev
       
       - name: Build dbt Models in Dev
-        run: dbt build --target dev
+        run: dbt build --target dev 
 
       - name: Build System Container Image
         run: |
