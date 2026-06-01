@@ -14,5 +14,5 @@ The Warehouse layer represents the planned analytics staging area after ingestio
 ## Current state
 
 - `prod_v1` currently writes to a GCS data lake
-- `dbt_project/` includes current models for pipeline metadata observability, SLO reporting, and alert monitoring
+- `dbt_project/` includes current models for pipeline metadata observability, SLO reporting and monitoring
 - The architecture is ready for broader analytics, but full warehouse load logic for market analytics is still planned

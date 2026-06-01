@@ -39,10 +39,6 @@ models:
       +schema: marts
       +materialized: table
 
-    monitoring:
-      +schema: monitoring
-      +materialized: view
-
     reporting:
       +schema: reporting
       +materialized: table

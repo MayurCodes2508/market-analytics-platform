@@ -85,6 +85,8 @@ resource "google_cloud_run_v2_job" "dev_market_analytics_platform_run" {
         
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/market-job:latest"
 
+        command = ["bash", "-c"]
+
         args = [
           "python -u -m orchestrator.runner --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json"
         ]
@@ -218,6 +220,8 @@ resource "google_cloud_run_v2_job" "prod_market_analytics_platform_run" {
     template {
       containers {
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/market-job:prod_v1"
+
+        command = ["bash", "-c"]
 
         args = [
           "python -u -m orchestrator.runner --file_path configs/coingecko_sources/prod/market_price.json --schema_path schemas/root_schema.json"

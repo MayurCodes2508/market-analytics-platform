@@ -12,7 +12,7 @@ The Market Analytics Platform ingests cryptocurrency market data from the CoinGe
 - GCS Parquet ingestion layer
 - Run metadata tracking in PostgreSQL
 - Metadata ingestion pipeline to BigQuery table `instant-medium-491107-t6.prod_metadata.raw_pipeline_runs`
-- dbt models for pipeline observability, SLO reporting, and alert monitoring
+- dbt models for pipeline observability, SLO reporting
 - Artifact Registry repository `market-analytics-platform-repository` and GitHub Actions Workload Identity pool `github-actions-pool`
 - Environment separation for dev and prod
 - Infrastructure defined in Terraform
@@ -41,5 +41,5 @@ The system is built to support a SaaS-like release model: dev and prod are isola
 - `pipeline/exec_cmds/` contains source extraction logic
 - `pipeline/destinations/` contains storage logic
 - `metadata_pipeline/` loads pipeline run metadata into BigQuery
-- `dbt_project/` builds observability, SLO reporting, and alert monitoring models
+- `dbt_project/` builds observability, SLO reporting models
 - `terraform/` contains infrastructure provisioning

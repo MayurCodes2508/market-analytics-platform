@@ -1,7 +1,7 @@
 WITH metric_calculation AS (
     SELECT pipeline_name,
            EXTRACT(DATE FROM created_at) AS created_at,
-           AVG(TIMESTAMP_DIFF(end_time, start_time, SECOND)) AS avg_runtime_seconds
+           ROUND(AVG(TIMESTAMP_DIFF(end_time, start_time, SECOND)), 2) AS avg_runtime_seconds
 
     FROM {{ ref('stg_pipeline_runs') }}
 
