@@ -45,9 +45,6 @@ jobs:
       - name: Install dbt Packages
         run: dbt deps
 
-      - name: Parse dbt Project
-        run: dbt parse
-
       - name: Compile dbt in Dev
         run: dbt compile --target dev
       
