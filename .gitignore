@@ -16,8 +16,9 @@ __init__.py
 logs/
 target/
 package-lock.yml
-dbt_project/
-metadata_pipeline/
+macros/
+snapshots/
+tests/
 
 !configs/
 !docs/
@@ -33,3 +34,5 @@ metadata_pipeline/
 !README.md
 !requirements.txt
 !.github/
+!dbt_project/
+!metadata_pipeline/

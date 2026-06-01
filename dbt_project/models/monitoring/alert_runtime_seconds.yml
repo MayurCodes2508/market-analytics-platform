@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: alert_runtime_seconds
+    description: >
+      This table stores records of processing durations for various automated tasks.
+      It tracks the time taken for each task to complete and identifies instances where
+      a task's completion time deviates significantly from its expected range. This
+      data supports monitoring and analysis of task performance.
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "is_runtime_anomaly IS TRUE OR is_runtime_anomaly IS FALSE"
+      - dbt_utils.expression_is_true:
+          expression: "is_runtime_anomaly IS FALSE OR is_runtime_anomaly IS TRUE AND runtime_seconds > 60"
+
+    columns:
+      - name: pipeline_name
+        description: "This column contains the unique identifier for a specific automated task or process."
+
+      - name: created_at
+        description: "This column holds the timestamp indicating when the record of the task's processing duration was created."
+
+      - name: runtime_seconds
+        description: "This column stores the duration, in seconds, that the automated task took to complete."
+        tests:
+          - not_null
+
+      - name: is_runtime_anomaly
+        description: "This column indicates whether the recorded processing duration for the task is considered unusual or outside of expected parameters."
+        tests:
+          - not_null

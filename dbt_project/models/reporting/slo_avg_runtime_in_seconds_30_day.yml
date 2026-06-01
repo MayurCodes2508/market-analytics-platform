@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: slo_avg_runtime_in_seconds_30_day
+    description: >
+      This table tracks the performance of data pipelines over time. It provides
+      insights into the operational efficiency of pipelines, helps monitor adherence
+      to performance targets, and supports analysis of pipeline health and reliability.
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "is_slo_threshold_breached IS TRUE OR is_slo_threshold_breached IS FALSE"  
+      - dbt_utils.expression_is_true:
+          expression: "is_slo_threshold_breached IS FALSE OR is_slo_threshold_breached IS TRUE AND avg_runtime_seconds > 60"
+      - dbt_utils.expression_is_true:
+          expression: "rolling_30_day_slo_percentage >= 0.00 AND rolling_30_day_slo_percentage <= 100.00"
+      - dbt_utils.expression_is_true:
+          expression: "is_slo_met_for_day IS TRUE OR is_slo_met_for_day IS FALSE"
+      - dbt_utils.expression_is_true:
+          expression: "is_slo_met_for_day IS FALSE OR is_slo_met_for_day IS TRUE AND rolling_30_day_slo_percentage >= 99.00"
+
+    columns:
+      - name: pipeline_name
+        description: "The unique identifier for a specific data pipeline."
+
+      - name: created_at
+        description: "The date on which the performance metric was recorded."
+
+      - name: avg_runtime_seconds
+        description: "The average duration, in seconds, that a pipeline took to complete its execution."
+        tests:
+          - not_null
+
+      - name: is_slo_threshold_breached
+        description: "A boolean indicating whether the pipeline's average runtime exceeded its defined Service Level Objective (SLO) threshold."
+        tests:
+          - not_null
+
+      - name: rolling_30_day_slo_percentage
+        description: "The percentage of days within the last 30 days where the pipeline met its Service Level Objective."
+        tests: 
+          - not_null
+ 
+      - name: is_slo_met_for_day
+        description: "A boolean indicating whether the pipeline met its Service Level Objective for the specific day."
+        tests:
+          - not_null

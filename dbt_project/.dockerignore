@@ -1,0 +1,15 @@
+.venv
+logs/
+target/
+.gcloudignore
+package-lock.yml
+
+!dbt_packages/
+!macros/
+!models/
+!snapshots/
+!tests/
+!dbt_project.yml
+!Dockerfile
+!packages.yml
+!requirements.txt

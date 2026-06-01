@@ -1,0 +1,48 @@
+name: market_analytics_platform
+version: '1.0'
+config-version: 2
+
+profile: market-analytics-platform
+
+model-paths: ["models"]
+snapshot-paths: ["snapshots"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+models:
+  market_analytics_platform:
+    +on_configuration_change: apply
+    +persist_docs:
+      relation: true
+      columns: true
+
+    staging:
+      +schema: staging
+      +materialized: view
+
+    core:
+      +schema: core
+
+      intermediates:
+        +materialized: view
+
+      dimensions:
+        +materialized: table
+      
+      facts:
+        +materialized: incremental
+        +incremental_strategy: merge
+        +on_schema_change: append_new_columns
+        +require_partition_filter: false
+      
+    marts:
+      +schema: marts
+      +materialized: table
+
+    monitoring:
+      +schema: monitoring
+      +materialized: view
+
+    reporting:
+      +schema: reporting
+      +materialized: table
