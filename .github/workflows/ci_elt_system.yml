@@ -34,6 +34,9 @@ jobs:
   validate_elt:
     name: Test System and Scan For Vulnerabilities
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
