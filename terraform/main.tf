@@ -8,7 +8,47 @@ resource "google_artifact_registry_repository" "market_analytics_platform_repo" 
   repository_id = "market-analytics-platform-repository"
   format        = "DOCKER"
   location      = "asia-south1"
+  project       = "instant-medium-491107-t6"
+  lifecycle {
+    prevent_destroy = true
+  }
 }
+
+resource "google_iam_workload_identity_pool" "github_pool" {
+  workload_identity_pool_id = "github-actions-pool"
+  display_name              = "GitHub Actions Pool"
+  description               = "Identity pool for market analytics CI pipeline"
+}
+
+resource "google_iam_workload_identity_pool_provider" "github_provider" {
+  workload_identity_pool_id          = google_iam_workload_identity_pool.github_pool.workload_identity_pool_id
+  workload_identity_pool_provider_id = "github-provider"
+  display_name                       = "GitHub Actions Provider"
+
+  attribute_mapping = {
+    "google.subject"       = "assertion.sub"
+    "attribute.repository" = "assertion.repository"
+    "attribute.owner"      = "assertion.repository_owner"
+  }
+
+  oidc {
+    issuer_uri = "https://token.actions.githubusercontent.com"
+  }
+    attribute_condition = "assertion.repository_owner == 'MayurCodes2508'"
+}
+
+resource "google_service_account_iam_member" "wif_binding" {
+  service_account_id = "projects/instant-medium-491107-t6/serviceAccounts/github-workflows@instant-medium-491107-t6.iam.gserviceaccount.com"
+  role               = "roles/iam.workloadIdentityUser"
+  member = "principalSet://iam.googleapis.com/projects/144449440045/locations/global/workloadIdentityPools/github-actions-pool/attribute.repository/MayurCodes2508/market-analytics-platform"
+  
+  depends_on = [ 
+    google_iam_workload_identity_pool.github_pool,
+    google_iam_workload_identity_pool_provider.github_provider
+   ]
+}
+
+
 
 
 ###################################
@@ -42,10 +82,11 @@ resource "google_cloud_run_v2_job" "dev_market_analytics_platform_run" {
   template {
     template {
       containers {
+        
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/market-job:latest"
 
         args = [
-          "python -u -m orchestrator.runner --file_path configs/coingecko_sources/dev_market_price.json --schema_path schemas/api_exec_schema.json"
+          "python -u -m orchestrator.runner --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json"
         ]
 
         env {
@@ -68,9 +109,40 @@ resource "google_cloud_run_v2_job" "dev_market_analytics_platform_run" {
           }
         }
       }
+      service_account = "development-cloud-resources-jo@instant-medium-491107-t6.iam.gserviceaccount.com"
     }
   }
 }
+
+resource "google_cloudfunctions2_function" "dev_metadata_pipeline" {
+  name = "dev-metadata-pipeline"
+  location = "asia-south1"
+  build_config {
+    runtime = "python311"
+    entry_point = "handler"
+    source {
+      storage_source {
+        bucket = "function-bucket-metadata-pipeline"
+        object = "metadata_pipeline.zip"
+      }
+    }
+  }
+  service_config {
+    max_instance_count = 1
+    available_memory = "256M"
+    timeout_seconds = 30
+    environment_variables = {
+      ENV = "dev"
+    }
+    secret_environment_variables {
+      key = "DB_URL"
+      project_id = "instant-medium-491107-t6"
+      secret = "dev_market_analytics_platform_secrets"
+      version = "5"
+    }
+  }
+}
+
 
 
 ###################################
@@ -124,10 +196,7 @@ resource "google_cloud_run_v2_job" "prod_market_analytics_platform_run" {
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/market-job:prod_v1"
 
         args = [
-          "--file_path",
-          "configs/coingecko_sources/prod_market_price.json",
-          "--schema_path",
-          "schemas/api_exec_schema.json"
+          "python -u -m orchestrator.runner --file_path configs/coingecko_sources/prod/market_price.json --schema_path schemas/root_schema.json"
         ]
 
         env {
@@ -150,6 +219,39 @@ resource "google_cloud_run_v2_job" "prod_market_analytics_platform_run" {
           }
         }
       }
+      service_account = "production-cloud-resources-job@instant-medium-491107-t6.iam.gserviceaccount.com"
+    }
+  }
+}
+
+resource "google_cloudfunctions2_function" "prod_metadata_pipeline" {
+  name = "prod-metadata-pipeline"
+  location = "asia-south1"
+  lifecycle {
+    prevent_destroy = true
+  }
+  build_config {
+    runtime = "python311"
+    entry_point = "handler"
+    source {
+      storage_source {
+        bucket = "function-bucket-metadata-pipeline"
+        object = "metadata_pipeline.zip"
+      }
+    }
+  }
+  service_config {
+    max_instance_count = 1
+    available_memory = "256M"
+    timeout_seconds = 30
+    environment_variables = {
+      ENV = "prod"
+    }
+    secret_environment_variables {
+      key = "DB_URL"
+      project_id = "instant-medium-491107-t6"
+      secret = "prod-market-analytics-platform-secret"
+      version = "2"
     }
   }
 }
@@ -159,10 +261,16 @@ resource "google_cloud_scheduler_job" "prod_market_analytics_platform_scheduler"
   region    = "asia-south1"
   schedule  = "0 * * * *"
   time_zone = "Asia/Kolkata"
+  lifecycle {
+    prevent_destroy = true
+  }
+  depends_on = [ 
+    google_cloud_run_v2_job.prod_market_analytics_platform_run
+   ]
 
   retry_config {
     retry_count          = 3
-    max_retry_duration   = "0s"
+    max_retry_duration   = "3600s"
     min_backoff_duration = "5s"
     max_backoff_duration = "3600s"
     max_doublings        = 5
@@ -173,8 +281,43 @@ resource "google_cloud_scheduler_job" "prod_market_analytics_platform_scheduler"
     http_method = "POST"
 
     oauth_token {
-      service_account_email = "production-cloud-resources-job@instant-medium-491107-t6.iam.gserviceaccount.com"
+      service_account_email = "production-cloud-resources-sch@instant-medium-491107-t6.iam.gserviceaccount.com"
       scope                 = "https://www.googleapis.com/auth/cloud-platform"
+    }
+  }
+}
+
+resource "google_cloud_scheduler_job" "prod_metadata_pipeline_scheduler" {
+  name      = "prod-metadata-pipeline-scheduler"
+  region    = "asia-south1"
+  schedule  = "0 * * * *"
+  time_zone = "Asia/Kolkata"
+  lifecycle {
+    prevent_destroy = true
+  }
+  depends_on = [ 
+    google_cloudfunctions2_function.prod_metadata_pipeline
+   ]
+
+  retry_config {
+    retry_count          = 3
+    max_retry_duration   = "3600s"
+    min_backoff_duration = "5s"
+    max_backoff_duration = "3600s"
+    max_doublings        = 5
+  }
+
+  http_target {
+    uri         = google_cloudfunctions2_function.prod_metadata_pipeline.service_config[0].uri
+    http_method = "POST"
+
+    headers = {
+      "Content-Type" = "application/json"
+    }
+
+    oidc_token {
+      service_account_email = "production-cloud-resources-913@instant-medium-491107-t6.iam.gserviceaccount.com"
+      audience              = google_cloudfunctions2_function.prod_metadata_pipeline.service_config[0].uri
     }
   }
 }

@@ -13,6 +13,8 @@ README.md
 .gcloudignore
 gcloud
 __init__.py
+metadata_pipeline/
+logs/
 
 !configs/
 !orchestrator/
@@ -20,3 +22,4 @@ __init__.py
 !schemas/
 !Dockerfile
 !requirements.txt
+!.dockerignore
