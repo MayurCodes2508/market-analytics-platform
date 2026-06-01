@@ -114,6 +114,28 @@ resource "google_cloud_run_v2_job" "dev_market_analytics_platform_run" {
   }
 }
 
+resource "google_cloud_run_v2_job" "dev_dbt_project_run" {
+  name = "dev-dbt-project-run"
+  location = "asia-south1"
+  template {
+    template {
+      containers {
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/dbt-job:latest"
+
+        args = [
+          "dbt build --target $$DBT_TARGET --profiles-dir ."
+        ]
+
+        env {
+          name = "DBT_TARGET"
+          value = "dev"
+        }
+      }
+      service_account = "development-cloud-resource-396@instant-medium-491107-t6.iam.gserviceaccount.com"
+    }
+  }
+}
+
 resource "google_cloudfunctions2_function" "dev_metadata_pipeline" {
   name = "dev-metadata-pipeline"
   location = "asia-south1"

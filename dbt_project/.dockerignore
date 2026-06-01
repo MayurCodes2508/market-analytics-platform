@@ -13,3 +13,4 @@ dbt_packages/
 !Dockerfile
 !packages.yml
 !requirements.txt
+!profiles.yml

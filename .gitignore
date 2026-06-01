@@ -20,6 +20,7 @@ macros/
 snapshots/
 tests/
 dbt_packages/
+profiles.yml
 
 !configs/
 !docs/
