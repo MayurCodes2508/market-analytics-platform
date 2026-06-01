@@ -121,9 +121,11 @@ resource "google_cloud_run_v2_job" "dev_dbt_project_run" {
     template {
       containers {
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/dbt-job:latest"
+        
+        command = ["bash", "-c"]
 
         args = [
-          "dbt build --target $$DBT_TARGET --profiles-dir ."
+          "dbt deps && dbt build --target $DBT_TARGET --profiles-dir ."
         ]
 
         env {
@@ -246,6 +248,30 @@ resource "google_cloud_run_v2_job" "prod_market_analytics_platform_run" {
   }
 }
 
+resource "google_cloud_run_v2_job" "prod_dbt_project_run" {
+  name = "prod-dbt-project-run"
+  location = "asia-south1"
+  template {
+    template {
+      containers {
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/dbt-job:prod_v1"
+        
+        command = ["bash", "-c"]
+
+        args = [
+          "dbt deps && dbt build --target $DBT_TARGET --profiles-dir ."
+        ]
+
+        env {
+          name = "DBT_TARGET"
+          value = "prod"
+        }
+      }
+      service_account = "production-cloud-resources-960@instant-medium-491107-t6.iam.gserviceaccount.com"
+    }
+  }
+}
+
 resource "google_cloudfunctions2_function" "prod_metadata_pipeline" {
   name = "prod-metadata-pipeline"
   location = "asia-south1"
@@ -308,6 +334,33 @@ resource "google_cloud_scheduler_job" "prod_market_analytics_platform_scheduler"
     }
   }
 }
+
+resource "google_cloud_scheduler_job" "prod_dbt_project_scheduler" {
+  name = "prod-dbt-project-scheduler"
+  region = "asia-south1"
+  schedule = "0 * * * *"
+  time_zone = "Asia/Kolkata"
+  depends_on = [
+    google_cloud_run_v2_job.prod_dbt_project_run   
+  ]
+  retry_config {
+    retry_count          = 3
+    max_retry_duration   = "3600s"
+    min_backoff_duration = "5s"
+    max_backoff_duration = "3600s"
+    max_doublings        = 5
+  }
+
+  http_target {
+    uri = "https://asia-south1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/instant-medium-491107-t6/jobs/prod-dbt-project-run:run"
+    http_method = "POST"
+    oauth_token {
+      service_account_email = "production-cloud-resources--38@instant-medium-491107-t6.iam.gserviceaccount.com"
+      scope = "https://www.googleapis.com/auth/cloud-platform"
+    }
+  }
+}
+
 
 resource "google_cloud_scheduler_job" "prod_metadata_pipeline_scheduler" {
   name      = "prod-metadata-pipeline-scheduler"

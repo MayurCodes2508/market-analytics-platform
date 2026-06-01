@@ -6,7 +6,7 @@ Schema validation enforces correctness of every job configuration before the run
 
 ## Implementation
 
-The schema is defined in `schemas/api_exec_schema.json` and includes requirements for:
+The schema is defined in `schemas/root_schema.json`, which references `exec_schemas/api_exec_schema.json` and `dest_schemas/gcs_dest_schema.json`. It includes requirements for:
 
 - pipeline identification
 - metadata fields
@@ -21,7 +21,7 @@ The schema is defined in `schemas/api_exec_schema.json` and includes requirement
 
 1. Load job configuration
 2. Load JSON schema
-3. Validate the config using `jsonschema`
+3. Validate the config using `jsonschema_rs`
 4. Fail fast if the config is invalid
 
 ## Current constraints
@@ -29,7 +29,7 @@ The schema is defined in `schemas/api_exec_schema.json` and includes requirement
 - `pipeline_name` must be `market_analytics_platform`
 - `job_name` must start with `dev_` or `prod_`
 - `job_type` is currently fixed to `ingestion`
-- `exec.type` must be `ApiReadExecCommand`
+- `exec.type` must be `ApiExecCommand`
 - production page size is enforced at up to 250
 - destination format is fixed to `parquet`
 

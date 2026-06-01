@@ -21,6 +21,10 @@ snapshots/
 tests/
 dbt_packages/
 profiles.yml
+file_list.txt
+core/
+marts/
+dbt_packages/
 
 !configs/
 !docs/

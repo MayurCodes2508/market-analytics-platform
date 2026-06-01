@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Warehouse layer represents the planned analytics staging area after ingestion. In `prod_v1`, the architecture prepares for a warehouse layer, even though the current implementation stops at the GCS landing zone.
+The Warehouse layer represents the planned analytics staging area after ingestion. In `prod_v1`, the current implementation stops at the GCS landing zone, while the dbt project is focused on pipeline metadata observability and reliability reporting.
 
 ## Intended workflow
 
@@ -14,5 +14,5 @@ The Warehouse layer represents the planned analytics staging area after ingestio
 ## Current state
 
 - `prod_v1` currently writes to a GCS data lake
-- `dbt_project/` exists as a placeholder for future warehouse transformations
-- The architecture is ready for downstream analytics but does not yet implement full warehouse load logic
+- `dbt_project/` includes current models for pipeline metadata observability, SLO reporting, and alert monitoring
+- The architecture is ready for broader analytics, but full warehouse load logic for market analytics is still planned

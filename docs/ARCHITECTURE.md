@@ -12,16 +12,15 @@ The system is designed with clear separation of concerns between execution, data
 
 ---
 
-## 🎯 Data Products
+## 🎯 Observability and Reporting
 
-The platform generates the following analytical outputs:
+The platform generates pipeline observability and reporting assets from execution metadata.
 
-- Top Performing Coins  
-- Consistently Performing Coins  
-- Worst Performing Coins  
-- Category-Based Performance  
+- Run execution history for the ingestion pipeline
+- Pipeline performance and runtime SLO reporting
+- Alert monitoring for freshness and runtime thresholds
 
-These data products represent the final analytical insights derived from processed cryptocurrency data.
+These assets are surfaced through a dbt project that consumes BigQuery-loaded pipeline metadata.
 
 ---
 
@@ -41,19 +40,23 @@ Execution Engine (Runner)
 
 ▼
 
-Data Lake (GCS)
+Destination persistence to GCS
 
 ▼
 
-Data Warehouse (BigQuery)
+Run metadata capture in PostgreSQL
 
 ▼
 
-dbt Transformations
+Metadata ingestion to BigQuery
 
 ▼
 
-Analytics Layer
+dbt observability and reporting models
+
+▼
+
+Analytics and reliability insights
 
 👉 [View full topology breakdown](architecture/TOPOLOGY.md)
 
@@ -87,7 +90,7 @@ All job configurations are validated against a predefined JSON schema to enforce
 
 ### 4. Destination Engine
 
-The destination engine processes extracted data and writes it to storage systems such as GCS in optimized formats like Parquet or JSON.
+The destination engine processes extracted data and writes it to Google Cloud Storage in optimized Parquet format.
 
 👉 [Deep dive](core/DESTINATION_ENGINE.md)
 
@@ -113,7 +116,7 @@ Raw data is stored in a partitioned and optimized format for efficient storage a
 
 ### 2. Data Warehouse Layer
 
-Processed data is modeled using a multi-layer architecture (Bronze, Silver, Gold) within BigQuery.
+The architecture is designed to support future warehouse layering, while current dbt work is focused on pipeline metadata observability, SLO reporting, and alert monitoring.
 
 👉 [Deep dive](layers/WAREHOUSE.md)
 

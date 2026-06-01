@@ -24,7 +24,7 @@ The main runner is in `orchestrator/runner.py`.
 3. `validate_config()` enforces config correctness
 4. `load_env_credentials()` loads secrets from an environment file
 5. `insert_run_metadata()` records the job start state
-6. `execute_execcmd()` creates the `ApiReadExecCommand`
+6. `execute_execcmd()` creates the `ApiExecCommand`
 7. `execute_destination()` creates the GCS destination object
 8. `update_run_metadata()` writes final status and record counts
 
@@ -32,6 +32,8 @@ The main runner is in `orchestrator/runner.py`.
 
 The runner separates orchestration from execution logic. Execution commands are pluggable, enabling future support for additional data sources without changing the core runner.
 
+The repository also includes a metadata pipeline in `metadata_pipeline/main.py` that extracts pipeline run metadata from PostgreSQL and loads it into BigQuery table `instant-medium-491107-t6.prod_metadata.raw_pipeline_runs` for dbt consumption.
+
 ## Current status
 
-The runner supports `ApiReadExecCommand` in `prod_v1` and writes ingestion metadata to PostgreSQL. It uses `dev.env` locally for secrets, while production is designed to use secret manager values in Terraform.
+The runner supports `ApiExecCommand` in `prod_v1` and writes ingestion metadata to PostgreSQL. It uses `dev.env` locally for secrets, while production is designed to use secret manager values in Terraform.

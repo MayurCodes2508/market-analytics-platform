@@ -6,9 +6,8 @@ SLOs define the reliability targets for production ingestion in `prod_v1`.
 
 ## Current objectives
 
-- **Job success rate**: target 95%+ for hourly production runs
-- **Data availability**: ingestion files should be available shortly after run completion
-- **Error visibility**: all failures should be captured in run metadata
+- **Job success rate**: target 95%+ for hourly production runs with target 99.00%+ over 30 days
+- **Average Runtime**: target -60 secs for hourly production runs with target 99.00%+ over 30 days
 
 ## Observability
 
@@ -24,6 +23,8 @@ Run tracking stores:
 - `start_time`
 - `end_time`
 - `created_at`
+
+The metadata pipeline loads this execution history into BigQuery, where dbt models calculate runtime SLOs and alert conditions.
 
 ## Failure handling
 
