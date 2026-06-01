@@ -26,7 +26,7 @@ resource "google_iam_workload_identity_pool_provider" "github_provider" {
   display_name                       = "GitHub Actions Provider"
 
   attribute_mapping = {
-    "google.subject"       = "assertion.subject"
+    "google.subject"       = "assertion.sub"
     "attribute.repository" = "assertion.repository"
     "attribute.owner"      = "assertion.repository_owner"
   }
