@@ -42,7 +42,7 @@ Run metadata is loaded from PostgreSQL into BigQuery using `metadata_pipeline/ma
 
 ### 6. Observability and reporting
 
-A dbt project consumes the loaded run metadata and builds pipeline observability, SLO reporting, and alert monitoring artifacts.
+A dbt project consumes the loaded run metadata and builds pipeline observability, SLO reporting and monitoring artifacts.
 
 ## Deployment topology
 

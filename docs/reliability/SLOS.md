@@ -24,7 +24,7 @@ Run tracking stores:
 - `end_time`
 - `created_at`
 
-The metadata pipeline loads this execution history into BigQuery, where dbt models calculate runtime SLOs and alert conditions.
+The metadata pipeline loads this execution history into BigQuery, where dbt models calculate runtime SLOs conditions.
 
 ## Failure handling
 
@@ -34,4 +34,4 @@ The metadata pipeline loads this execution history into BigQuery, where dbt mode
 
 ## Current status
 
-The `prod_v1` release is built on structured run tracking and hourly scheduled execution. Future releases should add alerting and automated SLA reporting.
+The `prod_v1` release is built on structured run tracking and hourly scheduled execution. Future releases should add automated SLA reporting.

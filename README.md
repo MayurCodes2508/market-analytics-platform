@@ -16,7 +16,7 @@ This repository contains the Market Analytics Platform, a production-ready, vers
 - Production Cloud Run job image tagged `market-job:prod_v1`
 - Production Cloud Run dbt job image tagged `dbt-job:prod_v1`
 - Metadata ingestion pipeline in `metadata_pipeline/main.py` that loads run tracking into BigQuery table `instant-medium-491107-t6. prod_metadata.raw_pipeline_runs`
-- dbt models for pipeline observability, SLO reporting, and alert monitoring `dbt_project/models`
+- dbt models for pipeline observability, SLO reporting `dbt_project/models`
 - Hourly Cloud Scheduler deployment for production ingestion, dbt, and metadata workflows
 - Separate dev and prod configurations, storage, and secrets
 
@@ -46,7 +46,7 @@ This project uses a SaaS-style versioning pattern:
 - `pipeline/exec_cmds/api_exec.py` — API extraction logic
 - `pipeline/destinations/gcs.py` — destination persistence logic
 - `metadata_pipeline/main.py` — metadata ingestion to BigQuery
-- `dbt_project/` — dbt models for pipeline observability, monitoring, and reporting
+- `dbt_project/` — dbt models for pipeline observability and reporting
 - `schemas/root_schema.json` — job configuration schema
 - `configs/coingecko_sources/` — environment-specific ingestion jobs
 - `terraform/` — infrastructure deployment definitions
@@ -82,8 +82,8 @@ dbt build --target dev
 - Add reliable retry and backoff for API failures
 - Add incremental ingestion and delta loads
 - Expand dbt analytics beyond pipeline observability into broader market analytics
-- Strengthen automated alerting and SLA reporting
+- Strengthen automated SLA reporting
 
 ## Notes
 
-This release is scoped to ingestion, storage, run tracking, metadata ingestion, and dbt observability. `prod_v1` represents the first production deployment of the platform with a clear path for broader analytics, alert monitoring, and warehouse transformation releases.
+This release is scoped to ingestion, storage, run tracking, metadata ingestion, and dbt observability. `prod_v1` represents the first production deployment of the platform with a clear path for broader analytics and warehouse transformation releases.

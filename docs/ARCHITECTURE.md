@@ -18,7 +18,6 @@ The platform generates pipeline observability and reporting assets from executio
 
 - Run execution history for the ingestion pipeline
 - Pipeline performance and runtime SLO reporting
-- Alert monitoring for freshness and runtime thresholds
 
 These assets are surfaced through a dbt project that consumes BigQuery-loaded pipeline metadata.
 
@@ -116,7 +115,7 @@ Raw data is stored in a partitioned and optimized format for efficient storage a
 
 ### 2. Data Warehouse Layer
 
-The architecture is designed to support future warehouse layering, while current dbt work is focused on pipeline metadata observability, SLO reporting, and alert monitoring.
+The architecture is designed to support future warehouse layering, while current dbt work is focused on pipeline metadata observability, SLO reporting and monitoring.
 
 👉 [Deep dive](layers/WAREHOUSE.md)
 
