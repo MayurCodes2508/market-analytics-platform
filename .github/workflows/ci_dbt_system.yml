@@ -1,0 +1,76 @@
+name: CI dbt PROJECT SYSTEM
+
+on:
+  push: 
+    branches: [main, dev]
+    paths:
+      - '**dbt_project/**'
+
+  pull_request: 
+    branches: [main, dev]
+    paths:
+      - '**dbt_project/**'
+
+jobs:
+  validate_dbt:
+    name: Test & Scan for Vulnerabilities, Build dbt Models
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    defaults:
+      run:
+        working-directory: ./dbt_project
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: "projects/144449440045/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider"
+          service_account: "github-workflows@instant-medium-491107-t6.iam.gserviceaccount.com"
+
+      - name: Set up python 3.11.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11.9'
+          cache: 'pip'
+          cache-dependency-path: 'dbt_project/requirements.txt'
+
+      - name: Create dbt profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat <<EOF > ~/.dbt/profiles.yml
+          market-analytics-platform:
+            target: dev
+            outputs:
+              dev:
+                type: bigquery
+                method: oauth
+                project: instant-medium-491107-t6
+                dataset: dev_metadata
+                threads: 4
+                location: asia-south1
+                timeout_seconds: 300
+          EOF
+
+      - name: Install System Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Install dbt Packages
+        run: dbt deps
+
+      - name: Parse dbt profiles
+        run: dbt parse
+      
+      - name: dbt Compile
+        run: dbt compile
+      
+      - name: Build dbt Models in Dev
+        run: dbt build --target dev 
+
+      - name: Build System Container Image
+        run: |
+          docker build -t market-analytics-platform:latest .

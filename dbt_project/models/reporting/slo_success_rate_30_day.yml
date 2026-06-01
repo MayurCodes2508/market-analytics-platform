@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: slo_success_rate_30_day
+    description: >
+      This table tracks the performance of automated processes over a 30-day rolling window.
+      It provides insights into the reliability and adherence to performance targets for
+      these processes, supports analysis of process health, and identifies instances where
+      performance falls below expected levels. It is used for monitoring and reporting on
+      operational efficiency.
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "success_rate >= 0.00 AND success_rate <= 100.00"
+      - dbt_utils.expression_is_true:
+          expression: "is_slo_threshold_breached IS TRUE OR is_slo_threshold_breached IS FALSE"
+      - dbt_utils.expression_is_true:
+          expression: "is_slo_threshold_breached IS FALSE OR is_slo_threshold_breached IS TRUE AND success_rate < 95.00"
+      - dbt_utils.expression_is_true:
+          expression: "rolling_30_day_slo_percentage >= 0.00 AND rolling_30_day_slo_percentage <= 100.00"
+      - dbt_utils.expression_is_true:
+          expression: "is_slo_met_for_day IS TRUE OR is_slo_met_for_day IS FALSE"
+      - dbt_utils.expression_is_true:
+          expression: "is_slo_met_for_day IS FALSE OR is_slo_met_for_day IS TRUE AND rolling_30_day_slo_percentage >= 99.00"
+
+    columns:
+      - name: pipeline_name
+        description: "This column contains the name of the automated process being monitored."
+
+      - name: created_at
+        description: "This column contains the date on which the performance metric was recorded."
+
+      - name: success_rate
+        description: "This column contains the percentage of successful operations for a given process on a specific date."
+        tests:
+          - not_null
+
+      - name: is_slo_threshold_breached
+        description: "This column indicates whether the defined service level objective threshold was exceeded for a process on a specific date. A value of TRUE means the threshold was breached, and FALSE means it was not."
+        tests:
+          - not_null 
+
+      - name: rolling_30_day_slo_percentage
+        description: "This column contains the average success rate for a process calculated over the preceding 30 days."
+        tests:
+          - not_null
+
+      - name: is_slo_met_for_day
+        description: "This column indicates whether the service level objective was achieved for a process on a specific date. A value of TRUE means the objective was met, and FALSE means it was not."
+        tests:
+          - not_null
