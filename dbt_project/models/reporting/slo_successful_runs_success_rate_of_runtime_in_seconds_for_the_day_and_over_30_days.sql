@@ -3,7 +3,7 @@ SELECT pipeline_name,
        DATE(created_at) AS created_at,
        TIMESTAMP_DIFF(end_time, start_time, SECOND) AS runtime
 
-FROM `instant-medium-491107-t6.prod_metadata_staging.stg_pipeline_runs`
+FROM {{ ref('stg_pipeline_runs') }}
 
 WHERE status = 'SUCCESS'
 ),
