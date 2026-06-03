@@ -3,9 +3,7 @@ version: 2
 models:
   - name: slo_successful_runs_success_rate_of_runtime_in_seconds_for_the_day_and_over_30_days
     description: >
-      This table tracks the performance of data pipelines over time. It provides
-      insights into the operational efficiency of pipelines, helps monitor adherence
-      to performance targets, and supports analysis of pipeline health and reliability.
+      Tracks whether data pipelines meet runtime success SLOs for the current day and a rolling 30-day window. It supports pipeline health monitoring, operational efficiency reporting, and detection of SLO breaches for runtime-based success rates.
     tests:
       - dbt_utils.expression_is_true:
           arguments:
@@ -33,27 +31,27 @@ models:
 
     columns:
       - name: pipeline_name
-        description: "The unique identifier for a specific data pipeline."
+        description: "Identifier of the monitored data pipeline."
 
       - name: created_at
-        description: "The date on which the performance metric was recorded."
+        description: "Date when this daily SLO performance record was captured."
 
       - name: success_rate_for_the_day
-        description: "The average duration, in seconds, that a pipeline took to complete its execution."
+        description: "Daily success rate percentage for pipeline runs that met the runtime SLO."
         tests:
           - not_null
 
       - name: is_slo_threshold_for_the_day_breached
-        description: "A boolean indicating whether the pipeline's average runtime exceeded its defined Service Level Objective (SLO) threshold."
+        description: "Boolean indicating whether the pipeline failed to meet the daily runtime success SLO. TRUE means the daily success rate fell below the target threshold."
         tests:
           - not_null
 
       - name: success_rate_over_30_days
-        description: "The percentage of days within the last 30 days where the pipeline met its Service Level Objective."
+        description: "Rolling 30-day success rate percentage for pipeline runs that met the runtime SLO."
         tests: 
           - not_null
  
       - name: is_slo_threshold_over_30_days_breached
-        description: "A boolean indicating whether the pipeline met its Service Level Objective for the specific day."
+        description: "Boolean indicating whether the pipeline failed to meet the 30-day rolling runtime success SLO. TRUE means the 30-day success rate fell below the target threshold."
         tests:
           - not_null
