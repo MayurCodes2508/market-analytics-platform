@@ -1,10 +1,12 @@
 .venv/
+.vscode/
 __pycache__/
-*.pyc
+*.pyc*
 .env
 .DS_Store
 dev_testing/
 *.terraform*
+*.code-workspace*
 LICENSE.txt
 *.exe
 *.backup
