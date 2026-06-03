@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: slo_avg_runtime_in_seconds_30_day
+  - name: slo_successful_runs_success_rate_of_runtime_in_seconds_for_the_day_and_over_30_days
     description: >
       This table tracks the performance of data pipelines over time. It provides
       insights into the operational efficiency of pipelines, helps monitor adherence
@@ -9,19 +9,27 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "is_slo_threshold_breached IS TRUE OR is_slo_threshold_breached IS FALSE"  
+            expression: "success_rate_for_the_day >= 0.00 AND success_rate_for_the_day <= 100.00"
+
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "is_slo_threshold_breached IS FALSE OR is_slo_threshold_breached IS TRUE AND avg_runtime_seconds > 60"
+            expression: "success_rate_over_30_days >= 0.00 AND success_rate_over_30_days <= 100.00"
+
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "rolling_30_day_slo_percentage >= 0.00 AND rolling_30_day_slo_percentage <= 100.00"
+            expression: "is_slo_threshold_for_the_day_breached IS true OR is_slo_threshold_for_the_day_breached IS false"
+      
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "is_slo_met_for_day IS TRUE OR is_slo_met_for_day IS FALSE"
+            expression: "is_slo_threshold_for_the_day_breached IS false OR is_slo_threshold_for_the_day_breached IS true AND success_rate_for_the_day < 95.00"
+
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "is_slo_met_for_day IS FALSE OR is_slo_met_for_day IS TRUE AND rolling_30_day_slo_percentage >= 99.00"
+            expression: "is_slo_threshold_over_30_days_breached IS true or is_slo_threshold_over_30_days_breached IS false"
+
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "is_slo_threshold_over_30_days_breached IS false OR is_slo_threshold_over_30_days_breached IS true AND success_rate_over_30_days < 99.00"
 
     columns:
       - name: pipeline_name
@@ -30,22 +38,22 @@ models:
       - name: created_at
         description: "The date on which the performance metric was recorded."
 
-      - name: avg_runtime_seconds
+      - name: success_rate_for_the_day
         description: "The average duration, in seconds, that a pipeline took to complete its execution."
         tests:
           - not_null
 
-      - name: is_slo_threshold_breached
+      - name: is_slo_threshold_for_the_day_breached
         description: "A boolean indicating whether the pipeline's average runtime exceeded its defined Service Level Objective (SLO) threshold."
         tests:
           - not_null
 
-      - name: rolling_30_day_slo_percentage
+      - name: success_rate_over_30_days
         description: "The percentage of days within the last 30 days where the pipeline met its Service Level Objective."
         tests: 
           - not_null
  
-      - name: is_slo_met_for_day
+      - name: is_slo_threshold_over_30_days_breached
         description: "A boolean indicating whether the pipeline met its Service Level Objective for the specific day."
         tests:
           - not_null

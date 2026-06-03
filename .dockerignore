@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 .git/
 .gitignore
+*.code-workspace*
+.vscode/
 .venv
 dbt_project/
 dev_testing/
