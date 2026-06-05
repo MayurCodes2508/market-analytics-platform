@@ -127,7 +127,7 @@ resource "google_cloud_run_v2_job" "dev_dbt_project_run" {
         command = ["bash", "-c"]
 
         args = [
-          "dbt deps && dbt build --target $DBT_TARGET --profiles-dir ."
+          "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET --profiles-dir ."
         ]
 
         env {
@@ -149,13 +149,13 @@ resource "google_cloudfunctions2_function" "dev_metadata_pipeline" {
     source {
       storage_source {
         bucket = "function-bucket-metadata-pipeline"
-        object = "metadata_pipeline.zip"
+        object = "dev_metadata_pipeline.zip"
       }
     }
   }
   service_config {
     max_instance_count = 1
-    available_memory = "256M"
+    available_memory = "512M"
     timeout_seconds = 30
     environment_variables = {
       ENV = "dev"
@@ -165,6 +165,42 @@ resource "google_cloudfunctions2_function" "dev_metadata_pipeline" {
       project_id = "instant-medium-491107-t6"
       secret = "dev_market_analytics_platform_secrets"
       version = "5"
+    }
+    service_account_email = "development-cloud-resources-se@instant-medium-491107-t6.iam.gserviceaccount.com"
+  }
+}
+
+resource "google_cloud_scheduler_job" "dev_metadata_pipeline_scheduler" {
+  name      = "dev-metadata-pipeline-scheduler"
+  region    = "asia-south1"
+  schedule  = "0 * * * *"
+  time_zone = "Asia/Kolkata"
+  lifecycle {
+    prevent_destroy = true
+  }
+  depends_on = [ 
+    google_cloudfunctions2_function.dev_metadata_pipeline
+   ]
+
+  retry_config {
+    retry_count          = 3
+    max_retry_duration   = "3600s"
+    min_backoff_duration = "5s"
+    max_backoff_duration = "3600s"
+    max_doublings        = 5
+  }
+
+  http_target {
+    uri         = google_cloudfunctions2_function.dev_metadata_pipeline.service_config[0].uri
+    http_method = "POST"
+
+    headers = {
+      "Content-Type" = "application/json"
+    }
+
+    oidc_token {
+      service_account_email = "development-cloud-resources-sc@instant-medium-491107-t6.iam.gserviceaccount.com"
+      audience              = google_cloudfunctions2_function.dev_metadata_pipeline.service_config[0].uri
     }
   }
 }
@@ -263,7 +299,7 @@ resource "google_cloud_run_v2_job" "prod_dbt_project_run" {
         command = ["bash", "-c"]
 
         args = [
-          "dbt deps && dbt build --target $DBT_TARGET --profiles-dir ."
+          "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET --profiles-dir ."
         ]
 
         env {
@@ -288,13 +324,13 @@ resource "google_cloudfunctions2_function" "prod_metadata_pipeline" {
     source {
       storage_source {
         bucket = "function-bucket-metadata-pipeline"
-        object = "metadata_pipeline.zip"
+        object = "prod_metadata_pipeline.zip"
       }
     }
   }
   service_config {
     max_instance_count = 1
-    available_memory = "256M"
+    available_memory = "512M"
     timeout_seconds = 30
     environment_variables = {
       ENV = "prod"
@@ -305,6 +341,7 @@ resource "google_cloudfunctions2_function" "prod_metadata_pipeline" {
       secret = "prod-market-analytics-platform-secret"
       version = "2"
     }
+    service_account_email = "production-cloud-resources-ser@instant-medium-491107-t6.iam.gserviceaccount.com"
   }
 }
 

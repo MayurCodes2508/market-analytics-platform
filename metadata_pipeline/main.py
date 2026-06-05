@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 import os
 import psycopg2, psycopg2.extras
 from google.cloud import bigquery
+from datetime import datetime, timezone
+import pandas as pd
 
 
 def load_env_credentials():
@@ -45,23 +47,17 @@ def execute_query(db_url):
 def load_data(data):
 
     try:
-
-        for row in data:
-            for key, value in row.items():
-                if hasattr(value, "isoformat"):
-                    row[key] = value.isoformat()
+        
+        df = pd.DataFrame(data)
+        df["ingestion_ts"] = datetime.now(timezone.utc)
 
         big_query_client = bigquery.Client(location='asia-south1')
 
-        table_id = 'instant-medium-491107-t6.dev_metadata.raw_pipeline_runs'
+        table_id = 'instant-medium-491107-t6.prod_metadata.raw_pipeline_runs'
 
-        errors = big_query_client.insert_rows_json(table_id, data)
-
-        if errors:
-            logger.error(f"Error inserting data into BigQuery: {errors}")
-            raise Exception(errors)
-        
-        logger.info(f"Successfully loaded the data to BigQuery table: {table_id}")
+        insert_records = big_query_client.load_table_from_dataframe(df, table_id)
+        insert_records.result()
+        logger.info(f"Successfully loaded the data to the table")
         
     except Exception as e:
         logger.error(f"Error loading data to table: {e}")
