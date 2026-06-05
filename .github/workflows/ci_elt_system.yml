@@ -10,9 +10,6 @@ on:
       - '**/orchestrator/**'
       - '**/pipeline/**'
       - '**/schemas/**'
-      - '**/terraform/**'
-      - '**/.dockerignore'
-      - '**/.gcloudignore'
       - '**/Dockerfile'
       - '**/requirements.txt'
   
@@ -25,9 +22,6 @@ on:
       - '**/orchestrator/**'
       - '**/pipeline/**'
       - '**/schemas/**'
-      - '**/terraform/**'
-      - '**/.dockerignore'
-      - '**/.gcloudignore'
       - '**/Dockerfile'
       - '**/requirements.txt'   
 jobs:
