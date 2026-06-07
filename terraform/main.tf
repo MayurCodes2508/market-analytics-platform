@@ -379,7 +379,7 @@ resource "google_cloud_scheduler_job" "prod_market_analytics_platform_scheduler"
 resource "google_cloud_scheduler_job" "prod_dbt_project_scheduler" {
   name = "prod-dbt-project-scheduler"
   region = "asia-south1"
-  schedule = "0 * * * *"
+  schedule = "5 * * * *"
   time_zone = "Asia/Kolkata"
   depends_on = [
     google_cloud_run_v2_job.prod_dbt_project_run   
@@ -406,7 +406,7 @@ resource "google_cloud_scheduler_job" "prod_dbt_project_scheduler" {
 resource "google_cloud_scheduler_job" "prod_metadata_pipeline_scheduler" {
   name      = "prod-metadata-pipeline-scheduler"
   region    = "asia-south1"
-  schedule  = "0 * * * *"
+  schedule  = "3 * * * *"
   time_zone = "Asia/Kolkata"
   lifecycle {
     prevent_destroy = true

@@ -7,7 +7,7 @@ sources:
     tables:
       - name: raw_pipeline_runs
         config:
-          loaded_at_field: created_at
+          loaded_at_field: ingestion_ts
           freshness:
             warn_after: {count: 3, period: hour}
             error_after: {count: 6, period: hour}

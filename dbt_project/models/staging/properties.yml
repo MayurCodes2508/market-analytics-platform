@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: stg_pipeline_runs
-    description: >
+    description: |
       This table stores metadata about the execution of various data pipelines. It captures
       essential details about each pipeline run, including its operational status and any
       encountered issues. The table supports monitoring pipeline health and performance,
@@ -15,32 +15,32 @@ models:
       - name: run_id
         description: "This column contains a unique identifier for each individual pipeline execution."
         data_type: string
-        tests:
+        data_tests:
           - not_null
           - unique
   
       - name: pipeline_name
         description: "This column holds the name of the data pipeline that was executed."
         data_type: string
-        tests:
+        data_tests:
           - not_null
 
       - name: job_name
         description: "This column stores the specific job or task name within a pipeline run."
         data_type: string
-        tests:
+        data_tests:
           - not_null
 
       - name: job_type
         description: "This column indicates the category or classification of the job being executed."
         data_type: string
-        tests:
+        data_tests:
           - not_null
 
       - name: rows_processed
         description: "This column contains the number of data rows successfully processed during a pipeline job."
         data_type: integer
-        tests:
+        data_tests:
           - not_null
           - dbt_utils.expression_is_true:
               arguments:
@@ -53,7 +53,7 @@ models:
       - name: status
         description: "This column indicates the current state or outcome of a pipeline job, such as 'success', 'failed', or 'running'."
         data_type: string
-        tests:
+        data_tests:
           - not_null
           - accepted_values:
               arguments:
@@ -62,16 +62,16 @@ models:
       - name: start_time
         description: "This column records the timestamp when a pipeline job began its execution."
         data_type: timestamp
-        tests:
+        data_tests:
           - not_null
 
       - name: end_time
         description: "This column records the timestamp when a pipeline job completed its execution."
         data_type: timestamp
-
+        
       - name: created_at
         description: "This column stores the timestamp when the record of the pipeline run was created in this table."
         data_type: timestamp
-        tests:
+        data_tests:
           - not_null
 

@@ -35,3 +35,7 @@ The metadata pipeline loads this execution history into BigQuery, where dbt mode
 ## Current status
 
 The `prod_v1` release is built on structured run tracking and hourly scheduled execution. Future releases should add automated SLA reporting.
+
+### Reliability Report Dashboard Link
+
+[Reliability report dashboard](https://datastudio.google.com/reporting/33a12455-9652-47ab-8f47-7ac4319ddf25)
