@@ -64,7 +64,7 @@ jobs:
         with:
           path: dbt_packages
           key: dbt-cache-${{ hashFiles('dbt_project/packages.yml', 'dbt_project/package-lock.yml') }}
-          restore_keys: |
+          restore-keys: |
             dbt-cache-
 
       - name: Install dbt Packages
