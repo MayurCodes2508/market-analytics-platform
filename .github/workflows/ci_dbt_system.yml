@@ -59,6 +59,9 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Install dbt Packages
+        run: dbt deps
+
       - name: Cache dbt packages
         uses: actions/cache@v3
         with:
@@ -66,9 +69,6 @@ jobs:
           key: dbt-cache-${{ hashFiles('dbt_project/packages.yml', 'dbt_project/package-lock.yml') }}
           restore-keys: |
             dbt-cache-
-
-      - name: Install dbt Packages
-        run: dbt deps
 
       - name: Parse the project
         run: dbt parse
