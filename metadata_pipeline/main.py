@@ -53,7 +53,7 @@ def load_data(data):
 
         big_query_client = bigquery.Client(location='asia-south1')
 
-        table_id = 'instant-medium-491107-t6.prod_metadata.raw_pipeline_runs'
+        table_id = 'instant-medium-491107-t6.dev_metadata.raw_pipeline_runs'
 
         insert_records = big_query_client.load_table_from_dataframe(df, table_id)
         insert_records.result()

@@ -17,7 +17,6 @@ dev.env
 __init__.py
 logs/
 target/
-package-lock.yml
 macros/
 snapshots/
 tests/
@@ -26,7 +25,7 @@ profiles.yml
 file_list.txt
 core/
 marts/
-dbt_packages/
+
 
 !configs/
 !docs/
@@ -44,3 +43,4 @@ dbt_packages/
 !.github/
 !dbt_project/
 !metadata_pipeline/
+!package-lock.yml
