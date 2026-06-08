@@ -75,3 +75,8 @@ models:
         data_tests:
           - not_null
 
+      - name: ingestion_ts
+        description: "This column stores the timestamp when the record of the pipeline run was ingested into the raw table."
+        data_type: timestamp
+        data_tests:
+          - not_null

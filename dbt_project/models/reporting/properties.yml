@@ -7,11 +7,11 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "success_rate_for_the_day >= 0.00 AND success_rate_for_the_day <= 100.00"
+            expression: "success_rate_for_the_day >= 0 AND success_rate_for_the_day <= 1"
 
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "success_rate_over_30_days >= 0.00 AND success_rate_over_30_days <= 100.00"
+            expression: "success_rate_over_30_days >= 0 AND success_rate_over_30_days <= 1"
 
       - dbt_utils.expression_is_true:
           arguments:
@@ -19,7 +19,7 @@ models:
       
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "is_slo_threshold_for_the_day_breached IS false OR is_slo_threshold_for_the_day_breached IS true AND success_rate_for_the_day < 95.00"
+            expression: "is_slo_threshold_for_the_day_breached IS false OR is_slo_threshold_for_the_day_breached IS true AND success_rate_for_the_day < 0.95"
 
       - dbt_utils.expression_is_true:
           arguments:
@@ -27,7 +27,7 @@ models:
 
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "is_slo_threshold_over_30_days_breached IS false OR is_slo_threshold_over_30_days_breached IS true AND success_rate_over_30_days < 99.00"
+            expression: "is_slo_threshold_over_30_days_breached IS false OR is_slo_threshold_over_30_days_breached IS true AND success_rate_over_30_days < 0.99"
           
 
     columns:
@@ -63,11 +63,11 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "success_rate_for_the_day >= 0.00 AND success_rate_for_the_day <= 100.00"
+            expression: "success_rate_for_the_day >= 0 AND success_rate_for_the_day <= 1"
 
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "success_rate_over_30_days >= 0.00 AND success_rate_over_30_days <= 100.00"
+            expression: "success_rate_over_30_days >= 0 AND success_rate_over_30_days <= 1"
 
       - dbt_utils.expression_is_true:
           arguments:
@@ -75,7 +75,7 @@ models:
       
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "is_slo_threshold_for_the_day_breached IS false OR is_slo_threshold_for_the_day_breached IS true AND success_rate_for_the_day < 95.00"
+            expression: "is_slo_threshold_for_the_day_breached IS false OR is_slo_threshold_for_the_day_breached IS true AND success_rate_for_the_day < 0.95"
 
       - dbt_utils.expression_is_true:
           arguments:
@@ -83,7 +83,7 @@ models:
 
       - dbt_utils.expression_is_true:
           arguments:
-            expression: "is_slo_threshold_over_30_days_breached IS false OR is_slo_threshold_over_30_days_breached IS true AND success_rate_over_30_days < 99.00"
+            expression: "is_slo_threshold_over_30_days_breached IS false OR is_slo_threshold_over_30_days_breached IS true AND success_rate_over_30_days < 0.99"
 
     columns:
       - name: pipeline_name

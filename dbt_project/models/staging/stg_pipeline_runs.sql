@@ -7,6 +7,7 @@ SELECT run_id,
        TRIM(status) AS status,
        start_time,
        end_time,
-       created_at
+       created_at,
+       ingestion_ts
 FROM {{ source('metadata', 'raw_pipeline_runs') }}
-QUALIFY ROW_NUMBER() OVER(PARTITION BY run_id ORDER BY created_at DESC) = 1
+QUALIFY ROW_NUMBER() OVER(PARTITION BY run_id ORDER BY ingestion_ts DESC) = 1
