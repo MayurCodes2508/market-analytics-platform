@@ -82,7 +82,7 @@ class Runner:
                 INSERT INTO pipeline_runs (run_id, pipeline_name,  job_name, job_type, rows_processed, error_message, status, start_time, end_time, created_at)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(insert_query, (run_id, job_config['pipeline_name'], job_config['job_name'], job_config['job_type'], 0, None, 'RUNNING', now, None, now))
+            cursor.execute(insert_query, (run_id, job_config['pipeline_name'], job_config['job_name'], job_config['job_type'], None, None, 'RUNNING', now, None, now))
             conn.commit()
             cursor.close()
             conn.close()
@@ -93,7 +93,7 @@ class Runner:
             logger.error(f"Error inserting run metadata for job {job_config['job_name']}: {e}")
             raise
 
-    def execute_execcmd(self, job_config, api_key, db_url):
+    def execute_execcmd(self, job_config, api_key):
         
         exec_cfg = job_config['exec']
         job_name = job_config['job_name']
@@ -121,7 +121,7 @@ class Runner:
         else:
             raise ValueError(f"Unsupported destination type: {destination_cfg['type']}")
 
-    def update_run_metadata(self, job_config, run_id, status, db_url, total_records=None, error_message=None,):
+    def update_run_metadata(self, job_config, run_id, status, db_url, total_records, error_message=None,):
 
         try:
             conn = psycopg2.connect(db_url)
@@ -162,7 +162,7 @@ class Runner:
         error_message = None
         total_records = 0
         try:
-            execcmd = self.execute_execcmd(job_config=job_config, api_key=api_key, db_url=db_url)
+            execcmd = self.execute_execcmd(job_config=job_config, api_key=api_key)
             logger.info(f"Executing job {job_config['job_name']} with run ID: {run_id}")
             data, total_records = execcmd.run()
             destination = self.execute_destination(job_config=job_config, data=data)

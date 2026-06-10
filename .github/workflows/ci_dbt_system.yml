@@ -77,10 +77,10 @@ jobs:
         run: dbt source freshness --target dev
       
       - name: Run dbt Models in Dev
-        run: dbt run --target dev --fail-fast
+        run: dbt run --target dev -s tag:dev --fail-fast
 
       - name: Test dbt Models in Dev
-        run: dbt test --target dev --store-failures
+        run: dbt test --target dev -s tag:dev --store-failures
 
       - name: Build System Container Image
         run: |

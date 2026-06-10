@@ -10,4 +10,4 @@ SELECT run_id,
        created_at,
        ingestion_ts
 FROM {{ source('metadata', 'raw_pipeline_runs') }}
-QUALIFY ROW_NUMBER() OVER(PARTITION BY run_id ORDER BY ingestion_ts DESC) = 1
+QUALIFY ROW_NUMBER() OVER(PARTITION BY run_id ORDER BY ingestion_ts) = 1

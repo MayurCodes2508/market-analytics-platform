@@ -127,7 +127,7 @@ resource "google_cloud_run_v2_job" "dev_dbt_project_run" {
         command = ["bash", "-c"]
 
         args = [
-          "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET --profiles-dir ."
+          "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET -s tag:dev --profiles-dir ."
         ]
 
         env {
