@@ -7,7 +7,7 @@ profile: market-analytics-platform
 model-paths: ["models"]
 snapshot-paths: ["snapshots"]
 macro-paths: ["macros"]
-test-paths: ["tests"]
+test-paths: ["data_tests"]
 
 models:
   market_analytics_platform:
@@ -24,4 +24,3 @@ models:
     reporting:
       +schema: reporting
       +materialized: table
-

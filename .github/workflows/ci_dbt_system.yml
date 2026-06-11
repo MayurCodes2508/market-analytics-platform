@@ -38,23 +38,6 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'requirements.txt'
 
-      - name: Create dbt profiles.yml
-        run: |
-          mkdir -p ~/.dbt
-          cat <<EOF > ~/.dbt/profiles.yml
-          market-analytics-platform:
-            target: dev
-            outputs:
-              dev:
-                type: bigquery
-                method: oauth
-                project: instant-medium-491107-t6
-                dataset: dev_metadata
-                threads: 4
-                location: asia-south1
-                timeout_seconds: 300
-          EOF
-
       - name: Install System Dependencies
         run: |
           pip install -r requirements.txt
@@ -74,13 +57,10 @@ jobs:
         run: dbt parse
 
       - name: Source Freshness Check in Dev
-        run: dbt source freshness --target dev
+        run: dbt source freshness --target dev --profiles-dir .
       
-      - name: Run dbt Models in Dev
-        run: dbt run --target dev -s tag:dev --fail-fast
-
-      - name: Test dbt Models in Dev
-        run: dbt test --target dev -s tag:dev --store-failures
+      - name: dbt Build in Dev
+        run: dbt build --target dev -s tag:dev --fail-fast --store-failures --profiles-dir .
 
       - name: Build System Container Image
         run: |

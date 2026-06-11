@@ -21,7 +21,6 @@ macros/
 snapshots/
 tests/
 dbt_packages/
-profiles.yml
 file_list.txt
 core/
 marts/
@@ -44,3 +43,4 @@ marts/
 !dbt_project/
 !metadata_pipeline/
 !package-lock.yml
+!profiles.yml
