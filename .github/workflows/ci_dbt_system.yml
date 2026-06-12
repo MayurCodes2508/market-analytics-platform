@@ -45,7 +45,7 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Install dbt Packages
+      - name: Install dbt Packages  
         run: dbt deps
 
       - name: Cache dbt packages
