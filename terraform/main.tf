@@ -127,7 +127,7 @@ resource "google_cloud_run_v2_job" "dev_dbt_project_run" {
         command = ["bash", "-c"]
 
         args = [
-          "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET -s tag:dev --profiles-dir ."
+          "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET -s tag:dev --fail-fast --store-failures --profiles-dir ."
         ]
 
         env {
@@ -247,8 +247,8 @@ resource "google_secret_manager_secret" "prod_market_analytics_platform_secrets"
   deletion_protection = true
 }
 
-resource "google_cloud_run_v2_job" "prod_market_analytics_platform_run" {
-  name     = "prod-market-analytics-platform-run"
+resource "google_cloud_run_v2_job" "prod_el_system_run" {
+  name     = "prod-el-system-run"
   location = "asia-south1"
 
   deletion_protection = true
@@ -260,7 +260,7 @@ resource "google_cloud_run_v2_job" "prod_market_analytics_platform_run" {
   template {
     template {
       containers {
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/market-job:prod_v1"
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:latest"
 
         command = ["bash", "-c"]
 
@@ -356,8 +356,8 @@ resource "google_cloudfunctions2_function" "prod_metadata_pipeline" {
   }
 }
 
-resource "google_cloud_scheduler_job" "prod_market_analytics_platform_scheduler" {
-  name      = "prod-market-analytics-platform-scheduler"
+resource "google_cloud_scheduler_job" "prod_el_system_scheduler" {
+  name      = "prod-el-system-scheduler"
   region    = "asia-south1"
   schedule  = "0 * * * *"
   time_zone = "Asia/Kolkata"
@@ -365,7 +365,7 @@ resource "google_cloud_scheduler_job" "prod_market_analytics_platform_scheduler"
     prevent_destroy = true
   }
   depends_on = [ 
-    google_cloud_run_v2_job.prod_market_analytics_platform_run
+    google_cloud_run_v2_job.prod_el_system_run
    ]
 
   retry_config {
@@ -377,7 +377,7 @@ resource "google_cloud_scheduler_job" "prod_market_analytics_platform_scheduler"
   }
 
   http_target {
-    uri         = "https://asia-south1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/instant-medium-491107-t6/jobs/prod-market-analytics-platform-run:run"
+    uri         = "https://asia-south1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/instant-medium-491107-t6/jobs/prod-el-system-run:run"
     http_method = "POST"
 
     oauth_token {
