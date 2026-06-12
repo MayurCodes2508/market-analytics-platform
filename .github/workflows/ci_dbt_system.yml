@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: '3.11.9'
           cache: 'pip'
-          cache-dependency-path: 'requirements.txt'
+          cache-dependency-path: 'dbt_transformations/requirements.txt'
 
       - name: Install System Dependencies
         run: |
@@ -51,7 +51,7 @@ jobs:
       - name: Cache dbt packages
         uses: actions/cache@v3
         with:
-          path: dbt_packages
+          path: dbt_transformations/dbt_packages
           key: dbt-cache-${{ hashFiles('dbt_transformations/packages.yml', 'dbt_transformations/package-lock.yml') }}
           restore-keys: |
             dbt-cache-
