@@ -9,7 +9,7 @@ import pandas as pd
 
 def load_env_credentials():
 
-    load_dotenv(dotenv_path="market_analytics_platform/el_system/dev.env")
+    load_dotenv(dotenv_path="../dev.env")
     db_url = os.getenv("DB_URL")
     logger.info(f"Successfully loaded DB credentials")
 

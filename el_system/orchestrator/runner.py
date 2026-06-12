@@ -51,7 +51,7 @@ class Runner:
 
     def load_env_credentials(self, job_config):
 
-            load_dotenv(dotenv_path="dev.env")
+            load_dotenv(dotenv_path="../dev.env")
             db_url = os.getenv("DB_URL")
 
             if not db_url:

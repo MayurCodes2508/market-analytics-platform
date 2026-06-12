@@ -1,8 +1,6 @@
 __pycache__/
 *.pyc*
 .venv/
-dev.env
-example.env
 __init__.py
 
 !configs/

@@ -1,8 +1,6 @@
 __pycache__/
 *.pyc*
 .venv
-dev.env
-example.env
 .gcloudignore
 __init__.py
 
