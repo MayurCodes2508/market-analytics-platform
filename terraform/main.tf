@@ -75,15 +75,15 @@ resource "google_secret_manager_secret" "dev_market_analytics_platform_secrets" 
   }
 }
 
-resource "google_cloud_run_v2_job" "dev_market_analytics_platform_run" {
-  name     = "dev-market-analytics-platform-run"
+resource "google_cloud_run_v2_job" "dev_elt_system_run" {
+  name     = "dev-elt-system-run"
   location = "asia-south1"
   deletion_protection = false
   template {
     template {
       containers {
         
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/market-job:latest"
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:latest"
 
         command = ["bash", "-c"]
 

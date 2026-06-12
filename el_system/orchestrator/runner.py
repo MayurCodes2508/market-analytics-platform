@@ -102,7 +102,7 @@ class Runner:
             return ApiExecCommand(exec_cfg, job_name, api_key)
             
         else:
-            raise ValueError(f"Unsupported exec type: {exec_cfg["type"]}")
+            raise ValueError(f"Unsupported exec type: {exec_cfg['type']}")
 
     def execute_destination(self, job_config, data):
 
