@@ -83,7 +83,7 @@ resource "google_cloud_run_v2_job" "dev_elt_system_run" {
     template {
       containers {
         
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:latest"
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:dev_v1"
 
         command = ["bash", "-c"]
 
@@ -116,13 +116,19 @@ resource "google_cloud_run_v2_job" "dev_elt_system_run" {
   }
 }
 
-resource "google_cloud_run_v2_job" "dev_dbt_project_run" {
-  name = "dev-dbt-project-run"
+resource "google_cloud_run_v2_job" "dev_dbt_transformations_run" {
+  name = "dev-dbt-transformations-run"
   location = "asia-south1"
+
+  deletion_protection = false
+
+  lifecycle {
+    prevent_destroy = false
+  }
   template {
     template {
       containers {
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/dbt-job:latest"
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/dbt-job:dev_v1"
         
         command = ["bash", "-c"]
 
@@ -260,7 +266,7 @@ resource "google_cloud_run_v2_job" "prod_el_system_run" {
   template {
     template {
       containers {
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:latest"
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:prod_v1"
 
         command = ["bash", "-c"]
 
@@ -293,8 +299,8 @@ resource "google_cloud_run_v2_job" "prod_el_system_run" {
   }
 }
 
-resource "google_cloud_run_v2_job" "prod_dbt_project_run" {
-  name = "prod-dbt-project-run"
+resource "google_cloud_run_v2_job" "prod_dbt_transformations_run" {
+  name = "prod-dbt-transformations-run"
   location = "asia-south1"
 
   deletion_protection = true
@@ -310,7 +316,7 @@ resource "google_cloud_run_v2_job" "prod_dbt_project_run" {
         command = ["bash", "-c"]
 
         args = [
-          "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET --profiles-dir ."
+          "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET -s tag:prod --fail-fast --store-failures --profiles-dir ."
         ]
 
         env {
@@ -387,13 +393,13 @@ resource "google_cloud_scheduler_job" "prod_el_system_scheduler" {
   }
 }
 
-resource "google_cloud_scheduler_job" "prod_dbt_project_scheduler" {
-  name = "prod-dbt-project-scheduler"
+resource "google_cloud_scheduler_job" "prod_dbt_transformations_scheduler" {
+  name = "prod-dbt-transformations-scheduler"
   region = "asia-south1"
   schedule = "5 * * * *"
   time_zone = "Asia/Kolkata"
   depends_on = [
-    google_cloud_run_v2_job.prod_dbt_project_run   
+    google_cloud_run_v2_job.prod_dbt_transformations_run  
   ]
   retry_config {
     retry_count          = 3
@@ -404,7 +410,7 @@ resource "google_cloud_scheduler_job" "prod_dbt_project_scheduler" {
   }
 
   http_target {
-    uri = "https://asia-south1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/instant-medium-491107-t6/jobs/prod-dbt-project-run:run"
+    uri = "https://asia-south1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/instant-medium-491107-t6/jobs/prod-dbt-transformations-run:run"
     http_method = "POST"
     oauth_token {
       service_account_email = "production-cloud-resources--38@instant-medium-491107-t6.iam.gserviceaccount.com"
