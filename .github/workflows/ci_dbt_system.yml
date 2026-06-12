@@ -22,7 +22,7 @@ jobs:
       contents: read
     defaults:
       run:
-        working-directory: dbt_transformations
+        working-directory: ./dbt_transformations
 
     steps:
       - name: Checkout Code
