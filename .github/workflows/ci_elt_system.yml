@@ -5,23 +5,14 @@ on:
     branches: [main, dev]
 
     paths:
-      - '**/configs/**'  
-      - '**/orchestrator/**'
-      - '**/pipeline/**'
-      - '**/schemas/**'
-      - '**/Dockerfile'
-      - '**/requirements.txt'
+      - '**el_system/**'
   
   pull_request:
     branches: [main, dev]
 
     paths:
-      - '**/configs/**'
-      - '**/orchestrator/**'
-      - '**/pipeline/**'
-      - '**/schemas/**'
-      - '**/Dockerfile'
-      - '**/requirements.txt'   
+      - '**el_system/**'
+
 jobs:
   validate_elt:
     name: Run EL Job & Containerize
@@ -30,7 +21,8 @@ jobs:
       id-token: write
       contents: read
     defaults:
-      run: ./el_system
+      run:
+        working-directory: ./elt_system
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

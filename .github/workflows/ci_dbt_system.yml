@@ -4,12 +4,12 @@ on:
   push: 
     branches: [main, dev]
     paths:
-      - '**dbt_project/**'
+      - '**dbt_transformations/**'
 
   pull_request: 
     branches: [main, dev]
     paths:
-      - '**dbt_project/**'
+      - '**dbt_transformations/**'
 
 jobs:
   validate_dbt:
@@ -20,7 +20,7 @@ jobs:
       contents: read
     defaults:
       run:
-        working-directory: ./dbt_project
+        working-directory: ./dbt_transformations
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
