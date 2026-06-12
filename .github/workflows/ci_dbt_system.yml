@@ -21,6 +21,7 @@ jobs:
     defaults:
       run:
         working-directory: ./dbt_transformations
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -49,7 +50,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: dbt_packages
-          key: dbt-cache-${{ hashFiles('dbt_project/packages.yml', 'dbt_project/package-lock.yml') }}
+          key: dbt-cache-${{ hashFiles('dbt_transformations/packages.yml', 'dbt_transformations/package-lock.yml') }}
           restore-keys: |
             dbt-cache-
 
