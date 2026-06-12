@@ -6,12 +6,14 @@ on:
 
     paths:
       - '**el_system/**'
+      - '**.github/**'
   
   pull_request:
     branches: [main, dev]
 
     paths:
       - '**el_system/**'
+      - '**.github/**'
 
 jobs:
   validate_elt:

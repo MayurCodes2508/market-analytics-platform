@@ -5,11 +5,13 @@ on:
     branches: [main, dev]
     paths:
       - '**dbt_transformations/**'
+      - '**.github/**'
 
   pull_request: 
     branches: [main, dev]
     paths:
       - '**dbt_transformations/**'
+      - '**.github/**'
 
 jobs:
   validate_dbt:
