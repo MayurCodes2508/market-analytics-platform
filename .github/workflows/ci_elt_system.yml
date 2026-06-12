@@ -24,7 +24,7 @@ jobs:
       contents: read
     defaults:
       run:
-        working-directory: ./elt_system
+        working-directory: elt_system
 
     steps:
       - name: Checkout Code
