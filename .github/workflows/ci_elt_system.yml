@@ -1,4 +1,4 @@
-name: CI - ELT CONFIG SYSTEM
+name: CI - EL CONFIG SYSTEM
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
 
     paths:
       - '**/configs/**'  
-      - '**/docs/**'
       - '**/orchestrator/**'
       - '**/pipeline/**'
       - '**/schemas/**'
@@ -18,7 +17,6 @@ on:
 
     paths:
       - '**/configs/**'
-      - '**/docs/**'
       - '**/orchestrator/**'
       - '**/pipeline/**'
       - '**/schemas/**'
@@ -26,11 +24,13 @@ on:
       - '**/requirements.txt'   
 jobs:
   validate_elt:
-    name: Test System and Scan For Vulnerabilities
+    name: Run EL Job & Containerize
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+    defaults:
+      run: ./el_system
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -59,12 +59,12 @@ jobs:
 
       - name: Run System Python Code
         run: |
-          python -u -m orchestrator.runner --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json
+          py -u -m orchestrator.runner --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json
         env:
           DB_URL: ${{ secrets.DB_URL }}
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
 
       - name: Build System Container Image
         run: |
-          docker build -t market-analytics-platform:latest .
+          docker build -t elt-job:CI .
           

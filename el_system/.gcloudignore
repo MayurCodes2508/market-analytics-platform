@@ -1,21 +1,9 @@
 __pycache__/
 *.pyc*
-*.code-workspace*
-.vscode/
-.git/
-.gitignore
 .venv/
-dbt_project/
-dev_testing/
-docs/
-terraform/
 dev.env
 example.env
-README.md
 __init__.py
-metadata_pipeline/
-logs/
-file_list.txt
 
 !configs/
 !orchestrator/

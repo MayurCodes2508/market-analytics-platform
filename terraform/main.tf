@@ -170,6 +170,7 @@ resource "google_cloudfunctions2_function" "dev_metadata_pipeline" {
   }
 }
 
+
 resource "google_cloud_scheduler_job" "dev_metadata_pipeline_scheduler" {
   name      = "dev-metadata-pipeline-scheduler"
   region    = "asia-south1"
@@ -252,6 +253,10 @@ resource "google_cloud_run_v2_job" "prod_market_analytics_platform_run" {
 
   deletion_protection = true
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   template {
     template {
       containers {
@@ -291,6 +296,12 @@ resource "google_cloud_run_v2_job" "prod_market_analytics_platform_run" {
 resource "google_cloud_run_v2_job" "prod_dbt_project_run" {
   name = "prod-dbt-project-run"
   location = "asia-south1"
+
+  deletion_protection = true
+
+  lifecycle {
+    prevent_destroy = true
+  }
   template {
     template {
       containers {

@@ -13,7 +13,7 @@ on:
 
 jobs:
   validate_dbt:
-    name: Test & Scan for Vulnerabilities, Build dbt Models
+    name: Build dbt Models and Containerize
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -64,4 +64,4 @@ jobs:
 
       - name: Build System Container Image
         run: |
-          docker build -t market-analytics-platform:latest .
+          docker build -t dbt-job:CI .

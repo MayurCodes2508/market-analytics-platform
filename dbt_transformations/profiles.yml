@@ -18,3 +18,4 @@ market-analytics-platform:
       threads: 4
       location: asia-south1
       timeout_seconds: 300
+      

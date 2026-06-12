@@ -24,23 +24,15 @@ dbt_packages/
 file_list.txt
 core/
 marts/
+alerts_system/
 
 
-!configs/
 !docs/
-!orchestrator/
-!pipeline/
-!schemas/
 !terraform/
 !.gitignore
-!.dockerignore
-!.gcloudignore
-!Dockerfile
-!example.env
 !README.md
-!requirements.txt
 !.github/
+!el_system/
 !dbt_project/
 !metadata_pipeline/
 !package-lock.yml
-!profiles.yml

@@ -1,23 +1,10 @@
 __pycache__/
-*.pyc
-.git/
-.gitignore
-*.code-workspace*
-.vscode/
+*.pyc*
 .venv
-dbt_project/
-dev_testing/
-docs/
-terraform/
 dev.env
 example.env
-README.md
 .gcloudignore
-gcloud
 __init__.py
-metadata_pipeline/
-logs/
-file_list.txt
 
 !configs/
 !orchestrator/
