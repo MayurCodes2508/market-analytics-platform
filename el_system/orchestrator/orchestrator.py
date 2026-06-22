@@ -1,5 +1,4 @@
 from loguru import logger as log
-import psutil
 import argparse
 from orchestrator.loader import Loader
 from orchestrator.validator import Validator
@@ -7,9 +6,6 @@ from orchestrator.metadata import Metadata
 from orchestrator.runner import Runner
 
 
-
-
-process = psutil.Process()
 
 
 class Orchestrator:
