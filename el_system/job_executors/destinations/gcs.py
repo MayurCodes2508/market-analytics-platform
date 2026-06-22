@@ -5,8 +5,10 @@ import io
 import pandas as pd
 
 class GCS:
-    def __init__(self, metadata_cfg, destination_cfg, data):
+    def __init__(self, job_name, dest_cfg=None, metadata_cfg=None, data=None):
         
+        self.job_name = job_name
+
         self.data = data
 
         self.metadata_cfg = metadata_cfg
@@ -14,11 +16,11 @@ class GCS:
         self.dataset = metadata_cfg['dataset']
         self.entity = metadata_cfg['entity']
 
-        self.destination_cfg = destination_cfg
-        self.bucket = destination_cfg['bucket']
-        self.layer = destination_cfg['layer']
-        self.format = destination_cfg['format']
-        self.path_template = destination_cfg['path_template']
+        self.destination_cfg = dest_cfg
+        self.bucket = dest_cfg['bucket']
+        self.layer = dest_cfg['layer']
+        self.format = dest_cfg['format']
+        self.path_template = dest_cfg['path_template']
 
     def build_path(self):
 
@@ -49,18 +51,18 @@ class GCS:
             blob = bucket.blob(path)
 
             if not data:
-                raise ValueError(f"No data received to upload")
+                raise ValueError("No data received to upload")
             df = pd.DataFrame(data)
             df["ingestion_timestamp"] = now
-            logger.info(f"Successfully converted the raw JSON data to Pandas DataFrame and added ingestion metadata(ingestion_timestamp)")
+            logger.info("Successfully converted the raw JSON data to Pandas DataFrame and added ingestion metadata(ingestion_timestamp)")
             
             buffer = io.BytesIO()
             df.to_parquet(buffer, index=False, compression='snappy')
-            logger.info(f"Successfully converted, compressed to Parquet & finished writing it to RAM buffer")
+            logger.info("Successfully converted, compressed to Parquet & finished writing it to RAM buffer")
             buffer.seek(0)
 
             blob.upload_from_file(buffer, content_type='application/octet-stream')
-            logger.info(f"Successfully uploaded the parquet data to GCS")
+            logger.info("Successfully uploaded the parquet data to GCS")
 
         except Exception as e:
             logger.error(f"Error Uploading the data to GCS: {e}")

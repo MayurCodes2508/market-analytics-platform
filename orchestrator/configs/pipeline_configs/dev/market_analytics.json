@@ -1,0 +1,9 @@
+{
+    "pipeline_name": "dev-market-analytics-pipeline",
+
+    "jobs": [
+        {
+            "job_name": "dev-el-system-run"
+        }
+    ]
+}

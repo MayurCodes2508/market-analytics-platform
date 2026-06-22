@@ -3,13 +3,9 @@
 
     "type": "object",
 
-    "required": ["pipeline_name", "job_name", "job_type", "exec"],
+    "required": ["job_name", "job_type", "exec"],
 
     "properties": {
-        "pipeline_name": {
-            "type": "string",
-            "const": "market_analytics_platform"
-        },
 
         "job_name": {
             "type": "string",
@@ -18,18 +14,36 @@
             "maxLength": 50
         },
 
+        "system": {
+            "type": "string",
+            "enum": ["el", "dbt", "metadata"]
+        },
+
         "job_type": {
             "type": "string",
-            "const": "ingestion"
+            "enum": ["ingestion", "quality", "transformation"]
+        },
+
+        "sub_jobtype": {
+            "type": "string",
+            "enum": ["api", "dbt"]
         },
 
         "metadata": {
             "type": "object",
-            "required": ["source", "dataset", "entity"],
             "properties": {
-                "source": {"type": "string"},
-                "dataset": {"type": "string"},
-                "entity": {"type": "string"}
+                "source": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9_]+$"
+                },
+                "dataset": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9_]+$"
+                },
+                "entity": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9_]+$"
+                }
             },
             "additionalProperties": false
         },
@@ -51,7 +65,7 @@
                 }
             },
             "then": {
-                "required": ["metadata"]
+                "required": ["metadata", "destination"]
             }
         }
     ],

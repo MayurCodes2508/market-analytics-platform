@@ -75,20 +75,20 @@ resource "google_secret_manager_secret" "dev_market_analytics_platform_secrets" 
   }
 }
 
-resource "google_cloud_run_v2_job" "dev_elt_system_run" {
-  name     = "dev-elt-system-run"
+resource "google_cloud_run_v2_job" "dev_el_system_run" {
+  name     = "dev-el-system-run"
   location = "asia-south1"
   deletion_protection = false
   template {
     template {
       containers {
         
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:dev_v1"
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:testing"
 
         command = ["bash", "-c"]
 
         args = [
-          "python -u -m orchestrator.runner --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json"
+          "python -u -m system_runner.runner --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json"
         ]
 
         env {

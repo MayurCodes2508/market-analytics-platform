@@ -3,11 +3,3 @@ __pycache__/
 .venv/
 __init__.py
 
-!configs/
-!orchestrator/
-!pipeline/
-!schemas/
-!.Dockerfile
-!requirements.txt
-!.dockerignore
-!gcloud

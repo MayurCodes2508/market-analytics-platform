@@ -1,0 +1,44 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+
+    "type": "object",
+
+    "required": ["jobs"],
+
+    "properties": {
+
+        "pipeline_name": {
+
+            "type": "string",
+            "pattern": "^(dev-|prod-)[a-z0-9-]+$",
+            "minLength": 5,
+            "maxLength": 30
+
+        },
+
+        "jobs": {
+
+            "type": "array",
+            "items": {
+
+                "type": "object",
+                "required": ["job_name"],
+                "properties": {
+
+                    "job_name": {
+
+                        "type": "string",
+                        "pattern": "^(dev-|prod-)[a-z0-9-]+$",
+                        "minLength": 5,
+                        "maxLength": 30
+                    }
+
+                },
+                "additionalProperties": false
+
+            },
+            "minItems": 1
+
+        }
+    }
+}

@@ -1,13 +1,5 @@
 __pycache__/
 *.pyc*
-.venv
+.venv/
 .gcloudignore
 __init__.py
-
-!configs/
-!orchestrator/
-!pipeline/
-!schemas/
-!Dockerfile
-!requirements.txt
-!.dockerignore

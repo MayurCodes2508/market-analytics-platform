@@ -49,12 +49,11 @@ jobs:
 
       - name: Run System Python Code
         run: |
-          python -u -m orchestrator.runner --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json
+          python -u -m orchestrator.orchestrator --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json
         env:
-          DB_URL: ${{ secrets.DB_URL }}
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
 
       - name: Build System Container Image
         run: |
-          docker build -t elt-job:CI .
+          docker build -t el-job:CI .
           

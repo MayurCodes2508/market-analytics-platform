@@ -2,11 +2,22 @@ from loguru import logger
 import requests
 
 class ApiExecCommand:
-    def __init__(self, exec_cfg, job_name, api_key=None):
+
+    def __init__(self, exec_cfg, job_name, auth_cfg=None, api_key=None):
+
+        self.exec_cfg = exec_cfg
+        self.api_key = api_key
+
+        if not auth_cfg:
+
+            self.auth_cfg = {}
+
+        else:
+
+            self.auth_cfg = auth_cfg
 
         self.job_name = job_name
-        self.api_key = api_key
-        self.exec_cfg = exec_cfg
+        
         self.base_url = exec_cfg["base_url"]
         self.path = exec_cfg["path"]
 
@@ -19,6 +30,7 @@ class ApiExecCommand:
         self.page_size_value = page_size_config["value"]
 
         if self.job_name.startswith("prod_"):
+
             self.page_size_value = 250
             
         query_params_config = exec_cfg["query_params"]
@@ -26,90 +38,130 @@ class ApiExecCommand:
         self.custom_query_params = {
             k: v for k, v in query_params_config.items() if k != "vs_currency"
         }
-   
-        auth_config = exec_cfg.get("auth")
-        if auth_config:
-            self.auth_type = auth_config["type"]
-            self.key_env = auth_config["key_env"]
-            self.location = auth_config["location"]
-            self.name = auth_config["name"]
-        else:
-            self.auth_type = None
-            self.key_env = None
-            self.location = None
-            self.name = None
+
+        self.auth_type = self.auth_cfg.get('type', None)
+        self.location = self.auth_cfg.get('location', None)
+        self.name = self.auth_cfg.get('name', None)
 
     def build_url(self):
 
         try:
+
             url = f"{self.base_url}{self.path}"
+
             logger.info(f"Built URL: {url}")
+
             return url
+        
         except Exception as e:
+
             logger.error(f"Error building URL: {e}")
+
             raise
+
 
     def build_headers(self):
 
         try:
+
             headers = {}
+
+            if not self.api_key:
+
+                logger.info('API Key Not Provided, Skipping....')
+
+                return headers
+            
             if self.api_key:
+
                 if self.location == "header":
+
                     headers[self.name] = self.api_key
-                    logger.info(f"Added API key to headers")
+
+                    logger.info("Added API key to headers")
+
                 else:
+
                     logger.warning(f"Unsupported auth location: {self.location}. API key will not be included in headers.")
+
             return headers
+        
         except Exception as e:
+
             logger.error(f"Error building headers: {e}")
+
             raise
+
 
     def build_params(self):
 
         try:
+
             params = {
                 self.page_size_param: self.page_size_value,
                 "vs_currency": self.vs_currency
             }
 
             params.update(self.custom_query_params)
+
             logger.info(f"Built query params: {params}")
+
             return params
+        
         except Exception as e:
+
             logger.error(f"Error building query params: {e}")
+
             raise
+
 
     def make_request(self, url, headers, params):
 
         logger.info(f"Making request started with: url={url} | headers=Headers | params={params}")
+
         try:
+
             response = requests.get(url=url, headers=headers, params=params)
+
             logger.info(f"Request made: {response}")
+
             return response
+        
         except Exception as e:
+
             logger.error(f"Error making request: {e}")
+
             raise
+
 
     def handle_response(self, response):
 
        try:
+           
            data = response.json()
-           logger.info(f"Successfully fetched & stored the data")
-           total_records = len(data)
-           logger.info(f"total_records fetched: {total_records}")
+
+           logger.info("Successfully fetched & stored the data")
+
+           rows_processed = len(data)
+
+           logger.info(f"rows processed fetched: {rows_processed}")
 
            if response.status_code != 200:
+               
                raise Exception(
                    f"Request_failed: {response.status_code} - {response.text}"
                )
-           return data, total_records
+           
+           return data, rows_processed
+       
        except Exception as e:
+           
            logger.error(f"Error handling response: {e}")
+
            raise
 
-    def run(self):
 
-        logger.info(f"Running API job: {self.job_name}")
+    def run(self):
         
         url = self.build_url()
 
@@ -119,5 +171,6 @@ class ApiExecCommand:
 
         response = self.make_request(url=url, headers=headers, params=params)
 
-        data, total_records = self.handle_response(response)
-        return data, total_records
+        data, rows_processed = self.handle_response(response=response)
+        
+        return data, rows_processed

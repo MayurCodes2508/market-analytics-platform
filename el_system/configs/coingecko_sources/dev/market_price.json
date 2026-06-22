@@ -1,9 +1,11 @@
 {
-    "pipeline_name": "market_analytics_platform",
-
     "job_name": "dev_coingecko_market_price",
 
+    "system": "el",
+
     "job_type": "ingestion",
+
+    "sub_jobtype": "api",
 
     "metadata": {
         "source": "coingecko",

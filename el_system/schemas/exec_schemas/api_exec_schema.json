@@ -5,14 +5,12 @@
       "type": { "const": "ApiExecCommand" },
       "base_url": {
         "type": "string",
-        "const": "https://api.coingecko.com/api/v3",
         "format": "uri",
         "minLength": 1,
         "maxLength": 50   
       },
         "path": {
           "type": "string",
-          "const": "/coins/markets",
           "minLength": 1,
           "maxLength": 50
         },
@@ -66,8 +64,7 @@
           "required": ["type", "key_env", "location", "name"],
           "properties": {
             "type": {
-              "type": "string",
-              "const": "api_key"
+              "type": "string"
             },
             "key_env": {
               "type": "string",
@@ -75,7 +72,7 @@
               "minLength": 1,
               "maxLength": 50
             },
-            "location": { "type": "string", "const": "header" },
+            "location": { "type": "string"},
             "name": { "type": "string" }
           },
           "additionalProperties": false
