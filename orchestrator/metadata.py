@@ -195,11 +195,11 @@ class Job_Metadata:
         
             if not self.execution:
 
-                log.warning("Invalid 'execution', Affected Job Metadata")
+                raise ValueError("Invalid 'execution', Stopping....")
 
             elif not self.execution.completion_time:
 
-                log.warning("Could Not Fetch 'completion_time' Within Time, Affected Job Metadata")
+                raise ValueError("Execution Failed to Complete Within Time, Stopping....")
 
 
             start_time = self.execution.start_time

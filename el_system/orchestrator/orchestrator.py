@@ -64,10 +64,27 @@ if __name__ == "__main__":
         runner.runner_run()
 
 
+
     except Exception as e:
 
         error_message = str(e)
 
-        log.exception("Error Occured While Job Execution")
+        metadata.metadata_run_2(runner.rows_processed, error_message)
+
+        log.exception(F"Job: {metadata.job_name} | Type: {metadata.job_type} | Sub Type: {metadata.sub_jobtype} | System: {metadata.system} | Status: Execution Failed | Error_message: {error_message}...")
 
         raise
+
+
+    else:
+
+        error_message = None
+
+        metadata.metadata_run_2(runner.rows_processed, error_message)
+
+        log.info(F"Job: {metadata.job_name} | Type: {metadata.job_type} | Sub Type: {metadata.sub_jobtype} | System: {metadata.system} | Status: Execution Successful...")
+
+
+    finally:
+
+        print(F"METADATA_DUMP: {metadata.metadata_dump}")

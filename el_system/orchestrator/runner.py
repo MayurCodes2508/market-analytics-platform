@@ -38,7 +38,7 @@ class Destination_Target_Factory:
 
         if dest_type is None:
 
-            log.info("Dest Not Provided, Skipping...")
+            log.info("Not Provided Dest, Skipping...")
 
             return 
 
@@ -72,20 +72,20 @@ class Runner:
         
     def execute_job(self):
 
-        exec_obj = Execution_Command_Factory.get_exec_type(exec_type=self.exec_type, exec_cfg=self.exec_cfg, job_name=self.job_name, api_key=self.api_key, auth_cfg=self.auth_cfg)
+        self.exec_obj = Execution_Command_Factory.get_exec_type(exec_type=self.exec_type, exec_cfg=self.exec_cfg, job_name=self.job_name, api_key=self.api_key, auth_cfg=self.auth_cfg)
 
-        data, rows_processed = exec_obj.run()
+        self.data, self.rows_processed = self.exec_obj.run()
 
 
-        dest_obj = Destination_Target_Factory.get_dest_type(dest_type=self.dest_type, dest_cfg=self.dest_cfg, metadata_cfg=self.metadata_cfg, job_name=self.job_name, data=data)
+        self.dest_obj = Destination_Target_Factory.get_dest_type(dest_type=self.dest_type, dest_cfg=self.dest_cfg, metadata_cfg=self.metadata_cfg, job_name=self.job_name, data=self.data)
 
-        if dest_obj:
+        if self.dest_obj:
 
-            dest_obj.run()
+            self.dest_obj.run()
 
         else:
 
-            log.info("Dest Not Provided, Skipping.....")
+            log.info("Not Provided Dest, Skipping.....")
 
 
     def runner_run(self):

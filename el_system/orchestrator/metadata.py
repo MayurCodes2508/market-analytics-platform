@@ -1,5 +1,5 @@
 from loguru import logger as log
-
+import json
 
 
 
@@ -163,6 +163,22 @@ class Metadata:
             log.info("Successfully Loaded Job Metadata")
 
 
+    def metadata_dump(self, rows_processed, error_message):
+
+        metadata_dump = {
+
+            'job_name': self.job_name,
+            'system': self.system,
+            'job_type': self.job_type,
+            'sub_jobtype': self.sub_jobtype,
+            'rows_processed': rows_processed,
+            'error_message': error_message
+
+        }
+
+        self.metadata_dump = json.dumps(metadata_dump)
+
+
     def metadata_run(self):
 
         self.load_metadata()
@@ -170,3 +186,8 @@ class Metadata:
         self.load_exec_metadata()
 
         self.load_dest_metadata()
+
+    
+    def metadata_run_2(self, *args, **kwargs):
+
+        self.metadata_dump(*args, **kwargs)
