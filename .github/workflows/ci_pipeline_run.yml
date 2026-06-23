@@ -52,7 +52,7 @@ jobs:
           python -u -m orchestrator.orchestrator --file_path configs/pipeline_configs/dev/market_analytics.json --schema_path schemas/pipeline_schema.json
         env:
           DB_URL: ${{ secrets.DB_URL }}
-          ENV: ${{ vars.TRIGGERED_BY }}
+          TRIGGERED_BY: ${{ vars.TRIGGERED_BY }}
 
       - name: Build Pipeline Container Image
         run: |
