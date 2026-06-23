@@ -49,7 +49,7 @@ jobs:
 
       - name: Run Pipeline Python Code
         run: |
-          py -u -m orchestrator.orchestrator --file_path configs/pipeline_configs/dev/market_analytics.json --schema_path schemas/pipeline_schema.json
+          python -u -m orchestrator.orchestrator --file_path configs/pipeline_configs/dev/market_analytics.json --schema_path schemas/pipeline_schema.json
         env:
           DB_URL: ${{ secrets.DB_URL }}
 
