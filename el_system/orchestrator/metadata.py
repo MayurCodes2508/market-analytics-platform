@@ -165,7 +165,7 @@ class Metadata:
 
     def metadata_dump(self, rows_processed, error_message):
 
-        metadata_dump = {
+        metadata = {
 
             'job_name': self.job_name,
             'system': self.system,
@@ -176,7 +176,7 @@ class Metadata:
 
         }
 
-        self.metadata_dump = json.dumps(metadata_dump)
+        self.metadata = json.dumps(metadata)
 
 
     def metadata_run(self):

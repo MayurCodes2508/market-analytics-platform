@@ -1,7 +1,7 @@
 from google.cloud.run_v2 import JobsClient
 from google.api_core.exceptions import GoogleAPIError, NotFound, InvalidArgument
 from loguru import logger as log
-import uuid
+from uuid6 import uuid7
 from orchestrator.metadata import Job_Metadata
 from orchestrator.logger import Job_Logger
 
@@ -66,7 +66,7 @@ class Runner:
 
         try:
 
-            self.job_run_id = str(uuid.uuid7())
+            self.job_run_id = str(uuid7())
 
             jobs_client = JobsClient()
 

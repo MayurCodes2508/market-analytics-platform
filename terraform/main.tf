@@ -166,6 +166,42 @@ resource "google_cloudfunctions2_function" "dev_metadata_pipeline" {
   }
 }
 
+resource "google_cloud_run_v2_job" "dev_pipeline_run" {
+  name = "dev-pipeline-run"
+  location = "asia-south1"
+
+  deletion_protection = false
+
+  template {
+    template {
+      containers {
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/pipeline_run:testing"
+
+        command = [ "bash", "-c" ]
+
+        args = [ 
+          "python -u -m orchestrator.orchestrator --file_path configs/pipeline_configs/dev/market_analytics.json --schema_path schemas/pipeline_schema.json"
+         ]
+
+         env {
+          name = "TRIGGERED_BY"
+          value = "scheduler"
+         }
+
+         env {
+          name = "DB_URL"
+          value_source {
+            secret_key_ref {
+              secret  = "dev_market_analytics_platform_secrets"
+              version = "5"
+            }
+          }
+         }
+      }
+      service_account = "development-cloud-resource-860@instant-medium-491107-t6.iam.gserviceaccount.com"
+    }
+  }
+}
 
 resource "google_cloud_scheduler_job" "dev_metadata_pipeline_scheduler" {
   name      = "dev-metadata-pipeline-scheduler"

@@ -1,5 +1,5 @@
 from loguru import logger as log
-import uuid
+from uuid6 import uuid7
 from datetime import datetime
 from dotenv import load_dotenv
 import os
@@ -50,7 +50,7 @@ class Pipeline_Metadata:
 
         try:
 
-            self.pipeline_run_id = str(uuid.uuid7())
+            self.pipeline_run_id = str(uuid7())
 
             self.now = datetime.now().isoformat()
 
