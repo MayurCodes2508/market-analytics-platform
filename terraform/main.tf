@@ -88,7 +88,7 @@ resource "google_cloud_run_v2_job" "dev_el_system_run" {
         command = ["bash", "-c"]
 
         args = [
-          "python -u -m system_runner.runner --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json"
+          "python -u -m orchestrator.orchestrator --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json"
         ]
 
         env {
@@ -97,16 +97,6 @@ resource "google_cloud_run_v2_job" "dev_el_system_run" {
             secret_key_ref {
               secret  = "dev_market_analytics_platform_secrets"
               version = "4"
-            }
-          }
-        }
-
-        env {
-          name = "DB_URL"
-          value_source {
-            secret_key_ref {
-              secret  = "dev_market_analytics_platform_secrets"
-              version = "5"
             }
           }
         }
@@ -266,7 +256,7 @@ resource "google_cloud_run_v2_job" "prod_el_system_run" {
   template {
     template {
       containers {
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:prod_v1"
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:latest"
 
         command = ["bash", "-c"]
 
@@ -292,6 +282,12 @@ resource "google_cloud_run_v2_job" "prod_el_system_run" {
               version = "2"
             }
           }
+        }
+
+        env {
+          name = "ENV"
+
+          value = "prod"
         }
       }
       service_account = "production-cloud-resources-job@instant-medium-491107-t6.iam.gserviceaccount.com"

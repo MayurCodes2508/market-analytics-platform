@@ -1,10 +1,10 @@
 from loguru import logger as log
 import argparse
-from loader import Loader
-from validator import Validator
-from metadata import Pipeline_Metadata
-from logger import Pipeline_Logger
-from runner import Runner
+from orchestrator.loader import Loader
+from orchestrator.validator import Validator
+from orchestrator.metadata import Pipeline_Metadata
+from orchestrator.logger import Pipeline_Logger
+from orchestrator.runner import Runner
 from datetime import datetime
 import os
 
