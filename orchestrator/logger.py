@@ -9,14 +9,14 @@ from psycopg2.extras import Json
 class Pipeline_Logger:
 
 
-    def __init__(self, loader, metadata=None):
+    def __init__(self, loader, metadata):
 
         self.loader = loader
         self.metadata = metadata
 
         self.db_url = self.loader.db_url
-        self.pipeline_start_metadata_dump = getattr(self.metadata, 'pipeline_start_metadata_dump', None)
 
+        self.pipeline_start_metadata_dump = self.metadata.pipeline_start_metadata_dump
         self.pipeline_end_metadata_dump = getattr(self.metadata, 'pipeline_end_metadata_dump', None)
         
     
@@ -137,13 +137,13 @@ class Pipeline_Logger:
 class Job_Logger:
 
 
-    def __init__(self, loader, metadata=None):
+    def __init__(self, loader, job_metadata):
 
         self.loader = loader
-        self.metadata = metadata
+        self.job_metadata = job_metadata
 
         self.db_url = self.loader.db_url
-        self.job_metadata_dump = getattr(self.metadata, 'job_metadata_dump', None)
+        self.job_metadata_dump = self.job_metadata.job_metadata_dump
 
 
     def log_job_run_metadata(self):

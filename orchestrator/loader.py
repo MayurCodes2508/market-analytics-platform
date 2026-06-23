@@ -86,11 +86,13 @@ class Loader:
 
         load_dotenv(dotenv_path='../dev.env')
 
-        self.db_url = os.getenv('DB_URL')
+        db_url = os.getenv('DB_URL')
 
-        if not self.db_url:
+        if not db_url:
 
-            log.warning("Invalid 'db_url', Affecting Pipeline Metadata")
+            raise ValueError(F"Invalid 'db_url': {db_url}")
+        
+        self.db_url = db_url
 
         log.info("Successfully Loaded DB Credentials")
 

@@ -1,9 +1,11 @@
 {
-    "pipeline_name": "market_analytics_platform",
-
     "job_name": "prod_coingecko_market_price",
 
+    "system": "el",
+
     "job_type": "ingestion",
+
+    "sub_jobtype": "api",
 
     "metadata": {
         "source": "coingecko",
@@ -37,7 +39,7 @@
     "destination": {
         "type": "GCS",
         "bucket": "prod-market-analytics-platform-bucket",
-        "layer": "staging",
+        "layer": "dev",
         "format": "parquet",
         "path_template": "{layer}/{source}/{dataset}/{entity}/ingestion_dt={ingestion_dt}/ingestion_ts={ingestion_ts}.{format}"
     }

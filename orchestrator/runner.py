@@ -2,6 +2,9 @@ from google.cloud.run_v2 import JobsClient
 from google.api_core.exceptions import GoogleAPIError, NotFound, InvalidArgument
 from loguru import logger as log
 import uuid
+from metadata import Job_Metadata
+from logger import Job_Logger
+
 
 
 
@@ -9,12 +12,57 @@ import uuid
 class Runner:
 
 
-    def __init__(self, job_name):
+    def __init__(self, pipeline_metadata, loader):
 
-        self.job_run_name = job_name
+        self.pipeline_metadata = pipeline_metadata
+
+        self.loader = loader
+
+        self.jobs = self.pipeline_metadata.run_jobs
 
 
-    def run_job(self):
+    def run_jobs(self):
+
+        log.info("All Jobs Executions Started")
+
+        self.successful_jobs = 0
+        self.failed_jobs = 0
+
+        try:
+
+            for job in self.jobs:
+
+                self.job_name = job['job_name']
+
+                if not self.job_name:
+
+                    raise ValueError(F"Invalid 'job_name': {self.job_name}")
+            
+                self.execute_job()
+
+
+                self.job_metadata = Job_Metadata(operation=self.operation, job_name=self.job_name, job_run_id=self.job_run_id, pipeline_run_id=self.pipeline_metadata.pipeline_run_id)
+
+                self.job_metadata.metadata_run()
+
+
+                self.job_logger = Job_Logger(loader=self.loader, job_metadata=self.job_metadata)
+
+                self.job_logger.logger_run()
+
+                self.failed_count, self.successful_count = self.pipeline_metadata.collect_job_counts(self.job_metadata.status)
+
+                self.successful_jobs += self.successful_count
+                self.failed_jobs += self.failed_count
+
+        except Exception:
+
+            log.exception("Error Occured While Running Jobs")
+
+            raise
+
+
+    def execute_job(self):
 
         try:
 
@@ -24,10 +72,10 @@ class Runner:
 
             self.base_path = 'projects/instant-medium-491107-t6/locations/asia-south1/jobs'
 
-            log.info(F"Started Execution of Job: {self.job_run_name}, With Run ID: {self.job_run_id}")
+            log.info(F"Executing Job: {self.job_name} | Run ID: {self.job_run_id}")
 
             self.operation = jobs_client.run_job(
-            name=(F"{self.base_path}/{self.job_run_name}")
+            name=(F"{self.base_path}/{self.job_name}")
             )
 
         except GoogleAPIError:
@@ -50,11 +98,11 @@ class Runner:
 
         except Exception:
 
-            log.exception("Unexpected Error Occured")
+            log.exception("Error Occured While Executing Job")
 
             raise
 
 
-    def run(self):
+    def runner_run(self):
 
-        self.run_job()
+        self.run_jobs()

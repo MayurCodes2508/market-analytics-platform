@@ -1,5 +1,7 @@
 from loguru import logger
 import requests
+import os
+
 
 class ApiExecCommand:
 
@@ -29,7 +31,9 @@ class ApiExecCommand:
         self.page_size_param = page_size_config["param"]
         self.page_size_value = page_size_config["value"]
 
-        if self.job_name.startswith("prod_"):
+        self.env = os.getenv('ENV')
+
+        if self.env == 'prod':
 
             self.page_size_value = 250
             

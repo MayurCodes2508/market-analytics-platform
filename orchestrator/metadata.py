@@ -22,9 +22,6 @@ class Pipeline_Metadata:
 
         self.pipeline_cfg = self.loader.pipeline_cfg
 
-        self.pipeline_start_metadata_dump = None
-        self.pipeline_end_metadata_dump = None
-
 
     def load_values(self):
 
@@ -34,9 +31,8 @@ class Pipeline_Metadata:
 
             log.warning("'name' is Missing, Affected Pipeline Metadata")
 
-        else:
 
-            self.pipeline_run_name = name
+        self.pipeline_run_name = name
 
 
         run_jobs = self.pipeline_cfg['jobs']
@@ -60,7 +56,7 @@ class Pipeline_Metadata:
 
             self.pipeline_run_start_time = self.now
 
-            self.pipeline_run_status = 'RUNNING'
+            self.pipeline_run_start_status = 'RUNNING'
 
             load_dotenv('../dev.env')
 
@@ -70,7 +66,7 @@ class Pipeline_Metadata:
 
             self.total_jobs = len(self.run_jobs)
 
-            self.pipeline_run_job_counts = {
+            self.pipeline_run_start_job_counts = {
                 'total_jobs': self.total_jobs,
                 'successful_jobs': None,
                 'failed_jobs': None
@@ -79,12 +75,12 @@ class Pipeline_Metadata:
             self.pipeline_start_metadata_dump = {
 
                 'pipeline_run_id': self.pipeline_run_id,
-                'pipeline_run_name': getattr(self, 'pipeline_run_name', None),
+                'pipeline_run_name': self.pipeline_run_name,
                 'pipeline_run_start_time': self.pipeline_run_start_time,
-                'pipeline_run_status': self.pipeline_run_status,
+                'pipeline_run_status': self.pipeline_run_start_status,
                 'pipeline_run_triggered_by': self.pipeline_run_triggered_by,
                 'pipeline_run_created_at': self.pipeline_run_created_at,
-                'pipeline_run_job_counts': self.pipeline_run_job_counts
+                'pipeline_run_job_counts': self.pipeline_run_start_job_counts
 
             }
 
@@ -95,15 +91,15 @@ class Pipeline_Metadata:
             log.exception("Unexpected Error Occured, Affecting Pipeline Metadata")
 
 
-    def create_pipeline_end_metadata(self, status=None, error_message=None, successful_job_counts=None, failed_job_counts=None):
+    def create_pipeline_end_metadata(self, status, error_message, successful_job_counts, failed_job_counts=None):
 
-        self.status = status
-        self.error_message = error_message,
-        self.successful_job_counts = successful_job_counts,
+        self.pipeline_run_end_status = status
+        self.pipeline_run_error_message = error_message
+        self.successful_job_counts = successful_job_counts
         self.failed_job_counts = failed_job_counts
         self.pipeline_run_end_time = datetime.now().isoformat()
 
-        self.pipeline_run_job_counts = {
+        self.pipeline_run_end_job_counts = {
             'total_jobs': self.total_jobs,
             'successful_jobs': self.successful_job_counts,
             'failed_jobs': self.failed_job_counts
@@ -112,10 +108,10 @@ class Pipeline_Metadata:
         self.pipeline_end_metadata_dump = {
 
             'pipeline_run_id': self.pipeline_run_id,
-            'pipeline_run_status': self.status,
-            'pipeline_run_error_message':  self.error_message,
+            'pipeline_run_status': self.pipeline_run_end_status,
+            'pipeline_run_error_message':  self.pipeline_run_error_message,
             'pipeline_run_end_time': self.pipeline_run_end_time,
-            'pipeline_run_job_counts': self.pipeline_run_job_counts
+            'pipeline_run_job_counts': self.pipeline_run_end_job_counts
 
         }
 
@@ -149,15 +145,15 @@ class Pipeline_Metadata:
         self.create_pipeline_start_metadata()
 
     
-    def metadata_run_2(self, status=None, error_message=None, successful_job_counts=None, failed_job_counts=None):
+    def metadata_run_2(self, *args, **kwargs):
 
-        self.create_pipeline_end_metadata(status, error_message, successful_job_counts, failed_job_counts)
+        self.create_pipeline_end_metadata(*args, **kwargs)
 
 
 class Job_Metadata:
 
 
-    def __init__(self, operation, job_name, job_run_id=None, pipeline_run_id=None):
+    def __init__(self, operation, job_name, job_run_id, pipeline_run_id):
 
 
         self.operation = operation
@@ -311,7 +307,7 @@ class Job_Metadata:
                 }
             }
 
-            log.info("Successfully got metadata")
+            log.info("Job Metadata Created")
 
         except Exception:
 
@@ -334,6 +330,6 @@ class Job_Metadata:
             log.exception("Unexpected Error Occured, Affecting Job Metadata")
 
     
-    def metadata_run_2(self):
+    def metadata_run(self):
 
         self.create_job_metadata()
