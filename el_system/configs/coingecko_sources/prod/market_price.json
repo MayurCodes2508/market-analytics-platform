@@ -39,7 +39,7 @@
     "destination": {
         "type": "GCS",
         "bucket": "prod-market-analytics-platform-bucket",
-        "layer": "dev",
+        "layer": "staging",
         "format": "parquet",
         "path_template": "{layer}/{source}/{dataset}/{entity}/ingestion_dt={ingestion_dt}/ingestion_ts={ingestion_ts}.{format}"
     }

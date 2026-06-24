@@ -282,6 +282,8 @@ class Job_Metadata:
 
             log.exception("Unexpected Error Occured, Affecting Job Metadata")
 
+            raise
+
         try:
 
             self.job_metadata_dump = {
@@ -296,7 +298,9 @@ class Job_Metadata:
                 'end_time': end_time.isoformat(),
                 'created_at': created_at.isoformat(),
                 'error_message': job_metadata.get('error_message', None),
-                'job_metrics': job_metadata.get('job_metrics', None),
+                'job_metrics': {
+                    'rows_processed': job_metadata.get('rows_processed', None)
+                },
                 'extra_metadata': {
                     'cloud_run_job_id': cloud_run_job_id,
                     'cloud_run_job_name': cloud_run_job_name,

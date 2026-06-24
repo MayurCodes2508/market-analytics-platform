@@ -297,7 +297,7 @@ resource "google_cloud_run_v2_job" "prod_el_system_run" {
         command = ["bash", "-c"]
 
         args = [
-          "python -u -m orchestrator.runner --file_path configs/coingecko_sources/prod/market_price.json --schema_path schemas/root_schema.json"
+          "python -u -m orchestrator.orchestrator --file_path configs/coingecko_sources/prod/market_price.json --schema_path schemas/root_schema.json"
         ]
 
         env {
@@ -306,16 +306,6 @@ resource "google_cloud_run_v2_job" "prod_el_system_run" {
             secret_key_ref {
               secret  = "prod-market-analytics-platform-secret"
               version = "1"
-            }
-          }
-        }
-
-        env {
-          name = "DB_URL"
-          value_source {
-            secret_key_ref {
-              secret  = "prod-market-analytics-platform-secret"
-              version = "2"
             }
           }
         }
@@ -361,6 +351,45 @@ resource "google_cloud_run_v2_job" "prod_dbt_transformations_run" {
   }
 }
 
+resource "google_cloud_run_v2_job" "prod_pipeline_run" {
+  name = "prod-pipeline-run"
+  location = "asia-south1"
+
+  deletion_protection = false
+
+  lifecycle {
+    prevent_destroy = false
+  }
+
+  template {
+    template {
+      containers {
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/pipeline_run:latest"
+
+        command = [ "bash", "-c" ]
+
+        args = [ "python -u -m orchestrator.orchestrator --file_path configs/pipeline_configs/prod/market_analytics.json --schema_path schemas/pipeline_schema.json" ]
+
+        env {
+        name = "DB_URL"
+        value_source {
+          secret_key_ref {
+            secret  = "prod-market-analytics-platform-secret"
+            version = "2"
+            }
+          }
+        }
+
+        env {
+          name = "TRIGGERED_BY"
+          value = "scheduler"
+        }
+      }
+      service_account = "production-cloud-resources-518@instant-medium-491107-t6.iam.gserviceaccount.com"
+    }
+  }
+}
+
 resource "google_cloudfunctions2_function" "prod_metadata_pipeline" {
   name = "prod-metadata-pipeline"
   location = "asia-south1"
@@ -394,8 +423,8 @@ resource "google_cloudfunctions2_function" "prod_metadata_pipeline" {
   }
 }
 
-resource "google_cloud_scheduler_job" "prod_el_system_scheduler" {
-  name      = "prod-el-system-scheduler"
+resource "google_cloud_scheduler_job" "prod_pipeline_run_scheduler" {
+  name      = "prod-pipeline-run-scheduler"
   region    = "asia-south1"
   schedule  = "0 * * * *"
   time_zone = "Asia/Kolkata"
@@ -403,7 +432,7 @@ resource "google_cloud_scheduler_job" "prod_el_system_scheduler" {
     prevent_destroy = true
   }
   depends_on = [ 
-    google_cloud_run_v2_job.prod_el_system_run
+    google_cloud_run_v2_job.prod_pipeline_run
    ]
 
   retry_config {
@@ -415,7 +444,7 @@ resource "google_cloud_scheduler_job" "prod_el_system_scheduler" {
   }
 
   http_target {
-    uri         = "https://asia-south1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/instant-medium-491107-t6/jobs/prod-el-system-run:run"
+    uri         = "https://asia-south1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/instant-medium-491107-t6/jobs/prod-pipeline-run:run"
     http_method = "POST"
 
     oauth_token {
