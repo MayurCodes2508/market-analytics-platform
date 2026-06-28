@@ -87,4 +87,4 @@ if __name__ == "__main__":
 
     finally:
 
-        print(F"METADATA_DUMP: {metadata.metadata}")
+        print(F"METADATA_DUMP: {metadata.metadata_payload}")

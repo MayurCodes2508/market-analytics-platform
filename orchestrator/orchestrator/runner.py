@@ -37,8 +37,11 @@ class Runner:
                 if not self.job_name:
 
                     raise ValueError(F"Invalid 'job_name': {self.job_name}")
+                
             
                 self.execute_job()
+
+                self.job_run_id = str(uuid7())
 
 
                 self.job_metadata = Job_Metadata(operation=self.operation, job_name=self.job_name, job_run_id=self.job_run_id, pipeline_run_id=self.pipeline_metadata.pipeline_run_id)
@@ -66,13 +69,11 @@ class Runner:
 
         try:
 
-            self.job_run_id = str(uuid7())
-
             jobs_client = JobsClient()
 
             self.base_path = 'projects/instant-medium-491107-t6/locations/asia-south1/jobs'
 
-            log.info(F"Executing Job: {self.job_name} | Run ID: {self.job_run_id}")
+            log.info(F"Executing Job: {self.job_name}")
 
             self.operation = jobs_client.run_job(
             name=(F"{self.base_path}/{self.job_name}")

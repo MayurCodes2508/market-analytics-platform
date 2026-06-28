@@ -1,6 +1,5 @@
 import json
 from loguru import logger as log
-from dotenv import load_dotenv
 import os
 
 
@@ -84,9 +83,7 @@ class Loader:
     
     def load_db_credentials(self):
 
-        load_dotenv(dotenv_path='../dev.env')
-
-        db_url = os.getenv('DB_URL')
+        db_url = os.getenv('NEON_DB_URL')
 
         if not db_url:
 

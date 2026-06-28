@@ -176,7 +176,7 @@ class Metadata:
 
         }
 
-        self.metadata = json.dumps(metadata)
+        self.metadata_payload = json.dumps(metadata)
 
 
     def metadata_run(self):

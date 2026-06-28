@@ -35,7 +35,7 @@
             "name": "x-cg-demo-api-key"
         }
     },
-    "destination": {
+    "dest": {
         "type": "GCS",
         "bucket": "dev-market-analytics-platform-bucket",
         "layer": "dev",

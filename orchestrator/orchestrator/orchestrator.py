@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
         pipeline_metadata.metadata_run_2(status='FAILED', error_message=error_message, successful_job_counts=runner.successful_jobs, failed_job_counts=runner.failed_jobs)
 
-        log.warning(F"Execution of Pipeline: {pipeline_metadata.pipeline_run_name} | Triggered By: {pipeline_metadata.pipeline_run_triggered_by} | Run ID: {pipeline_metadata.pipeline_run_id} | Status: {pipeline_metadata.pipeline_run_status} | error_message: {pipeline_metadata.pipeline_run_error_message} | Ended At: {pipeline_metadata.pipeline_run_end_time} | Failed Jobs Count: {pipeline_metadata.pipeline_run_end_job_counts['failed_jobs']}")
+        log.warning(F"Execution of Pipeline: {pipeline_metadata.pipeline_run_name} | Triggered By: {pipeline_metadata.pipeline_run_triggered_by} | Run ID: {pipeline_metadata.pipeline_run_id} | Status: {pipeline_metadata.pipeline_run_end_status} | error_message: {pipeline_metadata.pipeline_run_error_message} | Ended At: {pipeline_metadata.pipeline_run_end_time} | Failed Jobs Count: {pipeline_metadata.pipeline_run_end_job_counts['failed_jobs']}")
 
         pipeline_logger = Pipeline_Logger(loader, pipeline_metadata)
 

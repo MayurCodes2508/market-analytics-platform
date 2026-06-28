@@ -355,10 +355,10 @@ resource "google_cloud_run_v2_job" "prod_pipeline_run" {
   name = "prod-pipeline-run"
   location = "asia-south1"
 
-  deletion_protection = false
+  deletion_protection = true
 
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 
   template {
