@@ -11,7 +11,7 @@ on:
     branches: [main, dev]
     paths:
       - '**dbt_transformations/**'
-      - '**.github/**'
+      - '**.github/workflows/ci_dbt_system.yml**'
 
 jobs:
   validate_dbt:

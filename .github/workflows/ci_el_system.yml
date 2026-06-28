@@ -6,7 +6,7 @@ on:
 
     paths:
       - '**el_system/**'
-      - '**.github/**'
+      - '**.github/workflows/ci_el_system.yml**'
   
   pull_request:
     branches: [main, dev]

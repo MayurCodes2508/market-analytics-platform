@@ -6,7 +6,7 @@ on:
 
     paths:
       - '**orchestrator/**'
-      - '**.github/**'
+      - '**.github/workflows/ci_pipeline_run.yml**'
   
   pull_request:
     branches: [main, dev]
