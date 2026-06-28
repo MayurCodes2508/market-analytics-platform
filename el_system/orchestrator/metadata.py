@@ -167,12 +167,12 @@ class Metadata:
 
         metadata = {
 
-            'job_name': self.job_name,
-            'system': self.system,
-            'job_type': self.job_type,
-            'sub_jobtype': self.sub_jobtype,
-            'rows_processed': rows_processed,
-            'error_message': error_message
+            "job_name": self.job_name,
+            "system": self.system,
+            "job_type": self.job_type,
+            "sub_jobtype": self.sub_jobtype,
+            "rows_processed": rows_processed,
+            "error_message": error_message
 
         }
 

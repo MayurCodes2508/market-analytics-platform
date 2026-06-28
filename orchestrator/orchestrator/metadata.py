@@ -62,13 +62,13 @@ class Pipeline_Metadata:
 
             self.pipeline_start_metadata_dump = {
 
-                'pipeline_run_id': self.pipeline_run_id,
-                'pipeline_run_name': self.pipeline_run_name,
-                'pipeline_run_start_time': self.pipeline_run_start_time,
-                'pipeline_run_status': self.pipeline_run_start_status,
-                'pipeline_run_triggered_by': self.pipeline_run_triggered_by,
-                'pipeline_run_created_at': self.pipeline_run_created_at,
-                'pipeline_run_job_counts': self.pipeline_run_start_job_counts
+                "pipeline_run_id": self.pipeline_run_id,
+                "pipeline_run_name": self.pipeline_run_name,
+                "pipeline_run_start_time": self.pipeline_run_start_time,
+                "pipeline_run_status": self.pipeline_run_start_status,
+                "pipeline_run_triggered_by": self.pipeline_run_triggered_by,
+                "pipeline_run_created_at": self.pipeline_run_created_at,
+                "pipeline_run_job_counts": self.pipeline_run_start_job_counts
 
             }
 
@@ -93,18 +93,18 @@ class Pipeline_Metadata:
 
             self.pipeline_run_end_job_counts = {
 
-                'total_jobs': self.total_jobs,
-                'successful_jobs': self.successful_job_counts,
-                'failed_jobs': self.failed_job_counts
+                "total_jobs": self.total_jobs,
+                "successful_jobs": self.successful_job_counts,
+                "failed_jobs": self.failed_job_counts
             }
 
             self.pipeline_end_metadata_dump = {
 
-                'pipeline_run_id': self.pipeline_run_id,
-                'pipeline_run_status': self.pipeline_run_end_status,
-                'pipeline_run_error_message':  self.pipeline_run_error_message,
-                'pipeline_run_end_time': self.pipeline_run_end_time,
-                'pipeline_run_job_counts': self.pipeline_run_end_job_counts
+                "pipeline_run_id": self.pipeline_run_id,
+                "pipeline_run_status": self.pipeline_run_end_status,
+                "pipeline_run_error_message":  self.pipeline_run_error_message,
+                "pipeline_run_end_time": self.pipeline_run_end_time,
+                "pipeline_run_job_counts": self.pipeline_run_end_job_counts
 
             }
 
@@ -259,7 +259,7 @@ class Job_Metadata:
 
                 log_text = entry.payload
 
-                metadata = log_text.rsplit('METADATA_DUMP: ', 1)[-1]
+                metadata = log_text.rsplit("METADATA_DUMP: ", 1)[-1]
 
                 job_metadata = json.loads(metadata)
 
@@ -277,27 +277,27 @@ class Job_Metadata:
         try:
 
             self.job_metadata_dump = {
-                'job_run_id': self.job_run_id,
-                'pipeline_run_id': self.pipeline_run_id,
-                'job_name': job_metadata.get('job_name', None),
-                'system': job_metadata.get('system', None),
-                'job_type': job_metadata.get('job_type', None),
-                'sub_jobtype': job_metadata.get('sub_jobtype', None),
-                'job_status': self.status,
-                'start_time': start_time.isoformat(),
-                'end_time': end_time.isoformat(),
-                'created_at': created_at.isoformat(),
-                'error_message': job_metadata.get('error_message', None),
-                'job_metrics': {
-                    'rows_processed': job_metadata.get('rows_processed', None)
+                "job_run_id": self.job_run_id,
+                "pipeline_run_id": self.pipeline_run_id,
+                "job_name": job_metadata.get('job_name', None),
+                "system": job_metadata.get('system', None),
+                "job_type": job_metadata.get('job_type', None),
+                "sub_jobtype": job_metadata.get('sub_jobtype', None),
+                "job_status": self.status,
+                "start_time": start_time.isoformat(),
+                "end_time": end_time.isoformat(),
+                "created_at": created_at.isoformat(),
+                "error_message": job_metadata.get('error_message', None),
+                "job_metrics": {
+                    "rows_processed": job_metadata.get('rows_processed', None)
                 },
-                'extra_metadata': {
-                    'cloud_run_job_id': cloud_run_job_id,
-                    'cloud_run_job_name': cloud_run_job_name,
-                    'log_uri': log_uri,
-                    'max_retries': max_retries,
-                    'timeout': timeout,
-                    'is_retry': is_retry
+                "extra_metadata": {
+                    "cloud_run_job_id": cloud_run_job_id,
+                    "cloud_run_job_name": cloud_run_job_name,
+                    "log_uri": log_uri,
+                    "max_retries": max_retries,
+                    "timeout": timeout,
+                    "is_retry": is_retry
                 }
             }
 
