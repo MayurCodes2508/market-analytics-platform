@@ -8,36 +8,43 @@
     "sub_jobtype": "api",
 
     "metadata": {
+
         "source": "coingecko",
         "dataset": "market_price",
         "entity": "cryptocurrency"
     },
 
     "exec": {
-        "type": "ApiExecCommand",
+
+        "exec_type": "ApiExecCommand",
         "base_url": "https://api.coingecko.com/api/v3",
         "path": "/coins/markets",
         "pagination": {
+
             "strategy": "page",
             "page_param": "page"
         },
         "page_size": {
+
             "param": "per_page",
             "value": 250
         },
         "query_params": {
+
             "vs_currency": "inr"
         },
         "auth": {
-            "type": "api_key",
+
+            "auth_type": "api_key",
             "key_env": "COINGECKO_API_KEY",
             "location": "header",
             "name": "x-cg-demo-api-key"
         }
     },
 
-    "destination": {
-        "type": "GCS",
+    "dest": {
+
+        "dest_type": "GCS",
         "bucket": "prod-market-analytics-platform-bucket",
         "layer": "staging",
         "format": "parquet",

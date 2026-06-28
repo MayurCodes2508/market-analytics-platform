@@ -1,71 +1,119 @@
 {
+    
     "$schema": "https://json-schema.org/draft/2020-12/schema",
 
     "type": "object",
 
-    "required": ["job_name", "job_type", "exec"],
+    "required": ["job_name", "system", "job_type", "sub_jobtype", "exec"],
 
     "properties": {
 
         "job_name": {
+
             "type": "string",
             "pattern": "^(dev_|prod_)[a-z0-9_]+$",
             "minLength": 7,
-            "maxLength": 50
+            "maxLength": 30
         },
 
         "system": {
+
             "type": "string",
-            "enum": ["el", "dbt", "metadata"]
+            "minLength": 1,
+            "maxLength": 30
         },
 
         "job_type": {
+
             "type": "string",
-            "enum": ["ingestion", "quality", "transformation"]
+            "minLength": 1,
+            "maxLength": 30
         },
 
         "sub_jobtype": {
+
             "type": "string",
-            "enum": ["api", "dbt"]
+            "minLength": 1,
+            "maxLength": 30
         },
 
         "metadata": {
+
             "type": "object",
+
+            "required": ["source", "dataset", "entity"],
+
             "properties": {
+
                 "source": {
+
                     "type": "string",
-                    "pattern": "^[a-z0-9_]+$"
+                    "minLength": 1,
+                    "maxLength": 30
                 },
+
                 "dataset": {
+
                     "type": "string",
-                    "pattern": "^[a-z0-9_]+$"
+                    "minLength": 1,
+                    "maxLength": 30
                 },
+
                 "entity": {
+
                     "type": "string",
-                    "pattern": "^[a-z0-9_]+$"
+                    "minLength": 1,
+                    "maxLength": 30
                 }
             },
+
             "additionalProperties": false
         },
 
         "exec": {
+
             "$ref": "exec_schemas/api_exec_schema.json"
         },
 
-        "destination": {
+        "dest": {
+
             "$ref": "dest_schemas/gcs_dest_schema.json"
         }
     },
 
     "allOf": [
         {
+
             "if": {
+
                 "properties": {
+
                     "job_type": {"const": "ingestion"}
                 }
             },
+
             "then": {
-                "required": ["metadata", "destination"]
+
+                "required": ["dest"]
+            }
+        },
+
+        {
+
+            "if": {
+
+                "properties": {
+
+                    "dest": {
+
+                        
+                    }
+                }
+            },
+
+            "then": {
+
+                "required": ["metadata"]
             }
         }
     ],

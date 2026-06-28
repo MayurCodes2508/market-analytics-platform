@@ -66,7 +66,7 @@ class Metadata:
         log.info("Successfully Loaded Exec Cfg")
 
 
-        exec_type = self.exec_cfg['type']
+        exec_type = self.exec_cfg['exec_type']
 
         if not exec_type:
 
@@ -94,7 +94,7 @@ class Metadata:
 
         if self.job_type == 'ingestion':
 
-            dest_cfg = self.job_cfg['destination']
+            dest_cfg = self.job_cfg['dest']
 
             if not dest_cfg:
 
@@ -105,7 +105,7 @@ class Metadata:
             log.info("Successfully Loaded Dest Cfg")
 
 
-            dest_type = self.dest_cfg['type']
+            dest_type = self.dest_cfg['dest_type']
 
             if not dest_type:
 
@@ -128,7 +128,7 @@ class Metadata:
             
         else:
 
-            dest_cfg = self.job_cfg.get('destination')
+            dest_cfg = self.job_cfg.get('dest')
 
             if not dest_cfg:
 
@@ -141,7 +141,7 @@ class Metadata:
             log.info("Successfully Loaded Dest Cfg")
 
         
-            dest_type = self.dest_cfg['type']
+            dest_type = self.dest_cfg['dest_type']
 
             if not dest_type:
 
