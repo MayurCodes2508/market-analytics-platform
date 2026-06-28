@@ -53,7 +53,7 @@ class Runner:
 
                 self.job_logger.logger_run()
 
-                self.failed_count, self.successful_count = self.pipeline_metadata.collect_job_counts(self.job_metadata.status)
+                self.failed_count, self.successful_count = self.pipeline_metadata.collect_jobs_count(self.job_metadata.status)
 
                 self.successful_jobs += self.successful_count
                 self.failed_jobs += self.failed_count

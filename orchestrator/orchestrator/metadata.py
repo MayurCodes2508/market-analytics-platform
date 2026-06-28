@@ -1,7 +1,6 @@
 from loguru import logger as log
 from uuid6 import uuid7
 from datetime import datetime
-from dotenv import load_dotenv
 import os
 from google.cloud.run_v2 import ExecutionsClient
 from google.api_core.exceptions import GoogleAPIError, NotFound, InvalidArgument
@@ -20,34 +19,23 @@ class Pipeline_Metadata:
         
         self.loader = loader
 
+
+
         self.pipeline_cfg = self.loader.pipeline_cfg
 
+        self.pipeline_run_name = self.pipeline_cfg['pipeline_name']
 
-    def load_values(self):
-
-        name = self.pipeline_cfg.get('pipeline_name')
-
-        if not name:
-
-            log.warning("'name' is Missing, Affected Pipeline Metadata")
+        self.run_jobs = self.pipeline_cfg['jobs']
 
 
-        self.pipeline_run_name = name
+        log.info("Pipeline Values Loading Completed...")
 
 
-        run_jobs = self.pipeline_cfg['jobs']
-
-        if not run_jobs:
-
-            raise ValueError(F"Invalid 'run_jobs': {run_jobs}")
-        
-        self.run_jobs = run_jobs
-
-        log.info("Successfully Loaded the Values Required for Pipeline Execution")
+        log.info("Obj: pipeline metadata | Instance Initialized Successfully...")
 
 
     def create_pipeline_start_metadata(self):
-
+            
         try:
 
             self.pipeline_run_id = str(uuid7())
@@ -58,8 +46,6 @@ class Pipeline_Metadata:
 
             self.pipeline_run_start_status = 'RUNNING'
 
-            load_dotenv('../dev.env')
-
             self.pipeline_run_triggered_by = os.getenv('TRIGGERED_BY', 'manual')
 
             self.pipeline_run_created_at = self.now
@@ -67,9 +53,11 @@ class Pipeline_Metadata:
             self.total_jobs = len(self.run_jobs)
 
             self.pipeline_run_start_job_counts = {
+
                 'total_jobs': self.total_jobs,
                 'successful_jobs': None,
                 'failed_jobs': None
+
             }
 
             self.pipeline_start_metadata_dump = {
@@ -84,63 +72,77 @@ class Pipeline_Metadata:
 
             }
 
-            log.info("Pipeline Start Metadata Created")
+            log.info("Pipeline Start Metadata Creation Completed...")
 
         except Exception:
 
-            log.exception("Unexpected Error Occured, Affecting Pipeline Metadata")
+            log.error("Unexpected Error Occured While Creating Pipeline Start Metadata")
+
+            raise
 
 
-    def create_pipeline_end_metadata(self, status, error_message, successful_job_counts, failed_job_counts=None):
+    def create_pipeline_end_metadata(self, status, error_message, successful_job_counts, failed_job_counts):
 
-        self.pipeline_run_end_status = status
-        self.pipeline_run_error_message = error_message
-        self.successful_job_counts = successful_job_counts
-        self.failed_job_counts = failed_job_counts
-        self.pipeline_run_end_time = datetime.now().isoformat()
+        try:
 
-        self.pipeline_run_end_job_counts = {
-            'total_jobs': self.total_jobs,
-            'successful_jobs': self.successful_job_counts,
-            'failed_jobs': self.failed_job_counts
-        }
+            self.pipeline_run_end_status = status
+            self.pipeline_run_error_message = error_message
+            self.successful_job_counts = successful_job_counts
+            self.failed_job_counts = failed_job_counts
+            self.pipeline_run_end_time = datetime.now().isoformat()
 
-        self.pipeline_end_metadata_dump = {
+            self.pipeline_run_end_job_counts = {
 
-            'pipeline_run_id': self.pipeline_run_id,
-            'pipeline_run_status': self.pipeline_run_end_status,
-            'pipeline_run_error_message':  self.pipeline_run_error_message,
-            'pipeline_run_end_time': self.pipeline_run_end_time,
-            'pipeline_run_job_counts': self.pipeline_run_end_job_counts
+                'total_jobs': self.total_jobs,
+                'successful_jobs': self.successful_job_counts,
+                'failed_jobs': self.failed_job_counts
+            }
 
-        }
+            self.pipeline_end_metadata_dump = {
+
+                'pipeline_run_id': self.pipeline_run_id,
+                'pipeline_run_status': self.pipeline_run_end_status,
+                'pipeline_run_error_message':  self.pipeline_run_error_message,
+                'pipeline_run_end_time': self.pipeline_run_end_time,
+                'pipeline_run_job_counts': self.pipeline_run_end_job_counts
+
+            }
+
+            log.info("Pipeline End Metadata Creation Completed...")
+
+        except Exception:
+
+            log.error("Unexpected Error Occured While Creating Pipeline End Metadata")
+
+            raise
 
         
-    def collect_job_counts(self, status=None):
+    def collect_jobs_count(self, status):
 
-        if status == 'FAILED':
+        try:
 
-            failed_count = 1
-            successful_count = 0
+            if status == 'FAILED':
 
-        elif status == 'SUCCESS':
+                failed_count = 1
+                successful_count = 0
 
-            successful_count = 1
-            failed_count = 0
+            elif status == 'SUCCESS':
 
-        else:
+                successful_count = 1
+                failed_count = 0
 
-            log.warning("Unknown Status Value Found")
-
-            successful_count = 0
-            failed_count = 0
+            log.info("Jobs Count Collection Completed...")
             
-        return failed_count, successful_count
+            return failed_count, successful_count
+        
+        except Exception:
+
+            log.error("Unexpected Error Occured While Collecting Jobs Count")
+
+            raise
 
 
     def metadata_run(self):
-
-        self.load_values()
 
         self.create_pipeline_start_metadata()
 
@@ -253,29 +255,17 @@ class Job_Metadata:
 
                 '''
 
-            for seconds in range(30):
+            for entry in logging_client.list_entries(filter_=job_filter):
 
-                for entry in logging_client.list_entries(filter_=job_filter):
+                log_text = entry.payload
 
-                    log_text = entry.payload
+                metadata = log_text.rsplit('METADATA_DUMP: ', 1)[-1]
 
-                    metadata = log_text.rsplit('METADATA_DUMP: ', 1)[-1]
-
-                    job_metadata = json.loads(metadata)
-
-                    break
+                job_metadata = json.loads(metadata)
 
                 if job_metadata:
 
                     break
-
-                time.sleep(2)
-  
-            else:
-
-                job_metadata = None
-
-                log.warning("Couldnt Find the Entry, Affecting Job Metadata")
 
 
         except Exception:
