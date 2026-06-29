@@ -33,12 +33,12 @@ class Pipeline_Logger:
                     INSERT INTO pipeline_runs(
                                 run_id,
                                 pipeline_name,
-                                error_message,
                                 status,
                                 start_time,
                                 end_time,
                                 created_at,
                                 triggered_by,
+                                error_message,
                                 job_counts
                             )
 
@@ -51,13 +51,13 @@ class Pipeline_Logger:
                         query_values = (
 
                             self.pipeline_start_metadata_dump['pipeline_run_id'],
-                            self.pipeline_start_metadata_dump.get('pipeline_run_name', None),
-                            None,
+                            self.pipeline_start_metadata_dump['pipeline_run_name'],
                             self.pipeline_start_metadata_dump['pipeline_run_status'],
-                            self.pipeline_start_metadata_dump.get('pipeline_run_start_time', None),
+                            self.pipeline_start_metadata_dump['pipeline_run_start_time'],
                             None,
-                            self.pipeline_start_metadata_dump.get('pipeline_run_created_at', None),
-                            self.pipeline_start_metadata_dump.get('pipeline_run_triggered_by', None),
+                            self.pipeline_start_metadata_dump['pipeline_run_created_at'],
+                            self.pipeline_start_metadata_dump['pipeline_run_triggered_by'],
+                            None,
                             Json(self.pipeline_start_metadata_dump.get('pipeline_run_job_counts', None)),
 
                         )
@@ -101,11 +101,11 @@ class Pipeline_Logger:
                 """
 
                         query_values = (
-                            self.pipeline_end_metadata_dump.get('pipeline_run_status', None),
+                            self.pipeline_end_metadata_dump['pipeline_run_status'],
                             self.pipeline_end_metadata_dump.get('pipeline_run_error_message', None),
-                            self.pipeline_end_metadata_dump.get('pipeline_run_end_time', None),
+                            self.pipeline_end_metadata_dump['pipeline_run_end_time'],
                             Json(self.pipeline_end_metadata_dump.get('pipeline_run_job_counts', None)),
-                            self.pipeline_end_metadata_dump.get('pipeline_run_id', None)
+                            self.pipeline_end_metadata_dump['pipeline_run_id']
                         )
 
                         cursor.execute(update_query, query_values)
@@ -179,16 +179,16 @@ class Job_Logger:
                 """
 
                         query_values = (
-                            self.job_metadata_dump.get('job_run_id', None),
-                            self.job_metadata_dump.get('pipeline_run_id', None),                            
-                            self.job_metadata_dump.get('job_name', None),                            
-                            self.job_metadata_dump.get('system', None),                        
-                            self.job_metadata_dump.get('job_type', None),                        
-                            self.job_metadata_dump.get('sub_jobtype', None),                        
-                            self.job_metadata_dump.get('job_status', None),                        
-                            self.job_metadata_dump.get('start_time', None),                        
-                            self.job_metadata_dump.get('end_time', None),                        
-                            self.job_metadata_dump.get('created_at', None),                        
+                            self.job_metadata_dump['job_run_id'],
+                            self.job_metadata_dump['pipeline_run_id'],                            
+                            self.job_metadata_dump['job_name'],                            
+                            self.job_metadata_dump['system'],                        
+                            self.job_metadata_dump['job_type'],                        
+                            self.job_metadata_dump['sub_jobtype'],                        
+                            self.job_metadata_dump['job_status'],                        
+                            self.job_metadata_dump['start_time'],                        
+                            self.job_metadata_dump['end_time'],                        
+                            self.job_metadata_dump['created_at'],                        
                             self.job_metadata_dump.get('error_message', None),                        
                             Json(self.job_metadata_dump.get('job_metrics', None)),                        
                             Json(self.job_metadata_dump.get('extra_metadata', None)),                        
