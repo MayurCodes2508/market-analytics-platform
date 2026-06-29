@@ -238,18 +238,26 @@ class Job_Metadata:
                 textPayload:"METADATA_DUMP"
 
                 '''
+            
+            while True:
 
-            for entry in logging_client.list_entries(filter_=job_filter):
+                for entry in logging_client.list_entries(filter_=job_filter):
 
-                log_text = entry.payload
+                    log_text = entry.payload
 
-                metadata = log_text.rsplit("METADATA_DUMP: ", 1)[-1]
+                    metadata = log_text.rsplit("METADATA_DUMP: ", 1)[-1]
 
-                job_metadata = json.loads(metadata)
+                    job_metadata = json.loads(metadata)
+
+                    break
 
                 if job_metadata:
 
+                    log.info("Successfully Retrieved METADATA_DUMP")
+
                     break
+
+                time.sleep(2)
 
 
         except Exception:
