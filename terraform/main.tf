@@ -67,8 +67,16 @@ resource "google_storage_bucket" "dev_market_analytics_platform_bucket" {
   }
 }
 
-resource "google_secret_manager_secret" "dev_market_analytics_platform_secrets" {
-  secret_id = "dev_market_analytics_platform_secrets"
+resource "google_secret_manager_secret" "dev_market_analytics_platform_coingecko_api_key_secrets" {
+  secret_id = "dev-market-analytics-platform-coingecko-api-key-secret"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret" "dev_market_analytics_platform_neon_db_url_secrets" {
+  secret_id = "dev-market-analytics-platform-neon-db-url-secret"
 
   replication {
     auto {}
@@ -95,8 +103,8 @@ resource "google_cloud_run_v2_job" "dev_el_system_run" {
           name = "COINGECKO_API_KEY"
           value_source {
             secret_key_ref {
-              secret  = "dev_market_analytics_platform_secrets"
-              version = "4"
+              secret  = "dev-market-analytics-platform-coingecko-api-key-secret"
+              version = "1"
             }
           }
         }
@@ -189,11 +197,11 @@ resource "google_cloud_run_v2_job" "dev_pipeline_run" {
          }
 
          env {
-          name = "DB_URL"
+          name = "NEON_DB_URL"
           value_source {
             secret_key_ref {
-              secret  = "dev_market_analytics_platform_secrets"
-              version = "5"
+              secret  = "dev-market-analytics-platform-neon-db-url-secret"
+              version = "1"
             }
           }
          }
@@ -269,8 +277,26 @@ resource "google_storage_bucket" "prod_market_analytics_platform_bucket" {
   }
 }
 
-resource "google_secret_manager_secret" "prod_market_analytics_platform_secrets" {
-  secret_id = "prod-market-analytics-platform-secret"
+resource "google_secret_manager_secret" "prod_market_analytics_platform_coingecko_api_keysecrets" {
+  secret_id = "prod-market-analytics-platform-coingecko-api-key-secret"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  replication {
+    auto {}
+  }
+
+  deletion_protection = true
+}
+
+resource "google_secret_manager_secret" "prod_market_analytics_platform_neon_db_url_secrets" {
+  secret_id = "prod-market-analytics-platform-neon-db-url-secret"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 
   replication {
     auto {}
@@ -304,7 +330,7 @@ resource "google_cloud_run_v2_job" "prod_el_system_run" {
           name = "COINGECKO_API_KEY"
           value_source {
             secret_key_ref {
-              secret  = "prod-market-analytics-platform-secret"
+              secret  = "prod-market-analytics-platform-coingecko-api-key-secret"
               version = "1"
             }
           }
@@ -371,11 +397,11 @@ resource "google_cloud_run_v2_job" "prod_pipeline_run" {
         args = [ "python -u -m orchestrator.orchestrator --file_path configs/pipeline_configs/prod/market_analytics.json --schema_path schemas/pipeline_schema.json" ]
 
         env {
-        name = "DB_URL"
+        name = "NEON_DB_URL"
         value_source {
           secret_key_ref {
-            secret  = "prod-market-analytics-platform-secret"
-            version = "2"
+            secret  = "prod-market-analytics-platform-neon-db-url-secret"
+            version = "1"
             }
           }
         }
