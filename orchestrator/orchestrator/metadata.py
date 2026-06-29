@@ -177,7 +177,7 @@ class Job_Metadata:
 
             log.info(F"Job Execution Name: {self.execution_name}")
 
-            for seconds in range(30):
+            while True:
 
                 self.execution = executions_client.get_execution(
                     name=self.execution_name
@@ -190,14 +190,6 @@ class Job_Metadata:
                     break
 
                 time.sleep(2)
-        
-            if not self.execution:
-
-                raise ValueError("Invalid 'execution', Stopping....")
-
-            elif not self.execution.completion_time:
-
-                raise ValueError("Execution Failed to Complete Within Time, Stopping....")
 
 
             start_time = self.execution.start_time
@@ -218,23 +210,15 @@ class Job_Metadata:
 
             is_retry = bool(self.execution.retried_count)
 
-            for seconds in range(30):
+            for condition in self.execution.conditions:
 
-                for condition in self.execution.conditions:
-
-                    if condition.type_ == 'Completed' and condition.state == 4:
+                if condition.type_ == 'Completed' and condition.state == 4:
  
-                        log.info("Job Executed Successfully")
+                    log.info("Job Executed Successfully")
 
-                        self.status = 'SUCCESS'
-
-                        break
-
-                if self.status == 'SUCCESS':
+                    self.status = 'SUCCESS'
 
                     break
-
-                time.sleep(2)
 
             else:
 

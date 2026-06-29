@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     error_message = None
 
-    status = 'Failed'
+    status = "FAILED"
         
     try:
 
@@ -78,7 +78,7 @@ if __name__ == '__main__':
 
     else:
 
-        status = 'SUCCESS'
+        status = "SUCCESS"
 
         pipeline_metadata.metadata_run_2(status=status, error_message=error_message, successful_job_counts=runner.successful_jobs, failed_job_counts=runner.failed_jobs)
 
