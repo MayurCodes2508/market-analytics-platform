@@ -239,7 +239,10 @@ class Job_Metadata:
 
                 '''
             
+            job_metadata = None
+            
             while True:
+
 
                 for entry in logging_client.list_entries(filter_=job_filter):
 
@@ -250,6 +253,7 @@ class Job_Metadata:
                     job_metadata = json.loads(metadata)
 
                     break
+
 
                 if job_metadata:
 
@@ -265,6 +269,7 @@ class Job_Metadata:
             log.exception("Unexpected Error Occured, Affecting Job Metadata")
 
             raise
+
 
         try:
 
