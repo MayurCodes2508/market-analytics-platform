@@ -1,0 +1,41 @@
+from loguru import logger as log
+from job_executors.dests.bq_dest import BQ
+
+
+
+
+
+class BQDest:
+
+    
+    @classmethod
+    def run(cls, dest_cfg, metadata_cfg, data):
+
+        return BQ(dest_cfg=dest_cfg, metadata_cfg=metadata_cfg, data=data)
+
+        
+
+
+
+
+class DestType:
+
+
+    registry = {
+
+        "BQ": BQDest
+
+    }
+
+
+
+    @classmethod
+    def get_dest_type(cls, dest_type, *args, **kwargs):
+
+        class_template = cls.registry[dest_type]
+
+        log.info(F"Successfully Mapped the Dest Type: {dest_type} with Dest Registry...")
+
+        dest = class_template.run(*args, **kwargs)
+
+        return dest

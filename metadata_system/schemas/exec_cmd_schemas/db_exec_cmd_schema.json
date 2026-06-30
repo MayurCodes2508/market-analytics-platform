@@ -1,0 +1,54 @@
+{
+
+    "type": "object",
+
+    "required": ["exec_type", "table", "query", "auth"],
+
+    "properties": {
+
+        "exec_type": {
+
+            "type": "string",
+            "const": "DBExecCmd"
+        },
+
+        "table": {
+
+            "type": "string",
+            "const": "{dataset}"
+        },
+
+        "query": {
+
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30
+        },
+
+        "auth": {
+
+            "type": "object",
+
+            "required": ["auth_type", "key_env"],
+
+            "properties": {
+
+                "auth_type": {
+
+                    "type": "string",
+                    "const": "db_url"
+                },
+
+                "key_env": {
+
+                    "type": "string",
+                    "const": "NEON_DB_URL"
+                }
+            },
+
+            "additionalProperties": false
+        }
+    },
+
+    "additionalProperties": false
+}

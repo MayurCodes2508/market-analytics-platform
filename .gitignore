@@ -4,6 +4,7 @@ __pycache__/
 *.pyc*
 .env
 .DS_Store
+dev_testing.py
 dev_testing/
 *.terraform*
 *.code-workspace*
@@ -14,17 +15,14 @@ LICENSE.txt
 *.tfvars
 gcloud
 dev.env
-__init__.py
 logs/
 target/
 macros/
 snapshots/
 tests/
 dbt_packages/
-file_list.txt
-core/
-marts/
 alerts_system/
+
 
 
 !docs/
