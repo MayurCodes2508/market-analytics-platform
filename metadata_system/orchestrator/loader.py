@@ -1,26 +1,80 @@
+from pathlib import Path
 from loguru import logger as log
 import json
 from json import JSONDecodeError
 
 
+class JobCatalog:
+
+
+    def __init__(self):
+
+        self.file_path = Path(__file__).parent.parent / "configs" / "catalog" / "config.json"
+
+
+        log.info("JSON Job Catalog Path Loading Completed...")
+
+
+        log.info("Obj: job_catalog | Instance Initialized Successfully...")
+
+
+    def load_job_catalog(self):
+
+        try:
+
+            with open(file=self.file_path, mode='r') as f:
+
+                self.job_catalog = json.load(fp=f)
+
+                self.jobs = self.job_catalog['jobs']
+
+                log.info("Job Catalog Loading Completed...")
+
+        except FileNotFoundError:
+
+            log.error(F"File Not Found Error: {self.file_path} | Provide a Valid JSON Job Catalog File Path")
+
+            raise
+
+        except JSONDecodeError as e:
+
+            log.error(F"JSON Parsing/Decoding Error: {self.file_path} | Provide Valid JSON Format | Details: {e}")
+
+            raise
+
+        except UnicodeDecodeError:
+
+            log.error(F"Unicode Decoding Error: {self.file_path} | Expected UTF-8")
+
+            raise
+
+        except Exception:
+
+            log.exception(F"Unknown Error Occured While Loading Job Catalog: {self.file_path}")
+
+            raise
+
+
+    def job_catalog_run(self):
+
+        self.load_job_catalog()
 
 
 
+class JobConfigLoader: 
 
-class Loader:
 
-
-    def __init__(self, file_path, schema_path):
+    def __init__(self, file_path):
         
         self.file_path = file_path
 
-        self.schema_path = schema_path
+        self.schema_path = Path(__file__).parent.parent / "schemas" / "root_schema.json"
 
 
         log.info("JSON Job & Schema Cfg Paths Loading Completed...")
 
 
-        log.info("Obj: loader | Instance Initialized Successfully...")
+        log.info("Obj: job_cfg_loader | Instance Initialized Successfully...")
 
 
     def load_job_cfg(self):
@@ -93,7 +147,7 @@ class Loader:
             raise
 
 
-    def loader_run(self):
+    def job_cfg_loader_run(self):
 
         self.load_job_cfg()
 
