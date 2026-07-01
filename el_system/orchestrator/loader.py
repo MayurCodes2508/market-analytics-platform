@@ -1,6 +1,5 @@
 from loguru import logger as log
 import json
-from dotenv import load_dotenv
 import os
 
 
@@ -81,27 +80,20 @@ class Loader:
             raise
 
 
-    def load_auth(self):
+    def load_auth(self, auth_cfg):
 
-        load_dotenv(dotenv_path="../dev.env")
+        self.auth_cfg = auth_cfg
 
-        auth_config = self.exec_cfg.get('auth')
-
-        if not auth_config:
-
-            log.info("No Auth Configured in Job, Skipping Authentication")
-
-            return
                      
-        api_key = os.getenv(auth_config['key_env'])
+        api_key = os.getenv(self.auth_cfg['key_env'])
 
         if not api_key:
 
-            raise ValueError(f"Invalid 'api_key': {self.api_key}")
-        
-        self.api_key = api_key
+            raise ValueError(f"Invalid 'api_key': {api_key}")
             
         log.info("Successfully Loaded Env Creds")
+
+        return api_key
 
 
     def loader_run(self):

@@ -15,15 +15,21 @@ class Execution_Command_Factory:
 
 
     @classmethod
-    def get_exec_type(cls, exec_type, *args, **kwargs):
+    def get_exec_type(cls, exec_type, auth_cfg, loader, *args, **kwargs):
 
         exec_connector = cls.registry.get(exec_type)
 
         if not exec_connector:
 
             raise ValueError(F"Invalid Exec Type: {exec_type}")
+
+        api_key = None
+
+        if auth_cfg:
+
+            api_key = loader.load_auth(auth_cfg=auth_cfg)
         
-        return exec_connector(*args, **kwargs)
+        return exec_connector(api_key=api_key, auth_cfg=auth_cfg, *args, **kwargs)
 
 
 class Destination_Target_Factory:
@@ -66,13 +72,12 @@ class Runner:
 
         self.exec_type = self.metadata.exec_type
         self.job_name = self.metadata.job_name
-        self.api_key = getattr(self.loader, 'api_key', None)
 
         self.dest_type = getattr(self.metadata, 'dest_type', None)
         
     def execute_job(self):
 
-        self.exec_obj = Execution_Command_Factory.get_exec_type(exec_type=self.exec_type, exec_cfg=self.exec_cfg, job_name=self.job_name, api_key=self.api_key, auth_cfg=self.auth_cfg)
+        self.exec_obj = Execution_Command_Factory.get_exec_type(exec_type=self.exec_type, exec_cfg=self.exec_cfg, job_name=self.job_name, auth_cfg=self.auth_cfg, loader=self.loader)
 
         self.data, self.rows_processed = self.exec_obj.run()
 
