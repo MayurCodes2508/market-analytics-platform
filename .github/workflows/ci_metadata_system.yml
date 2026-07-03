@@ -1,30 +1,30 @@
-name: CI - EL CONFIG SYSTEM
+name: CI - METADATA CONFIG SYSTEM
 
 on:
   push:
     branches: [main, dev]
 
     paths:
-      - '**el_system/**'
-      - '**.github/workflows/ci_el_system.yml**'
+      - '**metadata_system/**'
+      - '**.github/workflows/ci_metadata_system.yml**'
   
   pull_request:
     branches: [main, dev]
 
     paths:
-      - '**el_system/**'
-      - '**.github/workflows/ci_el_system.yml**'
+      - '**metadata_system/**'
+      - '**.github/workflows/ci_metadata_system.yml**'
 
 jobs:
-  validate_elt_system:
-    name: Run EL Job & Containerize
+  validate_metadata_system:
+    name: Run Metadata Job & Containerize
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
     defaults:
       run:
-        working-directory: ./el_system
+        working-directory: ./metadata_system
 
     steps:
       - name: Checkout Code
@@ -41,7 +41,7 @@ jobs:
         with:
           python-version: '3.14.5'
           cache: 'pip'
-          cache-dependency-path: 'el_system/requirements.txt'
+          cache-dependency-path: 'metadata_system/requirements.txt'
 
       - name: Install System Dependencies
         run: |
@@ -49,11 +49,11 @@ jobs:
 
       - name: Run System Python Code
         run: |
-          python -u -m orchestrator.orchestrator --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json
+          python -u -m orchestrator.orchestrator
         env:
-          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+          NEON_DB_URL: ${{ secrets.NEON_DB_URL }}
 
       - name: Build System Container Image
         run: |
-          docker build -t el-system-job:CI .
+          docker build -t metadata-system-job:CI .
           
