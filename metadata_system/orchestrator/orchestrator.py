@@ -1,4 +1,5 @@
 from loguru import logger as log
+import json
 from orchestrator.loader import JobCatalog, JobConfigLoader
 from orchestrator.validator import Validator
 from orchestrator.metadata import Metadata
@@ -12,64 +13,106 @@ import time
 
 if __name__ == '__main__':
 
-    job_catalog_loader = JobCatalog()
+    try:
 
-    job_catalog_loader.job_catalog_run()
+        job_catalog_loader = JobCatalog()
 
-
-    for job in job_catalog_loader.jobs:
-
-        file_path = job['path']
-
-        error_message = None
+        job_catalog_loader.job_catalog_run()
 
 
-        try:
+        for job in job_catalog_loader.jobs:
 
-            job_cfg_loader = JobConfigLoader(file_path=file_path)
+            job_name = job['job_name']
 
-            job_cfg_loader.job_cfg_loader_run()
+            file_path = job['path']
 
+            try:
 
-            log.info("Job Execution Preparations Started...")
+                log.info("Job Execution Preparations Started...")
 
+                job_cfg_loader = JobConfigLoader(file_path=file_path)
 
-
-            validator = Validator(loader=job_cfg_loader)
-
-            validator.validator_run()
-
-
-            metadata = Metadata(loader=job_cfg_loader)
+                job_cfg_loader.job_cfg_loader_run()
 
 
-            log.info(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: RUNNNG...")
+                validator = Validator(loader=job_cfg_loader)
+
+                validator.validator_run()
 
 
-            runner = Runner(metadata=metadata)
+            except Exception as preparation_error:
 
-            runner.runner_run()
+                error_message = str(preparation_error)
+
+                print(F"METADATA_DUMP: {json.dumps({
+
+                    "job_name": job_name,
+                    "system": None,
+                    "job_type": None,
+                    "sub_jobtype": None,
+                    "error_message": error_message,
+                    "rows_processed": None
+                })}")
+
+                log.error(F"Job Execution: {job_name} | Preparations Failed")
+
+                log.error(F"Details: {error_message}")
 
 
-        except Exception as job_error:
+            runner = None
 
-            error_message = str(job_error)
+            try:
 
-            job_metadata_dump = metadata.build_job_metadata(error_message=error_message, rows_processed=runner.rows_processed)
-
-            print(F"METADATA_DUMP: {job_metadata_dump}")
-
-            log.error(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: FAILED | Details: {job_error}")
-
-            raise
+                metadata = Metadata(loader=job_cfg_loader)
 
 
-        else:
+                log.info(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: RUNNNG...")
 
-            job_metadata_dump = metadata.build_job_metadata(error_message=None, rows_processed=runner.rows_processed)
 
-            print(F"METADATA_DUMP: {job_metadata_dump}")
+                runner = Runner(metadata=metadata)
 
-            log.info(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: SUCCESS...")
+                runner.runner_run()
 
-        time.sleep(5)
+
+            except Exception as execution_error:
+
+                error_message = str(execution_error)
+
+                job_metadata_dump = metadata.build_job_metadata(
+                    error_message=error_message,
+                    rows_processed=(
+                        runner.rows_processed
+                        if runner and hasattr(runner, 'rows_processed')
+                        else None
+                    )
+                )
+
+                print(F"METADATA_DUMP: {job_metadata_dump}")
+
+                log.error(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: FAILED")
+
+                log.error(F"Details: {error_message}")
+
+
+            else:
+
+                job_metadata_dump = metadata.build_job_metadata(
+                    error_message=None,
+                    rows_processed=(
+                        runner.rows_processed
+                        if runner and hasattr(runner, 'rows_processed')
+                        else None
+                    )
+                )
+
+                print(F"METADATA_DUMP: {job_metadata_dump}")
+
+                log.info(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: SUCCESS...")
+
+
+            time.sleep(5)
+
+    
+    except Exception:
+
+        raise

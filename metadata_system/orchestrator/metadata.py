@@ -13,7 +13,6 @@ class Metadata:
         self.loader = loader
 
 
-
         self.job_cfg = loader.job_cfg
 
         self.job_name = self.job_cfg['job_name']
@@ -47,7 +46,6 @@ class Metadata:
             "sub_jobtype": self.sub_jobtype,
             "error_message": error_message,
             "rows_processed": rows_processed
-
         }
 
 

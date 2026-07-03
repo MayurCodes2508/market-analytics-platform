@@ -1,7 +1,11 @@
+import os
 from pathlib import Path
 from loguru import logger as log
 import json
 from json import JSONDecodeError
+
+
+
 
 
 class JobCatalog:
@@ -9,7 +13,21 @@ class JobCatalog:
 
     def __init__(self):
 
-        self.file_path = Path(__file__).parent.parent / "configs" / "catalog" / "config.json"
+        env = os.getenv(key='ENV')
+
+        if env == 'PROD':
+            
+            self.file_path = Path(__file__).parent.parent / "configs" / "catalog" / "prod" / "config.json"
+
+
+        elif env == 'DEV':
+            
+            self.file_path = Path(__file__).parent.parent / "configs" / "catalog" / "dev" / "config.json"
+
+        
+        else:
+
+            raise ValueError(F"Unknown Env: {env} | Provide a Valid Env")
 
 
         log.info("JSON Job Catalog Path Loading Completed...")
@@ -30,11 +48,13 @@ class JobCatalog:
 
                 log.info("Job Catalog Loading Completed...")
 
+
         except FileNotFoundError:
 
             log.error(F"File Not Found Error: {self.file_path} | Provide a Valid JSON Job Catalog File Path")
 
             raise
+
 
         except JSONDecodeError as e:
 
@@ -42,11 +62,13 @@ class JobCatalog:
 
             raise
 
+
         except UnicodeDecodeError:
 
             log.error(F"Unicode Decoding Error: {self.file_path} | Expected UTF-8")
 
             raise
+
 
         except Exception:
 
@@ -87,11 +109,13 @@ class JobConfigLoader:
 
                 log.info("Job Cfg Loading Completed...")
 
+
         except FileNotFoundError:
 
             log.error(F"File Not Found Error: {self.file_path} | Provide a Valid JSON Job Cfg File Path")
 
             raise
+
 
         except JSONDecodeError as e:
 
@@ -99,11 +123,13 @@ class JobConfigLoader:
 
             raise
 
+
         except UnicodeDecodeError:
 
             log.error(F"Unicode Decoding Error: {self.file_path} | Expected UTF-8")
 
             raise
+        
 
         except Exception:
 
@@ -122,11 +148,13 @@ class JobConfigLoader:
 
                 log.info("Schema Cfg Loading Completed...")
 
+
         except FileNotFoundError:
 
             log.error(F"File Not Found Error: {self.schema_path} | Provide a Valid JSON Schema Cfg File Path")
 
             raise
+
 
         except JSONDecodeError as e:
 
@@ -134,11 +162,13 @@ class JobConfigLoader:
 
             raise
 
+
         except UnicodeDecodeError:
 
             log.error(F"Unicode Decoding Error: {self.schema_path} | Expected UTF-8")
 
             raise
+
 
         except Exception:
 

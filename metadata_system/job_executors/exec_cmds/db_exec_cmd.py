@@ -30,20 +30,32 @@ class DBExecCommand:
         )
 
 
-        self.query = exec_cfg['query']
+        query = exec_cfg['query']
 
-        self.query = self.query.format(
+        self.query = query.format(
             table=self.table
         )
 
 
-        self.auth_cfg = exec_cfg['auth']
+        self.auth_cfg = exec_cfg.get('auth', {})
 
-        self.auth_type = self.auth_cfg['auth_type']    
+        self.auth_type = self.auth_cfg.get('auth_type', None)
+
+        if not self.auth_cfg and self.auth_type:
+
+            log.info("Auth Not Provided, Skipping...")
+            
+
+            log.info("Exec Metadata Loading Completed...")
+
+
+            log.info("Obj: dbexeccmd | Instance Initialization Completed...")
+
+            return
 
         self.auth = AuthRegistry.get_obj(
-            auth_type=self.auth_type,
-            auth_cfg=self.auth_cfg
+            auth_cfg=self.auth_cfg,
+            auth_type=self.auth_type
         )
             
         self.secret = self.auth.secret

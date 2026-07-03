@@ -39,17 +39,20 @@ class Validator:
 
             log.info("Job Validation Against the Given Schema Completed...")
 
+
         except ValidationError as e:
 
             log.error(F"Validation Error: {self.job_cfg} | Provide a Valid Job Cfg | Details: {e}")
 
             raise
 
+
         except SchemaError as e:
 
             log.error(F"Schema Error: {self.schema_cfg} | Provide a Valid Schema | Details: {e}")
 
             raise
+        
 
         except Exception:
 

@@ -19,11 +19,11 @@ class Runner:
         self.exec_type = self.exec_cfg['exec_type']
 
 
-        self.metadata_cfg = getattr(self.metadata, 'metadata_cfg', {})
+        self.metadata_cfg = metadata.metadata_cfg
 
 
 
-        self.dest_cfg = getattr(self.metadata, 'dest_cfg', {})
+        self.dest_cfg = metadata.dest_cfg
 
         self.dest_type = self.dest_cfg.get('dest_type', None)
 

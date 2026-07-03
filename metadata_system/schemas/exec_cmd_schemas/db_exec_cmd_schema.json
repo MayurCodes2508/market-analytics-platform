@@ -2,7 +2,7 @@
 
     "type": "object",
 
-    "required": ["exec_type", "table", "query", "auth"],
+    "required": ["exec_type", "table", "query"],
 
     "properties": {
 
@@ -21,15 +21,14 @@
         "query": {
 
             "type": "string",
-            "minLength": 1,
-            "maxLength": 30
+            "minLength": 1
         },
 
         "auth": {
 
             "type": "object",
 
-            "required": ["auth_type", "key_env"],
+            "required": ["auth_type"],
 
             "properties": {
 
@@ -45,6 +44,25 @@
                     "const": "NEON_DB_URL"
                 }
             },
+
+            "allOf": [
+
+                {
+
+                    "if": {
+
+                        "properties": {
+
+                            "auth_type": {"const": "db_url"}
+                        }
+                    },
+
+                    "then": {
+
+                        "required": ["key_env"]
+                    }
+                }
+            ],
 
             "additionalProperties": false
         }

@@ -9,7 +9,7 @@ from loguru import logger as log
 class DBUrl:
 
 
-    def __init__(self, auth_cfg=None):
+    def __init__(self, auth_cfg):
 
         self.auth_cfg = auth_cfg
 
@@ -24,7 +24,7 @@ class DBUrl:
 
     def load_db_creds(self):
 
-        secret = os.getenv(key=self.key_env, default=None)
+        secret = os.getenv(key=self.key_env)
 
         if not secret:
 
@@ -44,19 +44,16 @@ class DBUrl:
 class AuthRegistry:
 
 
-    auth_registry = {
+    registry = {
         'db_url': DBUrl
     }
 
 
     @classmethod
-    def get_obj(cls, auth_type, auth_cfg):
+    def get_obj(cls, auth_cfg, auth_type):
 
-        class_template = AuthRegistry.auth_registry.get(auth_type, None)
+        class_template = cls.registry[auth_type]
 
-        if not class_template:
-
-            raise ValueError(F"Unsupported Auth Type: {auth_type}")
         
         log.info(F"Successfully Mapped the Auth Type: {auth_type} with Auth Registry...")
         
