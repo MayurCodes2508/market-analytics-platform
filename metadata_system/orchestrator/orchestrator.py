@@ -44,15 +44,17 @@ if __name__ == '__main__':
 
                 error_message = str(preparation_error)
 
-                print(F"METADATA_DUMP: {json.dumps({
+                dump = {
 
                     "job_name": job_name,
                     "system": None,
                     "job_type": None,
                     "sub_jobtype": None,
                     "error_message": error_message,
-                    "rows_processed": None
-                })}")
+                    "rows_processed": None 
+                }
+
+                print(F"METADATA_DUMP: {json.dumps(obj=dump)}")
 
                 log.error(F"Job Execution: {job_name} | Preparations Failed")
 
