@@ -5,7 +5,6 @@ from orchestrator.loader import JobCatalog, JobConfigLoader
 from orchestrator.validator import Validator
 from orchestrator.metadata import Metadata
 from orchestrator.runner import Runner
-import time
 
 
 
@@ -49,7 +48,7 @@ class Orchestrator:
                 "rows_processed": None 
             }
 
-            print(F"METADATA_DUMP: {json.dumps(obj=dump)}")
+            log.info(F"METADATA_DUMP: {json.dumps(obj=dump)}")
 
             log.error(F"Job Execution: {job_name} | Preparations Failed")
 
@@ -84,7 +83,7 @@ class Orchestrator:
                 )
             )
 
-            print(F"METADATA_DUMP: {job_metadata_dump}")
+            log.info(F"METADATA_DUMP: {job_metadata_dump}")
 
             log.error(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: FAILED")
 
@@ -102,12 +101,9 @@ class Orchestrator:
                 )
             )
 
-            print(F"METADATA_DUMP: {job_metadata_dump}")
+            log.info(F"METADATA_DUMP: {job_metadata_dump}")
 
             log.info(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: SUCCESS...")
-
-
-        time.sleep(5)
 
 
 
