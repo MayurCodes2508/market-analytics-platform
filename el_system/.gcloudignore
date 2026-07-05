@@ -1,5 +1,4 @@
 __pycache__/
 *.pyc*
 .venv/
-__init__.py
-
+.vscode/
