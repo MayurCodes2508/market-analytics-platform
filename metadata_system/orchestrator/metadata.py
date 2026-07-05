@@ -34,7 +34,7 @@ class Metadata:
         log.info("Obj: metadata | Instance Initialized Successfully...")
 
 
-    def build_job_metadata(self, job_run_id, error_message, rows_processed):
+    def build_job_metadata(self, job_run_id, status, error_message, rows_processed):
 
         metadata_dump = {
             
@@ -43,6 +43,7 @@ class Metadata:
             "system": self.system,
             "job_type": self.job_type,
             "sub_jobtype": self.sub_jobtype,
+            "status": status,
             "error_message": error_message,
             "rows_processed": rows_processed
         }

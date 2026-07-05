@@ -31,7 +31,7 @@ class Orchestrator:
 
             job_run_id = str(uid())
 
-            log.success(F"Job: {job_name} | ID: {job_run_id} | Preparations Started...")
+            log.info(F"Job: {job_name} | ID: {job_run_id} | Preparations Started...")
 
             job_cfg_loader = JobConfigLoader(file_path=file_path)
 
@@ -54,6 +54,7 @@ class Orchestrator:
                 "system": None,
                 "job_type": None,
                 "sub_jobtype": None,
+                "status": "FAILED",
                 "error_message": error_message,
                 "rows_processed": None 
             }
@@ -74,7 +75,7 @@ class Orchestrator:
             metadata = Metadata(loader=job_cfg_loader)
 
 
-            log.success(F"Job Execution: {metadata.job_name} | ID: {job_run_id} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: RUNNING...")
+            log.info(F"Job Execution: {metadata.job_name} | ID: {job_run_id} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: RUNNING...")
 
 
             runner = Runner(metadata=metadata)
@@ -88,6 +89,7 @@ class Orchestrator:
 
             job_metadata_dump = metadata.build_job_metadata(
                 job_run_id=job_run_id,
+                status="FAILED",
                 error_message=error_message,
                 rows_processed=(
                     runner.rows_processed
@@ -109,6 +111,7 @@ class Orchestrator:
 
             job_metadata_dump = metadata.build_job_metadata(
                 job_run_id=job_run_id,
+                status="SUCCESS",
                 error_message=None,
                 rows_processed=(
                     runner.rows_processed
