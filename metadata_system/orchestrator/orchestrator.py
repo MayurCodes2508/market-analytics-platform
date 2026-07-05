@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor as tpe
 from loguru import logger as log
 from google.cloud import logging
+from uuid import uuid6 as uid
 import json
 from orchestrator.loader import JobCatalog, JobConfigLoader
 from orchestrator.validator import Validator
@@ -28,7 +29,9 @@ class Orchestrator:
 
         try:
 
-            log.info("Job Execution Preparations Started...")
+            job_run_id = str(uid())
+
+            log.success(F"Job: {job_name} | ID: {job_run_id} | Preparations Started...")
 
             job_cfg_loader = JobConfigLoader(file_path=file_path)
 
@@ -46,6 +49,7 @@ class Orchestrator:
 
             dump = {
 
+                "job_run_id": job_run_id,
                 "job_name": job_name,
                 "system": None,
                 "job_type": None,
@@ -58,7 +62,7 @@ class Orchestrator:
 
             log.info(F"METADATA_DUMP: {json.dumps(obj=dump)}")
 
-            log.error(F"Job Execution: {job_name} | Preparations Failed")
+            log.error(F"Job Execution: {job_name} | ID: {job_run_id} | Preparations Failed")
 
             log.error(F"Details: {error_message}")
 
@@ -70,7 +74,7 @@ class Orchestrator:
             metadata = Metadata(loader=job_cfg_loader)
 
 
-            log.info(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: RUNNNG...")
+            log.success(F"Job Execution: {metadata.job_name} | ID: {job_run_id} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: RUNNING...")
 
 
             runner = Runner(metadata=metadata)
@@ -83,6 +87,7 @@ class Orchestrator:
             error_message = str(execution_error)
 
             job_metadata_dump = metadata.build_job_metadata(
+                job_run_id=job_run_id,
                 error_message=error_message,
                 rows_processed=(
                     runner.rows_processed
@@ -95,7 +100,7 @@ class Orchestrator:
 
             log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
 
-            log.error(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}")
+            log.error(F"Job Execution: {metadata.job_name} | ID: {job_run_id} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}")
 
             log.error(F"Details: {error_message}")
 
@@ -103,6 +108,7 @@ class Orchestrator:
         else:
 
             job_metadata_dump = metadata.build_job_metadata(
+                job_run_id=job_run_id,
                 error_message=None,
                 rows_processed=(
                     runner.rows_processed
@@ -115,7 +121,7 @@ class Orchestrator:
 
             log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
 
-            log.success(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}")
+            log.success(F"Job Execution: {metadata.job_name}| ID: {job_run_id} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}")
 
 
 

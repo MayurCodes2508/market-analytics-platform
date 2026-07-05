@@ -11,7 +11,6 @@ class Metadata:
         
         self.loader = loader
 
-
         self.job_cfg = loader.job_cfg
 
         self.job_name = self.job_cfg['job_name']
@@ -35,10 +34,11 @@ class Metadata:
         log.info("Obj: metadata | Instance Initialized Successfully...")
 
 
-    def build_job_metadata(self, error_message, rows_processed):
+    def build_job_metadata(self, job_run_id, error_message, rows_processed):
 
         metadata_dump = {
-
+            
+            "job_run_id": job_run_id,
             "job_name": self.job_name,
             "system": self.system,
             "job_type": self.job_type,
