@@ -1,5 +1,4 @@
 from loguru import logger as log
-import json
 
 
 
@@ -47,14 +46,5 @@ class Metadata:
             "error_message": error_message,
             "rows_processed": rows_processed
         }
-
-
-        json_payload = json.dumps(
-            obj=metadata_dump
-        )
-
-        if not json_payload:
-
-            raise ValueError(F'JSON Payload is a Required Field: {json_payload}')
         
-        return json_payload
+        return metadata_dump

@@ -1,11 +1,17 @@
 from concurrent.futures import ThreadPoolExecutor as tpe
 from loguru import logger as log
+from google.cloud import logging
 import json
 from orchestrator.loader import JobCatalog, JobConfigLoader
 from orchestrator.validator import Validator
 from orchestrator.metadata import Metadata
 from orchestrator.runner import Runner
 
+
+
+glogclient = logging.Client()
+
+glog = glogclient.logger(name='json_metadata_dump')
 
 
 
@@ -48,6 +54,8 @@ class Orchestrator:
                 "rows_processed": None 
             }
 
+            glog.log_struct(info=dump, severity="INFO")
+
             log.info(F"METADATA_DUMP: {json.dumps(obj=dump)}")
 
             log.error(F"Job Execution: {job_name} | Preparations Failed")
@@ -83,9 +91,11 @@ class Orchestrator:
                 )
             )
 
-            log.info(F"METADATA_DUMP: {job_metadata_dump}")
+            glog.log_struct(info=job_metadata_dump, severity="INFO")
 
-            log.error(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: FAILED")
+            log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
+
+            log.error(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}")
 
             log.error(F"Details: {error_message}")
 
@@ -101,9 +111,11 @@ class Orchestrator:
                 )
             )
 
-            log.info(F"METADATA_DUMP: {job_metadata_dump}")
+            glog.log_struct(info=job_metadata_dump, severity="INFO")
 
-            log.info(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: SUCCESS...")
+            log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
+
+            log.success(F"Job Execution: {metadata.job_name} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}")
 
 
 
@@ -128,10 +140,9 @@ if __name__ == '__main__':
 
                 job_name = job['job_name']
 
-
                 future = executor.submit(orchestrator.run_concurrent_job, file_path, job_name)
-
     
+
     except Exception:
 
-        raise
+        raise 
