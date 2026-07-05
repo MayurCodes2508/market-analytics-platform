@@ -1,6 +1,5 @@
 __pycache__/
 *.pyc*
-dev_testing.py
 .venv/
 .vscode/
 .gcloudignore
