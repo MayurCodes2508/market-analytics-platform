@@ -1,6 +1,9 @@
+from concurrent.futures import ThreadPoolExecutor as tpe
 from loguru import logger as log
-import argparse
-from orchestrator.loader import Loader
+from google.cloud import logging
+from uuid import uuid6 as uid
+import json
+from orchestrator.loader import JobCatalog, JobConfigLoader
 from orchestrator.validator import Validator
 from orchestrator.metadata import Metadata
 from orchestrator.runner import Runner
@@ -8,83 +11,149 @@ from orchestrator.runner import Runner
 
 
 
+
+glogclient = logging.Client()
+
+glog = glogclient.logger(name='json_metadata_dump')
+
+
+
 class Orchestrator:
 
 
-    def run(self):
+    def __init__(self):
 
-        self.load_config()
-
-        self.load_schema()
-
-        self.validate_config()
-
-        self.load_metadata()
-
-        self.load_exec_cfg()
-
-        self.load_dest_cfg()
-
-        self.load_env_credentials()
+        pass
 
 
 
-if __name__ == "__main__":
+    def run_concurrent_job(self, file_path, job_name):
 
-    parser = argparse.ArgumentParser(description="Run a job defined in a JSON file with a given schema.")
-    parser.add_argument("--file_path", help="Path to the job configuration JSON file.", required=True)
-    parser.add_argument("--schema_path", help="Path to the JSON schema file.", required=True)
+        try:
 
-    args = parser.parse_args()
+            job_run_id = str(uid())
 
-    error_message = None
+            log.info(F"Job: {job_name} | ID: {job_run_id} | Preparations Started...")
+
+            job_cfg_loader = JobConfigLoader(file_path=file_path)
+
+            job_cfg_loader.job_cfg_loader_run()
+
+
+            validator = Validator(loader=job_cfg_loader)
+
+            validator.validator_run()
+
+
+        except Exception as preparation_error:
+
+            error_message = str(preparation_error)
+
+            dump = {
+
+                "job_run_id": job_run_id,
+                "job_name": job_name,
+                "system": None,
+                "job_type": None,
+                "sub_jobtype": None,
+                "status": "FAILED",
+                "error_message": error_message,
+                "rows_processed": None 
+            }
+
+            glog.log_struct(info=dump, severity="INFO")
+
+            log.info(F"METADATA_DUMP: {json.dumps(obj=dump)}")
+
+            log.error(F"Job Execution: {job_name} | ID: {job_run_id} | Preparations Failed")
+
+            log.error(F"Details: {error_message}")
+
+
+        runner = None
+
+        try:
+
+            metadata = Metadata(loader=job_cfg_loader)
+
+
+            log.info(F"Job Execution: {metadata.job_name} | ID: {job_run_id} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype} | Status: RUNNING...")
+
+
+            runner = Runner(metadata=metadata)
+
+            runner.runner_run()
+
+
+        except Exception as execution_error:
+
+            error_message = str(execution_error)
+
+            job_metadata_dump = metadata.build_job_metadata(
+                job_run_id=job_run_id,
+                status="FAILED",
+                error_message=error_message,
+                rows_processed=(
+                    runner.rows_processed
+                    if runner and hasattr(runner, 'rows_processed')
+                    else None
+                )
+            )
+
+            glog.log_struct(info=job_metadata_dump, severity="INFO")
+
+            log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
+
+            log.error(F"Job Execution: {metadata.job_name} | ID: {job_run_id} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}")
+
+            log.error(F"Details: {error_message}")
+
+
+        else:
+
+            job_metadata_dump = metadata.build_job_metadata(
+                job_run_id=job_run_id,
+                status="SUCCESS",
+                error_message=None,
+                rows_processed=(
+                    runner.rows_processed
+                    if runner and hasattr(runner, 'rows_processed')
+                    else None
+                )
+            )
+
+            glog.log_struct(info=job_metadata_dump, severity="INFO")
+
+            log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
+
+            log.success(F"Job Execution: {metadata.job_name}| ID: {job_run_id} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}")
+
+
+
+
+if __name__ == '__main__':
 
     try:
 
-        loader = Loader(args.file_path, args.schema_path)
+        job_catalog_loader = JobCatalog()
 
-        loader.loader_run()
+        job_catalog_loader.job_catalog_run()
 
-
-        validator = Validator(loader)
-
-        validator.validator_run()
+        
+        orchestrator = Orchestrator()
 
 
-        metadata = Metadata(loader)
+        with tpe(max_workers=5) as executor:
 
-        metadata.metadata_run()
+            for job in job_catalog_loader.jobs:
 
+                file_path = job['path']
 
-        log.info(F"Job: {metadata.job_name} | Type: {metadata.job_type} | Sub Type: {metadata.sub_jobtype} | System: {metadata.system} | Status: Ready to Run...")
+                job_name = job['job_name']
 
+                future = executor.submit(orchestrator.run_concurrent_job, file_path, job_name)
+    
 
-        runner = Runner(metadata, loader)
+    except Exception:
 
-        runner.runner_run()
-
-
-
-    except Exception as e:
-
-        error_message = str(e)
-
-        metadata.metadata_run_2(runner.rows_processed, error_message)
-
-        log.exception(F"Job: {metadata.job_name} | Type: {metadata.job_type} | Sub Type: {metadata.sub_jobtype} | System: {metadata.system} | Status: Execution Failed | Error_message: {error_message}...")
-
-        raise
-
-
-    else:
-
-        error_message = None
-
-        metadata.metadata_run_2(runner.rows_processed, error_message)
-
-        log.info(F"Job: {metadata.job_name} | Type: {metadata.job_type} | Sub Type: {metadata.sub_jobtype} | System: {metadata.system} | Status: Execution Successful...")
-
-
-    finally:
-
-        print(F"METADATA_DUMP: {metadata.metadata_payload}")
+        raise 

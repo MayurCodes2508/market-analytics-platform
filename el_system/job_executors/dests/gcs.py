@@ -1,15 +1,11 @@
-from loguru import logger
+from loguru import logger as log
 from datetime import datetime, timezone
 from google.cloud import storage
 import io
 import pandas as pd
 
 class GCS:
-    def __init__(self, job_name, dest_cfg=None, metadata_cfg=None, data=None):
-        
-        self.job_name = job_name
-
-        self.data = data
+    def __init__(self, metadata_cfg, dest_cfg, data):
 
         self.metadata_cfg = metadata_cfg
         self.source = metadata_cfg['source']
@@ -22,11 +18,15 @@ class GCS:
         self.format = dest_cfg['format']
         self.path_template = dest_cfg['path_template']
 
+        self.data = data
+
+
     def build_path(self):
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(tz=timezone.utc)
 
         try:
+
             path_context = {
                 "layer": self.layer,
                 "source": self.source,
@@ -36,36 +36,58 @@ class GCS:
                 "ingestion_ts": now.strftime("%Y%m%dT%H%M%SZ"),
                 "format": self.format
             }
+
             formatted_path = self.path_template.format(**path_context)
-            logger.info(f"Successfully created and formatted path: {formatted_path}")
+
+            log.info(f"Successfully created and formatted path: {formatted_path}")
+
             return formatted_path, now
-        except Exception as e:
-            logger.error(f"Error creating formatted_path: {e}") 
+        
+        except Exception:
+
+            log.exception("Error creating formatted_path") 
+
             raise 
+
 
     def upload_to_gcs(self, path, data, now):
 
         try:
+
             storage_client = storage.Client()
+
             bucket = storage_client.bucket(self.bucket)
+
             blob = bucket.blob(path)
 
             if not data:
+
                 raise ValueError("No data received to upload")
-            df = pd.DataFrame(data)
-            df["ingestion_timestamp"] = now
-            logger.info("Successfully converted the raw JSON data to Pandas DataFrame and added ingestion metadata(ingestion_timestamp)")
             
+            df = pd.DataFrame(data)
+
+            df["ingestion_timestamp"] = now
+
+            log.info("Successfully converted the raw JSON data to Pandas DataFrame and added ingestion metadata(ingestion_timestamp)")
+            
+
             buffer = io.BytesIO()
+
             df.to_parquet(buffer, index=False, compression='snappy')
-            logger.info("Successfully converted, compressed to Parquet & finished writing it to RAM buffer")
+
+            log.info("Successfully converted, compressed to Parquet & finished writing it to RAM buffer")
+
             buffer.seek(0)
 
-            blob.upload_from_file(buffer, content_type='application/octet-stream')
-            logger.info("Successfully uploaded the parquet data to GCS")
 
-        except Exception as e:
-            logger.error(f"Error Uploading the data to GCS: {e}")
+            blob.upload_from_file(buffer, content_type='application/octet-stream')
+
+            log.info("Successfully uploaded the parquet data to GCS")
+
+        except Exception:
+
+            log.exception("Error Uploading the data to GCS")
+
             raise 
 
     def run(self):

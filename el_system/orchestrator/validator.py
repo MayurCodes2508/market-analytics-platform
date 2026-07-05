@@ -1,6 +1,6 @@
 from loguru import logger as log
 import jsonschema_rs
-from jsonschema_rs import ValidationError
+from jsonschema.exceptions import ValidationError, SchemaError
 from pathlib import Path
 
 
@@ -11,48 +11,56 @@ class Validator:
 
 
     def __init__(self, loader):
-
+        
         self.loader = loader
+
+        self.job_cfg = loader.job_cfg
+
+        self.schema_cfg = loader.schema_cfg
 
         self.schema_path = loader.schema_path
 
-        self.job_cfg = loader.job_cfg
-        self.schema_cfg = loader.schema_cfg
+
+        log.info("Job & Schema Cfg Loading Completed...")
 
 
-    def validate_config(self):
+        log.info("Obj: validator | Instance Initialized Successfully...")
 
-        if not self.job_cfg:
 
-            raise ValueError(F"Invalid 'job_config': {self.job_cfg}")
-        
-        if not self.schema_cfg:
-
-            raise ValueError(F"Invalid 'schema_config': {self.schema_cfg}")
+    def validate_job_cfg(self):
 
         try:
 
-            full_uri = Path(self.schema_path).resolve().as_uri()
+            base_uri = Path(self.schema_path).resolve().as_uri()
 
-            validator = jsonschema_rs.validator_for(self.schema_cfg, base_uri=full_uri)
+            validate_cfg = jsonschema_rs.validator_for(schema=self.schema_cfg, base_uri=base_uri)
 
-            validator.validate(self.job_cfg)
+            validate_cfg.validate(instance=self.job_cfg)
 
-            log.info(f"Configuration Validated Against Schema {self.schema_path}")
+            log.info("Job Validation Against the Given Schema Completed...")
 
-        except ValidationError:
 
-            log.exception(F"Validation Error Occured: {self.schema_path}")
+        except ValidationError as e:
+
+            log.error(F"Validation Error: {self.job_cfg} | Provide a Valid Job Cfg | Details: {e}")
 
             raise
+
+
+        except SchemaError as e:
+
+            log.error(F"Schema Error: {self.schema_cfg} | Provide a Valid Schema | Details: {e}")
+
+            raise
+        
 
         except Exception:
 
-            log.exception("Unexpected Error Occured")
+            log.exception("Unknown Error Occured While Validating Job Cfg Againt Given Schema")
 
             raise
 
-    
+
     def validator_run(self):
 
-        self.validate_config()
+        self.validate_job_cfg()

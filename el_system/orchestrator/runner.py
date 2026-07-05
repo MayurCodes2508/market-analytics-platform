@@ -1,98 +1,69 @@
 from loguru import logger as log
-from job_executors.exec_cmds.api_exec import ApiExecCommand
-from job_executors.destinations.gcs import GCS
+from job_executors.exec_cmds.registries.exec_cmds import ExecCmdType
+from job_executors.dests.registries.dest_targets import DestType
 
 
 
-
-
-class Execution_Command_Factory:
-
-
-    registry = {
-        'ApiExecCommand': ApiExecCommand
-    }
-
-
-    @classmethod
-    def get_exec_type(cls, exec_type, auth_cfg, loader, *args, **kwargs):
-
-        exec_connector = cls.registry.get(exec_type)
-
-        if not exec_connector:
-
-            raise ValueError(F"Invalid Exec Type: {exec_type}")
-
-        api_key = None
-
-        if auth_cfg:
-
-            api_key = loader.load_auth(auth_cfg=auth_cfg)
-        
-        return exec_connector(api_key=api_key, auth_cfg=auth_cfg, *args, **kwargs)
-
-
-class Destination_Target_Factory:
-
-    registry = {
-        'GCS': GCS
-    }
-
-
-    @classmethod
-    def get_dest_type(cls, dest_type, *args, **kwargs):
-
-        if dest_type is None:
-
-            log.info("Not Provided Dest, Skipping...")
-
-            return 
-
-        dest_connect = cls.registry.get(dest_type)
-
-        if not dest_connect:
-
-            raise ValueError(F"Invalid Dest Type: {dest_type}")
-        
-        return dest_connect(*args, **kwargs )
 
 
 class Runner:
 
 
-    def __init__(self, metadata, loader):
+    def __init__(self, metadata):
 
         self.metadata = metadata
-        self.loader = loader
-
-        self.exec_cfg = self.metadata.exec_cfg
-        self.auth_cfg = getattr(self.metadata, 'auth_cfg', {})
-        self.dest_cfg = getattr(self.metadata, 'dest_cfg', {})
-        self.metadata_cfg = getattr(self.metadata, 'metadata', {})
-
-        self.exec_type = self.metadata.exec_type
-        self.job_name = self.metadata.job_name
-
-        self.dest_type = getattr(self.metadata, 'dest_type', None)
-        
-    def execute_job(self):
-
-        self.exec_obj = Execution_Command_Factory.get_exec_type(exec_type=self.exec_type, exec_cfg=self.exec_cfg, job_name=self.job_name, auth_cfg=self.auth_cfg, loader=self.loader)
-
-        self.data, self.rows_processed = self.exec_obj.run()
 
 
-        self.dest_obj = Destination_Target_Factory.get_dest_type(dest_type=self.dest_type, dest_cfg=self.dest_cfg, metadata_cfg=self.metadata_cfg, job_name=self.job_name, data=self.data)
+        self.exec_cfg = metadata.exec_cfg
 
-        if self.dest_obj:
+        self.exec_type = self.exec_cfg['exec_type']
 
-            self.dest_obj.run()
 
-        else:
+        self.metadata_cfg = metadata.metadata_cfg
 
-            log.info("Not Provided Dest, Skipping.....")
+
+
+        self.dest_cfg = metadata.dest_cfg
+
+        self.dest_type = self.dest_cfg.get('dest_type', None)
+
+
+        log.info("Runner Loading Completed...")
+
+
+        log.info("Obj: runner | Instance Initialized Successfully...")
+
+
+    def run_exec_cmd(self):
+
+        exec_cmd = ExecCmdType.get_exec_type(
+            exec_type=self.exec_type,
+            exec_cfg=self.exec_cfg,
+            metadata_cfg=self.metadata_cfg
+        )
+
+        self.data, self.rows_processed = exec_cmd.run()
+
+    def run_dest_target(self):
+
+        if not self.dest_cfg and self.dest_type:
+
+            log.info("Dest Not Provided, Skipping...")
+
+            return
+
+        dest = DestType.get_dest_type(
+            dest_type=self.dest_type,
+            dest_cfg=self.dest_cfg,
+            metadata_cfg=self.metadata_cfg,
+            data=self.data
+        )
+
+        dest.run()
 
 
     def runner_run(self):
 
-        self.execute_job()
+        self.run_exec_cmd()
+
+        self.run_dest_target()

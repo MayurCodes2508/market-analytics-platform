@@ -1,103 +1,184 @@
+import os
+from pathlib import Path
 from loguru import logger as log
 import json
-import os
+from json import JSONDecodeError
 
 
 
 
-class Loader:
+
+class JobCatalog:
 
 
-    def __init__(self, file_path, schema_path):
+    def __init__(self):
 
-        self.file_path = file_path
-        self.schema_path = schema_path
+        env = os.getenv(key='ENV')
 
-
-    def load_config(self):
-
-        if not self.file_path:
-
-            raise ValueError(F"Invalid 'file_path': {self.file_path}")
-
-        try:
-        
-            with open(self.file_path, 'r') as f:
-
-                self.job_cfg = json.load(f)
-
-                log.info(f"Successfully Loaded Job Config From Path {self.file_path}")
-
-        except FileNotFoundError:
-
-            log.exception(F"File Not Found Error Occured: {self.file_path}")
-
-            raise
-
-        except json.JSONDecodeError:
-
-            log.exception(F"Parsing Error Occured: {self.file_path}")
-
-            raise
-
-        except Exception:
-
-            log.exception(F"Unexpected Error Occured: {self.file_path}")
-
-            raise
-
-
-    def load_schema(self):
-
-        if not self.schema_path:
-
-            raise ValueError(F"Invalid 'schema_path': {self.schema}")
-
-        try:
-
-            with open(self.schema_path, 'r') as f:
-
-                self.schema_cfg = json.load(f)
-
-                log.info(f"Successfully Loaded JSON Schema From Path {self.schema_path}")
-
-        except FileNotFoundError:
-
-            log.exception(F"File Not Found Error Occured: {self.schema_path}")
-
-            raise
-
-        except json.JSONDecodeError:
-
-            log.exception(F"Parsing Error Occured: {self.schema_path}")
-
-            raise
-
-        except Exception:
-
-            log.exception(F"Unexpected Error Occured: {self.schema}")
-
-            raise
-
-
-    def load_auth(self, auth_cfg):
-
-        self.auth_cfg = auth_cfg
-
-                     
-        api_key = os.getenv(self.auth_cfg['key_env'])
-
-        if not api_key:
-
-            raise ValueError(f"Invalid 'api_key': {api_key}")
+        if env == 'PROD':
             
-        log.info("Successfully Loaded Env Creds")
-
-        return api_key
+            self.file_path = Path(__file__).parent.parent / "configs" / "catalog" / "prod" / "config.json"
 
 
-    def loader_run(self):
+        elif env == 'DEV':
+            
+            self.file_path = Path(__file__).parent.parent / "configs" / "catalog" / "dev" / "config.json"
 
-        self.load_config()
+        
+        else:
 
-        self.load_schema()
+            raise ValueError(F"Unknown Env: {env} | Provide a Valid Env")
+
+
+        log.info("JSON Job Catalog Path Loading Completed...")
+
+
+        log.info("Obj: job_catalog | Instance Initialized Successfully...")
+
+
+    def load_job_catalog(self):
+
+        try:
+
+            with open(file=self.file_path, mode='r') as f:
+
+                self.job_catalog = json.load(fp=f)
+
+                self.jobs = self.job_catalog['jobs']
+
+                log.info("Job Catalog Loading Completed...")
+
+
+        except FileNotFoundError:
+
+            log.error(F"File Not Found Error: {self.file_path} | Provide a Valid JSON Job Catalog File Path")
+
+            raise
+
+
+        except JSONDecodeError as e:
+
+            log.error(F"JSON Parsing/Decoding Error: {self.file_path} | Provide Valid JSON Format | Details: {e}")
+
+            raise
+
+
+        except UnicodeDecodeError:
+
+            log.error(F"Unicode Decoding Error: {self.file_path} | Expected UTF-8")
+
+            raise
+
+
+        except Exception:
+
+            log.exception(F"Unknown Error Occured While Loading Job Catalog: {self.file_path}")
+
+            raise
+
+
+    def job_catalog_run(self):
+
+        self.load_job_catalog()
+
+
+
+class JobConfigLoader: 
+
+
+    def __init__(self, file_path):
+        
+        self.file_path = file_path
+
+        self.schema_path = Path(__file__).parent.parent / "schemas" / "root_schema.json"
+
+
+        log.info("JSON Job & Schema Cfg Paths Loading Completed...")
+
+
+        log.info("Obj: job_cfg_loader | Instance Initialized Successfully...")
+
+
+    def load_job_cfg(self):
+
+        try:
+
+            with open(file=self.file_path, mode='r') as f:
+
+                self.job_cfg = json.load(fp=f)
+
+                log.info("Job Cfg Loading Completed...")
+
+
+        except FileNotFoundError:
+
+            log.error(F"File Not Found Error: {self.file_path} | Provide a Valid JSON Job Cfg File Path")
+
+            raise
+
+
+        except JSONDecodeError as e:
+
+            log.error(F"JSON Parsing/Decoding Error: {self.file_path} | Provide Valid JSON Format | Details: {e}")
+
+            raise
+
+
+        except UnicodeDecodeError:
+
+            log.error(F"Unicode Decoding Error: {self.file_path} | Expected UTF-8")
+
+            raise
+        
+
+        except Exception:
+
+            log.exception(F"Unknown Error Occured While Loading Job Cfg: {self.file_path}")
+
+            raise
+
+
+    def load_schema_cfg(self):
+
+        try:
+
+            with open(file=self.schema_path, mode='r') as f:
+
+                self.schema_cfg = json.load(fp=f)
+
+                log.info("Schema Cfg Loading Completed...")
+
+
+        except FileNotFoundError:
+
+            log.error(F"File Not Found Error: {self.schema_path} | Provide a Valid JSON Schema Cfg File Path")
+
+            raise
+
+
+        except JSONDecodeError as e:
+
+            log.error(F"Parsing/Decoding Error: {self.schema_path} | Provide Valid JSON Format | Details: {e}")
+
+            raise
+
+
+        except UnicodeDecodeError:
+
+            log.error(F"Unicode Decoding Error: {self.schema_path} | Expected UTF-8")
+
+            raise
+
+
+        except Exception:
+
+            log.exception(F"Unknown Error Occured While Loading Schema Cfg: {self.schema_path}")
+
+            raise
+
+
+    def job_cfg_loader_run(self):
+
+        self.load_job_cfg()
+
+        self.load_schema_cfg()

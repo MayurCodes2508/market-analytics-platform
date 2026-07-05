@@ -10,7 +10,7 @@
 
       "exec_type": {
 
-        "const": "ApiExecCommand" 
+        "const": "ApiExecCmd" 
     },
 
       "base_url": {
