@@ -1,6 +1,5 @@
-import os
 from loguru import logger as log
-
+import os
 
 
 
@@ -38,6 +37,7 @@ class DBUrl:
     def run(self):
 
         self.load_db_creds()
+
 
 
 

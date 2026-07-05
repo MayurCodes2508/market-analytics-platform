@@ -1,7 +1,7 @@
 from loguru import logger as log
 import psycopg2
-from job_executors.auth.registries.strategies import AuthRegistry
 from job_executors.exceptions.db_exceptions import DBExceptions
+from job_executors.auth.auth import Auth
 
 
 
@@ -37,28 +37,12 @@ class DBExecCommand:
         )
 
 
-        self.auth_cfg = exec_cfg.get('auth', {})
+        self.auth_cfg = exec_cfg['auth']
 
-        self.auth_type = self.auth_cfg.get('auth_type', None)
-
-        if not self.auth_cfg and self.auth_type:
-
-            log.info("Auth Not Provided, Skipping...")
-            
-
-            log.info("Exec Metadata Loading Completed...")
+        self.auth_type = self.auth_cfg['auth_type']
 
 
-            log.info("Obj: dbexeccmd | Instance Initialization Completed...")
-
-            return
-
-        self.auth = AuthRegistry.get_obj(
-            auth_cfg=self.auth_cfg,
-            auth_type=self.auth_type
-        )
-            
-        self.secret = self.auth.secret
+        self.secret = Auth.get_auth(auth_cfg=self.auth_cfg, auth_type=self.auth_type)
 
 
         log.info("Exec Metadata Loading Completed...")

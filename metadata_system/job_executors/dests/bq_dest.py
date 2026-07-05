@@ -9,10 +9,7 @@ from google.cloud import bigquery as bqcl
 class BQ:
 
 
-    def __init__(self, metadata_cfg, dest_cfg, data):
-
-        self.metadata_cfg = metadata_cfg
-
+    def __init__(self, dest_cfg, data):
 
         self.dest_cfg = dest_cfg
 

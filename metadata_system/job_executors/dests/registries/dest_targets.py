@@ -9,9 +9,9 @@ class BQDest:
 
     
     @classmethod
-    def run(cls, dest_cfg, metadata_cfg, data):
+    def run(cls, dest_cfg, data, metadata_cfg):
 
-        return BQ(dest_cfg=dest_cfg, metadata_cfg=metadata_cfg, data=data)
+        return BQ(dest_cfg=dest_cfg, data=data)
 
         
 
