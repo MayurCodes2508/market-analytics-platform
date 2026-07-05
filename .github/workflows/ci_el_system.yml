@@ -49,9 +49,10 @@ jobs:
 
       - name: Run System Python Code
         run: |
-          python -u -m orchestrator.orchestrator --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json
+          python -u -m orchestrator.orchestrator
         env:
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+          ENV: ${{ vars.ENV }}
 
       - name: Build System Container Image
         run: |
