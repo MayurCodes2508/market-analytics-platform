@@ -1,7 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor as tpe
 from loguru import logger as log
 from google.cloud import logging
-from uuid import uuid6 as uid
+from uuid6 import uuid6 as uid
 import json
 from orchestrator.loader import JobCatalog, JobConfigLoader
 from orchestrator.validator import Validator
