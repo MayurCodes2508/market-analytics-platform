@@ -1,6 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor as tpe
 from loguru import logger as log
-from google.cloud import logging
 from uuid6 import uuid7 as uid
 import json
 from orchestrator.loader import JobCatalog, JobConfigLoader
@@ -9,10 +8,6 @@ from orchestrator.metadata import Metadata
 from orchestrator.runner import Runner
 
 
-
-glogclient = logging.Client()
-
-glog = glogclient.logger(name='json_metadata_dump')
 
 
 
@@ -59,8 +54,6 @@ class Orchestrator:
                 "rows_processed": None 
             }
 
-            glog.log_struct(info=dump, severity="INFO")
-
             log.info(F"METADATA_DUMP: {json.dumps(obj=dump)}")
 
             log.error(F"Job Execution: {job_name} | ID: {job_run_id} | Preparations Failed")
@@ -98,8 +91,6 @@ class Orchestrator:
                 )
             )
 
-            glog.log_struct(info=job_metadata_dump, severity="INFO")
-
             log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
 
             log.error(F"Job Execution: {metadata.job_name} | ID: {job_run_id} | System: {metadata.system} | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}")
@@ -119,8 +110,6 @@ class Orchestrator:
                     else None
                 )
             )
-
-            glog.log_struct(info=job_metadata_dump, severity="INFO")
 
             log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
 
