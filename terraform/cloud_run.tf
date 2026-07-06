@@ -10,10 +10,6 @@ resource "google_cloud_run_v2_job" "dev_el_system_run" {
     template {
       containers {
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:testing"
-        command = ["bash", "-c"]
-        args = [
-          "python -u -m orchestrator.orchestrator --file_path configs/coingecko_sources/dev/market_price.json --schema_path schemas/root_schema.json"
-        ]
         env {
           name = "COINGECKO_API_KEY"
           value_source {
@@ -22,6 +18,10 @@ resource "google_cloud_run_v2_job" "dev_el_system_run" {
               version = "1"
             }
           }
+        }
+        env {
+          name = "ENV"
+          value = "DEV"
         }
       }
       service_account = "development-cloud-resources-jo@instant-medium-491107-t6.iam.gserviceaccount.com"
@@ -90,10 +90,6 @@ resource "google_cloud_run_v2_job" "dev_metadata_system_run" {
     template {
       containers {
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/metadata-job:testing"
-        command = [ "bash", "-c" ]
-        args = [ 
-          "python -u -m orchestrator.orchestrator"
-         ]
          env {
           name = "ENV"
           value = "DEV"
@@ -209,34 +205,3 @@ resource "google_cloud_run_v2_job" "prod_pipeline_run" {
   }
 }
 
-resource "google_cloud_run_v2_job" "prod_metadata_system_run" {
-  name = "prod-metadata-system-run"
-  location = "asia-south1"
-  deletion_protection = false
-  template {
-    template {
-      containers {
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/metadata-job:latest"
-        command = [ "bash", "-c" ]
-        args = [ 
-          "python -u -m orchestrator.orchestrator"
-         ]
-         env {
-          name = "ENV"
-          value = "PROD"
-          
-         }
-         env {
-          name = "NEON_DB_URL"
-          value_source {
-            secret_key_ref {
-              secret  = "prod-market-analytics-platform-neon-db-url-secret"
-              version = "1"
-            }
-          }
-         }
-      }
-      service_account = "production-cloud-resources-469@instant-medium-491107-t6.iam.gserviceaccount.com"
-    }
-  }
-}
