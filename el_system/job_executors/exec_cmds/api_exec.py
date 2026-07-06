@@ -47,7 +47,7 @@ class ApiExecCommand:
             log.info("Exec Metadata Loading Completed...")
 
 
-            log.info("Obj: dbexeccmd | Instance Initialization Completed...")
+            log.info("Obj: apiexeccmd | Instance Initialization Completed...")
 
             return
 
@@ -67,7 +67,7 @@ class ApiExecCommand:
         log.info("Exec Metadata Loading Completed...")
 
 
-        log.info("Obj: dbexeccmd | Instance Initialization Completed...")
+        log.info("Obj: apiexeccmd | Instance Initialization Completed...")
         
 
     def build_url(self):
@@ -105,7 +105,7 @@ class ApiExecCommand:
 
                     headers[self.name] = self.secret
 
-                    log.info("Added API key to headers")
+                    log.info("Added Secret to headers")
 
                 else:
 

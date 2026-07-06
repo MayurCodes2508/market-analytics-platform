@@ -21,6 +21,12 @@ class GCS:
         self.data = data
 
 
+        log.info("Dest Metadata Loading Completed...")
+
+
+        log.info("Obj: gcsdest | Instance Initialized Successfully...")
+
+
     def build_path(self):
 
         now = datetime.now(tz=timezone.utc)

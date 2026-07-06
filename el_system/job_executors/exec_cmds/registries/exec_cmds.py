@@ -9,7 +9,7 @@ class APIExec:
 
     
     @classmethod
-    def run(cls, exec_cfg, metadata_cfg):
+    def run(cls, exec_cfg, *args, **kwargs):
 
         return ApiExecCommand(exec_cfg=exec_cfg)
 
