@@ -1,11 +1,256 @@
 from loguru import logger as log
-import argparse
-from orchestrator.loader import Loader
+
+from orchestrator.loader import PipelineLoader
 from orchestrator.validator import Validator
-from orchestrator.metadata import Pipeline_Metadata
-from orchestrator.logger import Pipeline_Logger
+from orchestrator.metadata import Pipeline_Metadata, Job_Metadata
+from orchestrator.logger import Pipeline_Logger, Job_Logger
 from orchestrator.runner import Runner
 
+from uuid6 import uuid7 as uid
+from datetime import datetime as dt
+import os
+
+
+
+
+
+
+class Orchestrator:
+
+
+    def __init__(self):
+
+        pass
+
+
+    def run_pipeline(self, catalog, url):
+
+        pipelines = catalog['pipelines']
+
+        for pipeline in pipelines:
+
+            pipeline_name = pipeline['name']
+
+            jobs = pipeline['jobs']
+
+
+            start_metadata_dump = {}
+
+            try:
+
+                pipeline_run_id = str(uid())
+
+                pipeline_metadata = Pipeline_Metadata(
+
+                    run_id=pipeline_run_id,
+                    name=pipeline_name,
+                    status="RUNNING",
+                    error_message=None,
+                    totaL_jobs=None,
+                    total_failed_count=None,
+                    total_successful_count=None
+                )
+
+                start_metadata_dump = pipeline_metadata.create_pipeline_start_metadata()
+
+
+            except Exception as preparation_error:
+
+                error_message = str(preparation_error)
+
+                start_metadata_dump = {
+
+                    "pipeline_run_id": start_metadata_dump.get('pipeline_run_id', pipeline_run_id) or str(uid()),
+                    "pipeline_run_name": start_metadata_dump.get('pipeline_run_name', pipeline_name),
+                    "pipeline_run_status": "FAILED",
+                    "pipeline_run_start_time": start_metadata_dump.get('pipeline_run_start_time') or dt.now().isoformat(),
+                    "pipeline_run_end_time": dt.now().isoformat(),
+                    "pipeline_run_created_at": start_metadata_dump.get('pipeline_run_created_at') or dt.now().isoformat(),
+                    "pipeline_run_triggered_by": start_metadata_dump.get('pipeline_run_triggered_by') or os.getenv('TRIGGERED_BY', 'manual'),
+                    "pipeline_run_error_message": error_message,
+                    "pipeline_run_job_counts": {
+
+                        "total_jobs": None,
+                        "successful_jobs": None,
+                        "failed_jobs": None
+                    }
+
+                }
+
+
+                pipeline_logger = Pipeline_Logger(url=url, metadata=start_metadata_dump)
+
+                pipeline_logger.log_pipeline_run_start(url=url, metadata=start_metadata_dump)
+
+
+                log.error(F"Pipeline: {start_metadata_dump['pipeline_run_name']} | Triggered By: {start_metadata_dump['pipeline_run_triggered_by']} | Run ID: {start_metadata_dump['pipeline_run_id']} | Status: {start_metadata_dump['pipeline_run_status']} | Started At: {start_metadata_dump['pipeline_run_start_time']} | Ended At: {start_metadata_dump['pipeline_run_end_time']}")
+
+                log.error(F"Details: {error_message}")
+
+                return
+            
+
+            else:
+            
+                pipeline_logger = Pipeline_Logger(url=url, metadata=start_metadata_dump)
+
+                pipeline_logger.log_pipeline_run_start()
+
+
+                log.info(F"Pipeline: {start_metadata_dump['pipeline_run_name']} | Triggered By: {start_metadata_dump['pipeline_run_triggered_by']} | Run ID: {start_metadata_dump['pipeline_run_id']} | Status: {start_metadata_dump['pipeline_run_status']} | Started At: {start_metadata_dump['pipeline_run_start_time']}...")
+
+
+            is_pipeline_failed = False
+
+            total_failed_count = 0
+            total_successful_count = 0
+
+            runner = None
+
+            operation = None
+
+            for job in jobs:
+
+                run_name = job['name']
+
+
+                log.info(F"Executing Run: {run_name}...")
+
+
+                try:
+
+                    runner = Runner()
+
+                    operation = runner.execute_run(run_job_name=run_name)
+
+                
+                except Exception as exec_err:
+
+                    is_pipeline_failed = True
+
+                    error_message = str(exec_err)
+
+
+                    log.error(F"Run: {run_name} | Execution Failed")
+
+                    log.error(F"Defails: {error_message}")
+
+                    continue
+
+
+                job_metadatas = []
+
+                metadata = None
+
+                try:
+
+                    job_metadata = Job_Metadata(
+
+                        operation=operation,
+                        run_job_name=run_name,
+                        pipeline_run_id=start_metadata_dump['pipeline_run_id']
+                    )
+
+                    job_metadatas = job_metadata.create_job_metadata()
+
+
+                    for metadata in job_metadatas:
+
+                        try:
+
+                            job_logger = Job_Logger(url=url, metadata=metadata)
+
+                            job_logger.log_job_run_metadata()
+
+
+                            job_status = metadata['job_status']
+                    
+                            failed_count, successful_count = pipeline_metadata.collect_jobs_count(status=job_status)
+
+                            total_failed_count += failed_count
+                            total_successful_count += successful_count
+
+
+                        except Exception as log_err:
+
+                            error_message = str(log_err)
+
+
+                            log.error(F"Job: {metadata.get('job_name', 'UNKNOWN')} | Run ID: {metadata.get('job_run_id', 'UNKNOWN')} | Pipeline Run ID: {metadata.get('pipeline_run_id', pipeline_run_id)} | Run Name: {run_name} | Metadata Logging Failed")
+
+                            log.error(F"Details: {error_message}")
+
+                            continue
+
+
+                        else:
+
+                            log.info(F"Job: {metadata['job_name']} | Run ID: {metadata['job_run_id']} | Pipeline Run ID: {metadata['pipeline_run_id']} | System: {metadata['system']} | Job Type: {metadata['job_type']} | Sub JobType: {metadata['sub_jobtype']} | Status: {metadata['job_status']} | Started At: {metadata['start_time']} | Ended At: {metadata['end_time']}...")
+        
+
+                except Exception as meta_err:
+
+                    is_pipeline_failed = True
+
+                    error_message = str(meta_err)
+
+
+                    log.error(F"Job: {metadata.get('job_name', 'UNKNOWN')} | Run ID: {metadata.get('job_run_id', 'UNKNOWN')} | Pipeline Run ID: {metadata.get('pipeline_run_id', pipeline_run_id)} | Run Name: {run_name} | Metadata Retrieval Failed")
+
+                    log.error(F"Details: {error_message}")
+
+                    continue
+
+
+
+            if is_pipeline_failed:
+
+                pipeline_metadata = Pipeline_Metadata(
+
+                    run_id=pipeline_run_id,
+                    name=pipeline_name,
+                    status="FAILED",
+                    error_message= (F"{run_name} \n" F"{metadata.get('job_name', 'UNKNOWN')} \n" F"{error_message}"),
+                    totaL_jobs=len(job_metadatas),
+                    total_failed_count=total_failed_count,
+                    total_successful_count=total_successful_count
+                )
+
+                end_metadata_dump = pipeline_metadata.create_pipeline_end_metadata()
+
+
+                pipeline_logger = Pipeline_Logger(url=url, metadata=end_metadata_dump)
+
+                pipeline_logger.log_pipeline_run_end()
+
+
+                log.error(F"Pipeline: {start_metadata_dump['pipeline_run_name']} | Triggered By: {start_metadata_dump['pipeline_run_triggered_by']} | Run ID: {start_metadata_dump['pipeline_run_id']} | Status: {end_metadata_dump['pipeline_run_status']} | Started At: {start_metadata_dump['pipeline_run_start_time']} | Ended At: {end_metadata_dump['pipeline_run_end_time']} | Total Jobs: {end_metadata_dump['pipeline_run_job_counts']['total_jobs']} | Successful Jobs: {end_metadata_dump['pipeline_run_job_counts']['successful_jobs']} | Failed Jobs: {end_metadata_dump['pipeline_run_job_counts']['failed_jobs']}")
+
+                log.error(F"Details: {end_metadata_dump['pipeline_run_error_message']}")
+
+            
+            else:
+
+                pipeline_metadata = Pipeline_Metadata(
+
+                    run_id=pipeline_run_id,
+                    name=pipeline_name,
+                    status="SUCCESS",
+                    error_message=None,
+                    totaL_jobs=len(job_metadatas),
+                    total_failed_count=total_failed_count,
+                    total_successful_count=total_successful_count
+                )
+
+                end_metadata_dump = pipeline_metadata.create_pipeline_end_metadata()
+
+
+                pipeline_logger = Pipeline_Logger(url=url, metadata=end_metadata_dump)
+
+                pipeline_logger.log_pipeline_run_end()
+
+
+                log.info(F"Pipeline: {start_metadata_dump['pipeline_run_name']} | Triggered By: {start_metadata_dump['pipeline_run_triggered_by']} | Run ID: {start_metadata_dump['pipeline_run_id']} | Status: {end_metadata_dump['pipeline_run_status']} | Started At: {start_metadata_dump['pipeline_run_start_time']} | Ended At: {end_metadata_dump['pipeline_run_end_time']} | Total Jobs: {end_metadata_dump['pipeline_run_job_counts']['total_jobs']} | Successful Jobs: {end_metadata_dump['pipeline_run_job_counts']['successful_jobs']} | Failed Jobs: {end_metadata_dump['pipeline_run_job_counts']['failed_jobs']}...")
 
 
 
@@ -13,78 +258,25 @@ from orchestrator.runner import Runner
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(
-        description="Run a Pipeline Defined in a JSON Pipeline Cfg File with a Given Schema"
-    )
-
-    parser.add_argument(
-        "--file_path", help="Required File Path to a JSON Pipeline Cfg", required=True
-    )
-
-    parser.add_argument(
-        "--schema_path", help="Required Schema Path to a JSON Schema Cfg", required=True
-    )
-        
-
-    error_message = None
-
-    status = "FAILED"
-        
     try:
 
-        args = parser.parse_args()
+        pipeline_loader = PipelineLoader()
 
-        loader = Loader(args.file_path, args.schema_path)
+        pipeline_loader.pipeline_loader_run()
 
-        loader.loader_run()
+        pipeline_loader.load_db_creds()
 
 
-        validator = Validator(loader)
+        validator = Validator(pipeline_loader=pipeline_loader)
 
         validator.validator_run()
 
 
-        pipeline_metadata = Pipeline_Metadata(loader)
+        orchestrator = Orchestrator()
 
-        pipeline_metadata.metadata_run()
+        orchestrator.run_pipeline(catalog=pipeline_loader.pipeline_catalog, url=pipeline_loader.db_url)
 
+    
+    except Exception:
 
-        loader.loader_run_2()
-
-
-        pipeline_logger = Pipeline_Logger(loader, pipeline_metadata)
-
-        pipeline_logger.logger_run()
-
-
-        log.info(F"Pipeline: {pipeline_metadata.pipeline_run_name} | Triggered By: {pipeline_metadata.pipeline_run_triggered_by} | Run ID: {pipeline_metadata.pipeline_run_id} | Status: {pipeline_metadata.pipeline_run_start_status} | Started At: {pipeline_metadata.pipeline_run_start_time} | Total Jobs: {pipeline_metadata.total_jobs}...")
-         
-
-        runner = Runner(pipeline_metadata, loader)
-
-        runner.runner_run()
-
-    except Exception as pipeline_error:
-
-        error_message = str(pipeline_error)
-
-        pipeline_metadata.metadata_run_2(status=status, error_message=error_message, successful_job_counts=runner.successful_jobs, failed_job_counts=runner.failed_jobs)
-
-        log.warning(F"Execution of Pipeline: {pipeline_metadata.pipeline_run_name} | Triggered By: {pipeline_metadata.pipeline_run_triggered_by} | Run ID: {pipeline_metadata.pipeline_run_id} | Status: {pipeline_metadata.pipeline_run_end_status} | error_message: {pipeline_metadata.pipeline_run_error_message} | Ended At: {pipeline_metadata.pipeline_run_end_time} | Successful Jobs Count: {pipeline_metadata.pipeline_run_end_job_counts['successful_jobs']} | Failed Jobs Count: {pipeline_metadata.pipeline_run_end_job_counts['failed_jobs']}...")
-
-        pipeline_logger = Pipeline_Logger(loader, pipeline_metadata)
-
-        pipeline_logger.logger_run_2()
-
-    else:
-
-        status = "SUCCESS"
-
-        pipeline_metadata.metadata_run_2(status=status, error_message=error_message, successful_job_counts=runner.successful_jobs, failed_job_counts=runner.failed_jobs)
-
-        log.info(F"Execution of Pipeline: {pipeline_metadata.pipeline_run_name} | Triggered By: {pipeline_metadata.pipeline_run_triggered_by} | Run ID: {pipeline_metadata.pipeline_run_id} | Status: {pipeline_metadata.pipeline_run_end_status} | Ended At: {pipeline_metadata.pipeline_run_end_time} | Successful Jobs Count: {pipeline_metadata.pipeline_run_end_job_counts['successful_jobs']} | Failed Jobs Count: {pipeline_metadata.pipeline_run_end_job_counts['failed_jobs']}...")
-
-        pipeline_logger = Pipeline_Logger(loader, pipeline_metadata)
-
-        pipeline_logger.logger_run_2()
-
+        raise

@@ -1,9 +1,0 @@
-{
-    "pipeline_name": "prod-market-analytics-pipeline",
-
-    "jobs": [
-        {
-            "job_name": "prod-el-system-run"
-        }
-    ]
-}

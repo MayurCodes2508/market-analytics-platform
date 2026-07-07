@@ -3,40 +3,56 @@
 
     "type": "object",
 
-    "required": ["jobs"],
+    "required": ["pipelines"],
 
     "properties": {
 
-        "pipeline_name": {
-
-            "type": "string",
-            "pattern": "^(dev-|prod-)[a-z0-9-]+$",
-            "minLength": 5,
-            "maxLength": 30
-
-        },
-
-        "jobs": {
+        "pipelines": {
 
             "type": "array",
             "items": {
 
                 "type": "object",
-                "required": ["job_name"],
+                "required": ["name", "jobs"],
                 "properties": {
 
-                    "job_name": {
+                    "name": {
 
                         "type": "string",
                         "pattern": "^(dev-|prod-)[a-z0-9-]+$",
                         "minLength": 5,
-                        "maxLength": 30
-                    }
+                        "maxLength": 50
+                    },
 
+                    "jobs": {
+
+                        "type": "array",
+                        "items": {
+
+                            "type": "object",
+                            "required": ["name"],
+                            "properties": {
+
+                                "name": {
+
+                                    "type": "string",
+                                    "pattern": "^(dev-|prod-)[a-z0-9-]+$",
+                                    "minLength": 5,
+                                    "maxLength": 50
+                                }
+                            },
+
+                            "additionalProperties": false
+                        },
+
+                        "minItems": 1
+                    }
                 },
+
                 "additionalProperties": false
 
             },
+
             "minItems": 1
 
         }

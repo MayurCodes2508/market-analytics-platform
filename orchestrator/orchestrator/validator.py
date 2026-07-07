@@ -10,54 +10,55 @@ from pathlib import Path
 class Validator:
 
 
-    def __init__(self, loader):
+    def __init__(self, pipeline_loader):
 
-        self.loader = loader
+        self.pipeline_catalog = pipeline_loader.pipeline_catalog
 
-        self.pipeline_cfg = self.loader.pipeline_cfg
+        self.schema_cfg = pipeline_loader.schema_cfg
 
-        self.schema_cfg = self.loader.schema_cfg
-
-        self.schema_path = self.loader.schema_path
+        self.schema_path = pipeline_loader.schema_path
 
 
-        log.info("Pipeline & Schema Cfg Loading Completed...")
+        log.info("Values for Validation Loading Completed...")
 
 
         log.info("Obj: validator | Instance Initialized Successfully...")
 
 
-    def validate_pipeline_cfg(self):
+    def validate_catalog(self):
 
         try:
 
-            full_uri = Path(self.schema_path).resolve().as_uri()
+            base_uri = Path(self.schema_path).resolve().as_uri()
 
-            validator = jsonschema_rs.validator_for(schema=self.schema_cfg, base_uri=full_uri)
+            validate_cfg = jsonschema_rs.validator_for(schema=self.schema_cfg, base_uri=base_uri)
 
-            validator.validate(instance=self.pipeline_cfg)
+            validate_cfg.validate(instance=self.pipeline_catalog)
 
-            log.info("Pipeline Validation Against Given Schema...")
+            log.info("Catalog Validation Against the Given Schema Completed...")
+
 
         except ValidationError as e:
 
-            log.error(F"Validation Error: {self.pipeline_cfg} | Provide a Valid Pipeline Cfg | Details: {e}")
+            log.error(F"Validation Error: {self.pipeline_catalog} | Provide a Valid Pipeline Catalog | Details: {e}")
 
             raise
+
 
         except SchemaError as e:
 
             log.error(F"Schema Error: {self.schema_cfg} | Provide a Valid Schema | Details: {e}")
 
             raise
+        
 
         except Exception:
 
-            log.exception("Unknown Error Occured While Validating Pipeline Cfg Againt Given Schema")
+            log.exception("Unknown Error Occured While Validating Pipeline Catalog Againt Given Schema")
 
             raise
 
 
     def validator_run(self):
 
-        self.validate_pipeline_cfg()
+        self.validate_catalog()

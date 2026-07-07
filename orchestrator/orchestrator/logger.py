@@ -9,22 +9,24 @@ from psycopg2.extras import Json
 class Pipeline_Logger:
 
 
-    def __init__(self, loader, metadata):
+    def __init__(self, url, metadata):
 
-        self.loader = loader
+        self.url = url
+
         self.metadata = metadata
 
-        self.db_url = self.loader.db_url
 
-        self.pipeline_start_metadata_dump = self.metadata.pipeline_start_metadata_dump
-        self.pipeline_end_metadata_dump = getattr(self.metadata, 'pipeline_end_metadata_dump', None)
+        log.info("Pipeline Metadata & DB URL Loading Completed...")
+
+
+        log.info("Obj: pipeline logger | Instance Initialized Successfully...")
         
     
     def log_pipeline_run_start(self):
 
         try:
 
-            with psycopg2.connect(self.db_url) as conn:
+            with psycopg2.connect(self.url) as conn:
 
                     with conn.cursor() as cursor:
 
@@ -50,29 +52,32 @@ class Pipeline_Logger:
 
                         query_values = (
 
-                            self.pipeline_start_metadata_dump['pipeline_run_id'],
-                            self.pipeline_start_metadata_dump['pipeline_run_name'],
-                            self.pipeline_start_metadata_dump['pipeline_run_status'],
-                            self.pipeline_start_metadata_dump['pipeline_run_start_time'],
-                            None,
-                            self.pipeline_start_metadata_dump['pipeline_run_created_at'],
-                            self.pipeline_start_metadata_dump['pipeline_run_triggered_by'],
-                            None,
-                            Json(self.pipeline_start_metadata_dump.get('pipeline_run_job_counts', None)),
+                            self.metadata['pipeline_run_id'],
+                            self.metadata['pipeline_run_name'],
+                            self.metadata['pipeline_run_status'],
+                            self.metadata['pipeline_run_start_time'],
+                            self.metadata['pipeline_run_end_time'],
+                            self.metadata['pipeline_run_created_at'],
+                            self.metadata['pipeline_run_triggered_by'],
+                            self.metadata['pipeline_run_error_message'],
+                            Json(self.metadata["pipeline_run_job_counts"]),
 
                         )
 
                         cursor.execute(insert_query, query_values)
 
-                        log.info("Successfully Inserted Pipeline Run")
+                        log.info("Successfully Inserted Pipeline Run...")
+
 
         except (OperationalError, InterfaceError):
 
             log.exception("Network/Connection Error Occured")
 
+
         except DatabaseError:
 
             log.exception("SQL Syntax/DB Constraint Error Occured")
+
 
         except Exception:
 
@@ -83,7 +88,7 @@ class Pipeline_Logger:
 
         try:
 
-            with psycopg2.connect(self.db_url) as conn:
+            with psycopg2.connect(self.url) as conn:
                     
                     with conn.cursor() as cursor:
 
@@ -101,18 +106,20 @@ class Pipeline_Logger:
                 """
 
                         query_values = (
-                            self.pipeline_end_metadata_dump['pipeline_run_status'],
-                            self.pipeline_end_metadata_dump.get('pipeline_run_error_message', None),
-                            self.pipeline_end_metadata_dump['pipeline_run_end_time'],
-                            Json(self.pipeline_end_metadata_dump.get('pipeline_run_job_counts', None)),
-                            self.pipeline_end_metadata_dump['pipeline_run_id']
+                            self.metadata['pipeline_run_status'],
+                            self.metadata['pipeline_run_error_message'],
+                            self.metadata['pipeline_run_end_time'],
+                            Json(self.metadata['pipeline_run_job_counts']),
+                            self.metadata['pipeline_run_id']
                         )
 
                         cursor.execute(update_query, query_values)
 
+
         except (OperationalError, InterfaceError):
 
             log.exception("Network/Connection Error Occured")
+
 
         except DatabaseError:
 
@@ -123,34 +130,23 @@ class Pipeline_Logger:
 
             log.exception("Unexpected Error Occured")
 
-    
-    def logger_run(self):
-
-        self.log_pipeline_run_start()
-
-    
-    def logger_run_2(self):
-
-        self.log_pipeline_run_end()
 
 
 class Job_Logger:
 
 
-    def __init__(self, loader, job_metadata):
+    def __init__(self, url, metadata):
 
-        self.loader = loader
-        self.job_metadata = job_metadata
+        self.url = url
 
-        self.db_url = self.loader.db_url
-        self.job_metadata_dump = self.job_metadata.job_metadata_dump
+        self.metadata = metadata
 
 
     def log_job_run_metadata(self):
 
         try:
 
-            with psycopg2.connect(self.db_url) as conn:
+            with psycopg2.connect(self.url) as conn:
                     
                     with conn.cursor() as cursor:
 
@@ -179,36 +175,34 @@ class Job_Logger:
                 """
 
                         query_values = (
-                            self.job_metadata_dump['job_run_id'],
-                            self.job_metadata_dump['pipeline_run_id'],                            
-                            self.job_metadata_dump['job_name'],                            
-                            self.job_metadata_dump['system'],                        
-                            self.job_metadata_dump['job_type'],                        
-                            self.job_metadata_dump['sub_jobtype'],                        
-                            self.job_metadata_dump['job_status'],                        
-                            self.job_metadata_dump['start_time'],                        
-                            self.job_metadata_dump['end_time'],                        
-                            self.job_metadata_dump['created_at'],                        
-                            self.job_metadata_dump.get('error_message', None),                        
-                            Json(self.job_metadata_dump.get('job_metrics', None)),                        
-                            Json(self.job_metadata_dump.get('extra_metadata', None)),                        
+                            self.metadata['job_run_id'],
+                            self.metadata['pipeline_run_id'],                            
+                            self.metadata['job_name'],                            
+                            self.metadata['system'],                        
+                            self.metadata['job_type'],                        
+                            self.metadata['sub_jobtype'],                        
+                            self.metadata['job_status'],                        
+                            self.metadata['start_time'],                        
+                            self.metadata['end_time'],                        
+                            self.metadata['created_at'],                        
+                            self.metadata['error_message'],                        
+                            Json(self.metadata['job_metrics']),                        
+                            Json(self.metadata['extra_metadata']),                        
                         )
 
                         cursor.execute(insert_query, query_values)
+
 
         except (OperationalError, InterfaceError):
 
             log.exception("Network/Connection Error Occured")
 
+
         except DatabaseError:
 
             log.exception("SQL Syntax/DB Constraint Error Occured")
 
+
         except Exception:
 
             log.exception("Unexpected Error Occured")
-
-
-    def logger_run(self):
-        
-        self.log_job_run_metadata()

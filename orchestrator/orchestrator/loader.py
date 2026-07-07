@@ -1,48 +1,68 @@
+import os
+from pathlib import Path
+from loguru import logger as log
 import json
 from json import JSONDecodeError
-from loguru import logger as log
-import os
 
 
 
 
 
-class Loader:
+class PipelineLoader:
 
 
-    def __init__(self, file_path, schema_path):
+    def __init__(self):
 
-        self.file_path = file_path
+        env = os.getenv(key='ENV')
 
-        self.schema_path = schema_path
-
-        log.info("JSON Pipeline & Schema Cfg Paths Loading Completed...")
-
-
-        log.info("Obj: loader | Instance Initialized Successfully...")
+        if env == 'PROD':
+            
+            self.file_path = Path(__file__).parent.parent / "configs" / "catalog" / "prod" / "config.json"
 
 
-    def load_pipeline_cfg(self):
+        elif env == 'DEV':
+            
+            self.file_path = Path(__file__).parent.parent / "configs" / "catalog" / "dev" / "config.json"
+
         
+        else:
+
+            raise ValueError(F"Unknown Env: {env} | Provide a Valid Env")
+        
+
+        self.schema_path = Path(__file__).parent.parent / "schemas" / "pipeline_schema.json"
+
+
+        log.info("JSON Pipeline Catalog and Schema Cfg Paths Loading Completed...")
+
+
+        log.info("Obj: pipeline_loader | Instance Initialized Successfully...")
+
+
+    def load_pipeline_catalog(self):
+
         try:
 
             with open(file=self.file_path, mode='r') as f:
 
-                self.pipeline_cfg = json.load(fp=f)
+                self.pipeline_catalog = json.load(fp=f)
 
-                log.info("Pipeline Cfg Loading Completed...")
+                log.info("Pipeline Catalog Loading Completed...")
+
 
         except FileNotFoundError:
 
-            log.error(F"File Not Found Error: {self.file_path} | Provide a Valid JSON Pipeline Cfg File Path")
+            log.error(F"File Not Found Error: {self.file_path} | Provide a Valid JSON Pipeline Catalog File Path")
 
             raise
+
 
         except JSONDecodeError as e:
 
-            log.error(F"JSON Parsing/Decoding Error: {self.file_path} | Provide a Valid JSON Format | Details: {e}")
+            log.error(F"JSON Parsing/Decoding Error: {self.file_path} | Provide Valid JSON Format | Details: {e}")
 
             raise
+
 
         except UnicodeDecodeError:
 
@@ -50,12 +70,13 @@ class Loader:
 
             raise
 
+
         except Exception:
 
-            log.exception(F"Unknown Error Occured While Loading Pipeline Cfg: {self.file_path}")
+            log.exception(F"Unknown Error Occured While Loading Pipeline Catalog: {self.file_path}")
 
             raise
-        
+
 
     def load_schema_cfg(self):
 
@@ -67,11 +88,13 @@ class Loader:
 
                 log.info("Schema Cfg Loading Completed...")
 
+
         except FileNotFoundError:
 
             log.error(F"File Not Found Error: {self.schema_path} | Provide a Valid JSON Schema Cfg File Path")
 
             raise
+
 
         except JSONDecodeError as e:
 
@@ -79,11 +102,13 @@ class Loader:
 
             raise
 
+
         except UnicodeDecodeError:
 
             log.error(F"Unicode Decoding Error: {self.schema_path} | Expected UTF-8")
 
             raise
+
 
         except Exception:
 
@@ -91,27 +116,20 @@ class Loader:
 
             raise
 
-    
-    def load_db_creds(self):
 
-        db_url = os.getenv('NEON_DB_URL')
+    def pipeline_loader_run(self):
 
-        if not db_url:
-
-            raise ValueError(F"Invalid or Missing 'db_url': {db_url} | Provide a Valid DB Url")
-        
-        self.db_url = db_url
-
-        log.info("DB Creds Loading Completed...")
-
-
-    def loader_run(self):
-
-        self.load_pipeline_cfg()
+        self.load_pipeline_catalog()
 
         self.load_schema_cfg()
 
-    
-    def loader_run_2(self):
 
-        self.load_db_creds()
+    def load_db_creds(self):
+
+        db_url = os.getenv('DB_URL')
+
+        if not db_url:
+
+            raise ValueError(F"Invalid or Missing db_url: {db_url} | Provide a valid DB URL")
+        
+        self.db_url = db_url
