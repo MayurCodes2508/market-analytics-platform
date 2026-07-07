@@ -53,6 +53,7 @@ jobs:
         env:
           NEON_DB_URL: ${{ secrets.NEON_DB_URL }}
           TRIGGERED_BY: ${{ vars.TRIGGERED_BY }}
+          ENV: ${{ vars.ENV }}
 
       - name: Build Pipeline Container Image
         run: |
