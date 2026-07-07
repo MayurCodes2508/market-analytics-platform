@@ -59,6 +59,8 @@ class Orchestrator:
 
             log.error(F"Details: {error_message}")
 
+            return
+
 
         runner = None
 
@@ -83,11 +85,7 @@ class Orchestrator:
                 job_run_id=job_run_id,
                 status="FAILED",
                 error_message=error_message,
-                rows_processed=(
-                    runner.rows_processed
-                    if runner and hasattr(runner, 'rows_processed')
-                    else None
-                )
+                rows_processed=getattr(runner, 'rows_processed', None)
             )
 
             log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
@@ -103,11 +101,7 @@ class Orchestrator:
                 job_run_id=job_run_id,
                 status="SUCCESS",
                 error_message=None,
-                rows_processed=(
-                    runner.rows_processed
-                    if runner and hasattr(runner, 'rows_processed')
-                    else None
-                )
+                rows_processed=getattr(runner, 'rows_processed', None)
             )
 
             log.info(F"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
