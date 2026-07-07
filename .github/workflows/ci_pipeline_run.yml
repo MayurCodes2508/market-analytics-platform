@@ -51,7 +51,7 @@ jobs:
         run: |
           python -u -m orchestrator.orchestrator
         env:
-          NEON_DB_URL: ${{ secrets.NEON_DB_URL }}
+          DB_URL: ${{ secrets.DB_URL }}
           TRIGGERED_BY: ${{ vars.TRIGGERED_BY }}
           ENV: ${{ vars.ENV }}
 
