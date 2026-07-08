@@ -27,7 +27,7 @@ on:
 
 jobs:
   validate_elt_system:
-    name: Run EL Job & Containerize
+    name: Run Code & Tests
     runs-on: ubuntu-latest
     permissions:
       id-token: write
