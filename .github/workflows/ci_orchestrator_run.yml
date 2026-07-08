@@ -1,5 +1,7 @@
 name: CI ORCHESTRATOR RUN
 
+####################### Triggers ###############################
+
 on:
   push:
     branches:
@@ -21,6 +23,8 @@ on:
       - 'orchestrator/**'
       - '.github/workflows/ci_orchestrator_run.yml'
 
+######################## Jobs #######################################
+
 jobs:
   validate_orchestrator:
     name: Run Code & Tests
@@ -31,6 +35,10 @@ jobs:
     defaults:
       run:
         working-directory: ./orchestrator
+
+################################ Steps #########################################
+
+############################### Runtime Setup ###################################
 
     steps:
       - name: Checkout Code
@@ -49,7 +57,7 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'orchestrator/requirements.txt'
 
-###################### Pip Setup & Dependency Installation #######################
+###################### Dependency Setup #######################
 
       - name: Check For Pip Existance
         run: |
@@ -68,11 +76,21 @@ jobs:
         run: |
           pip-sync requirements.txt dev-requirements.txt
 
-###################### Dependency Tests ##########################################
-
       - name: Check for Broken Dependencies
         run: |
           pip check
+
+###################### Code QT ##########################################
+
+      - name: Code Linting Check
+        run: |
+          ruff check .
+
+      - name: Code Formatting Check
+        run: |
+          ruff format --check .
+
+########################### Run Code ##########################################
 
       - name: Run Python Code
         run: |
