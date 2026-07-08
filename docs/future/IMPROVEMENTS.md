@@ -33,8 +33,8 @@ Each record represents a single pipeline run, capturing its lifecycle, trigger s
 
 **`pipeline_name`** *(examples)*
 
-- `market_analytics_pipeline`
-- `metadata_pipeline`
+- `market-analytics-pipeline`
+- `platform-observability-pipeline`
 
 **`triggered_by`** *(typical values)*
 

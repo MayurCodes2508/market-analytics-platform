@@ -6,7 +6,7 @@ Schema validation enforces correctness of every job configuration before the run
 
 ## Implementation
 
-The schema is defined in `schemas/root_schema.json`, which references `exec_schemas/api_exec_schema.json` and `dest_schemas/gcs_dest_schema.json`. It includes requirements for:
+The schema is defined in `el_system/schemas/root_schema.json`, which references `el_system/schemas/exec_schemas/api_exec_schema.json` and `el_system/schemas/dest_schemas/gcs_dest_schema.json`. It includes requirements for:
 
 - pipeline identification
 - metadata fields

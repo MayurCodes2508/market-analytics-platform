@@ -13,7 +13,7 @@ The Destination Engine takes extracted data and writes it to the configured stor
 
 ## Implementation
 
-The destination logic lives in `pipeline/destinations/gcs.py`.
+The destination logic lives in `el_system/job_executors/dests/gcs.py`.
 
 ### Key steps
 
