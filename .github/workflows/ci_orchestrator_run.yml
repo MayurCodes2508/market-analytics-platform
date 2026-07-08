@@ -92,7 +92,7 @@ jobs:
 
 ########################### Run Code ##########################################
 
-      - name: Run Python Code
+      - name: Run Code
         run: |
           python -u -m orchestrator.orchestrator
         env:

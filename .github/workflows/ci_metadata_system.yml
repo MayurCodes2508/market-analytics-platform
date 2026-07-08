@@ -1,23 +1,33 @@
 name: CI - METADATA CONFIG SYSTEM
 
+####################### Triggers ###############################
+
 on:
   push:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
+      - 'feature/**'
 
     paths:
-      - '**metadata_system/**'
-      - '**.github/workflows/ci_metadata_system.yml**'
+      - 'orchestrator/**'
+      - '.github/workflows/ci_metadata_system.yml'
   
   pull_request:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
+      - 'feature/**'
 
     paths:
-      - '**metadata_system/**'
-      - '**.github/workflows/ci_metadata_system.yml**'
+      - 'orchestrator/**'
+      - '.github/workflows/ci_metadata_system.yml'
+
+######################## Jobs #######################################
 
 jobs:
   validate_metadata_system:
-    name: Run Metadata Job & Containerize
+    name: Run Code & Tests
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -25,6 +35,10 @@ jobs:
     defaults:
       run:
         working-directory: ./metadata_system
+
+################################ Steps #########################################
+
+############################### Runtime Setup ###################################
 
     steps:
       - name: Checkout Code
@@ -43,28 +57,47 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'metadata_system/requirements.txt'
 
-      - name: Install System Dependencies
-        run: |
-          pip install -r requirements.txt
+###################### Dependency Setup #######################
 
-      - name: Run System Python Code
+      - name: Check For Pip Existance
+        run: |
+          python -m ensurepip --default-pip
+
+      - name: Install Pip Tools
+        run: |
+          pip install pip-tools
+
+      - name: Compile Dependencies
+        run: |
+          pip-compile requirements.in 
+          pip-compile dev-requirements.in 
+
+      - name: Sync Dependencies
+        run: |
+          pip-sync requirements.txt dev-requirements.txt
+
+      - name: Check for Broken Dependencies
+        run: |
+          pip check
+
+###################### Code QT ##########################################
+
+      - name: Code Linting Check
+        run: |
+          ruff check .
+
+      - name: Code Formatting Check
+        run: |
+          ruff format --check .
+
+########################### Run Code ##########################################
+
+      - name: Run Code
         run: |
           python -u -m orchestrator.orchestrator
         env:
           NEON_DB_URL: ${{ secrets.NEON_DB_URL }}
           ENV: ${{ vars.ENV }}
 
-      - name: Build System Container Image
-        run: |
-          docker build -t metadata-job:CI .
 
-      - name: Run Container Image Code
-        run: |
-          docker run \
-           -e NEON_DB_URL \
-           -e ENV \
-           metadata-job:CI
-        env:
-          NEON_DB_URL: ${{ secrets.NEON_DB_URL }}
-          ENV: ${{ vars.ENV }}
           
