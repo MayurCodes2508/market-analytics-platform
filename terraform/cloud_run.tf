@@ -36,7 +36,7 @@ resource "google_cloud_run_v2_job" "dev_dbt_transformations_run" {
   template {
     template {
       containers {
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/dbt-job:dev_v1"
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/dbt-job:testing"
         command = ["bash", "-c"]
         args = [
           "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET -s tag:dev --fail-fast --store-failures --profiles-dir ."
@@ -59,16 +59,16 @@ resource "google_cloud_run_v2_job" "dev_pipeline_run" {
     template {
       containers {
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/pipeline_run:testing"
-        command = [ "bash", "-c" ]
-        args = [ 
-          "python -u -m orchestrator.orchestrator --file_path configs/pipeline_configs/dev/market_analytics.json --schema_path schemas/pipeline_schema.json"
-         ]
          env {
           name = "TRIGGERED_BY"
           value = "scheduler"
          }
          env {
-          name = "NEON_DB_URL"
+           name = "ENV"
+           value = "DEV"
+         }
+         env {
+          name = "DB_URL"
           value_source {
             secret_key_ref {
               secret  = "dev-market-analytics-platform-neon-db-url-secret"
@@ -125,10 +125,6 @@ resource "google_cloud_run_v2_job" "prod_el_system_run" {
     template {
       containers {
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/el-job:latest"
-        command = ["bash", "-c"]
-        args = [
-          "python -u -m orchestrator.orchestrator --file_path configs/coingecko_sources/prod/market_price.json --schema_path schemas/root_schema.json"
-        ]
         env {
           name = "COINGECKO_API_KEY"
           value_source {
@@ -140,7 +136,7 @@ resource "google_cloud_run_v2_job" "prod_el_system_run" {
         }
         env {
           name = "ENV"
-          value = "prod"
+          value = "PROD"
         }
       }
       service_account = "production-cloud-resources-job@instant-medium-491107-t6.iam.gserviceaccount.com"
@@ -158,7 +154,7 @@ resource "google_cloud_run_v2_job" "prod_dbt_transformations_run" {
   template {
     template {
       containers {
-        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/dbt-job:prod_v1"
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/dbt-job:latest"
         command = ["bash", "-c"]
         args = [
           "dbt deps && dbt source freshness --target $DBT_TARGET --profiles-dir . && dbt build --target $DBT_TARGET -s tag:prod --fail-fast --store-failures --profiles-dir ."
@@ -184,10 +180,8 @@ resource "google_cloud_run_v2_job" "prod_pipeline_run" {
     template {
       containers {
         image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/pipeline_run:latest"
-        command = [ "bash", "-c" ]
-        args = [ "python -u -m orchestrator.orchestrator --file_path configs/pipeline_configs/prod/market_analytics.json --schema_path schemas/pipeline_schema.json" ]
         env {
-        name = "NEON_DB_URL"
+        name = "DB_URL"
         value_source {
           secret_key_ref {
             secret  = "prod-market-analytics-platform-neon-db-url-secret"
@@ -199,9 +193,43 @@ resource "google_cloud_run_v2_job" "prod_pipeline_run" {
           name = "TRIGGERED_BY"
           value = "scheduler"
         }
+        env {
+          name = "ENV"
+          value = "PROD"
+        }
       }
       service_account = "production-cloud-resources-518@instant-medium-491107-t6.iam.gserviceaccount.com"
     }
   }
 }
 
+resource "google_cloud_run_v2_job" "prod_metadata_system_run" {
+  name = "prod-metadata-system-run"
+  location = "asia-south1"
+  deletion_protection = true
+  lifecycle {
+    prevent_destroy = true
+  }
+  template {
+    template {
+      containers {
+        image = "asia-south1-docker.pkg.dev/instant-medium-491107-t6/market-analytics-platform-repository/metadata-job:latest"
+         env {
+          name = "ENV"
+          value = "PROD"
+          
+         }
+         env {
+          name = "NEON_DB_URL"
+          value_source {
+            secret_key_ref {
+              secret  = "prod-market-analytics-platform-neon-db-url-secret"
+              version = "1"
+            }
+          }
+         }
+      }
+      service_account = "production-cloud-resources-525@instant-medium-491107-t6.iam.gserviceaccount.com"
+    }
+  }
+}
