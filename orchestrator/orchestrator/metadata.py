@@ -138,7 +138,7 @@ class Job_Metadata:
 
                     break
 
-                time.sleep(2)
+                time.sleep(3)
 
             start_time = execution.start_time
 
@@ -173,7 +173,9 @@ class Job_Metadata:
 
                 '''
 
-            entries = logging_client.list_entries(filter_=job_filter)
+            entries = logging_client.list_entries(
+                filter_=job_filter
+                )
 
             job_metadata_dumps = []
 
