@@ -56,5 +56,15 @@ jobs:
 
       - name: Build System Container Image
         run: |
-          docker build -t metadata-system-job:CI .
+          docker build -t metadata-job:CI .
+
+      - name: Run Container Image Code
+        run: |
+          docker run -rm \
+           -e NEON_DB_URL \
+           -e ENV \
+           metadata-job:CI
+        env:
+          NEON_DB_URL: ${{ secrets.NEON_DB_URL }}
+          ENV: ${{ vars.ENV }}
           

@@ -56,5 +56,15 @@ jobs:
 
       - name: Build System Container Image
         run: |
-          docker build -t el-system-job:CI .
+          docker build -t el-job:CI .
+
+      - name: Run Container Image Code
+        run: |
+          docker run -rm \
+           -e COINGECKO_API_KEY \
+           -e ENV \
+           el-job:CI
+        env:
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+          ENV: ${{ vars.ENV }}
           

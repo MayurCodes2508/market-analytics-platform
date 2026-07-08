@@ -47,6 +47,10 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Check for Broken Dependencies
+        run: |
+          pip check
+
       - name: Run Pipeline Python Code
         run: |
           python -u -m orchestrator.orchestrator
@@ -58,4 +62,16 @@ jobs:
       - name: Build Pipeline Container Image
         run: |
           docker build -t pipeline-run:CI .
+
+      - name: Run Container Image Code
+        run: |
+          docker run -rm \
+           -e DB_URL \
+           -e TRIGGERED_BY \
+           -e ENV \
+           pipeline-run:CI
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          TRIGGERED_BY: ${{ vars.TRIGGERED_BY }}
+          ENV: ${{ vars.ENV }}
           
