@@ -15,24 +15,21 @@ The Execution Engine orchestrates pipeline jobs by loading configs, validating t
 
 ## Implementation
 
-The main runner is in `orchestrator/runner.py`.
+The main runner is in `el_system/orchestrator/orchestrator.py`.
 
 ### Execution flow
 
-1. `load_config()` reads the job configuration
-2. `load_schema()` reads the schema definition
-3. `validate_config()` enforces config correctness
-4. `load_env_credentials()` loads secrets from an environment file
-5. `insert_run_metadata()` records the job start state
-6. `execute_execcmd()` creates the `ApiExecCommand`
-7. `execute_destination()` creates the GCS destination object
-8. `update_run_metadata()` writes final status and record counts
+1. The orchestrator loads a list of configured jobs from `el_system/configs/catalog`
+2. It validates each job config using `el_system/schemas/root_schema.json`
+3. It builds metadata records and job context
+4. It executes the EL ingestion job using `el_system/orchestrator/runner.py`
+5. It persists ingestion output to GCS via `el_system/job_executors/dests/gcs.py`
 
 ## Design
 
-The runner separates orchestration from execution logic. Execution commands are pluggable, enabling future support for additional data sources without changing the core runner.
+The orchestrator separates orchestration from execution logic. Execution commands are pluggable, enabling future support for additional data sources without changing the engine.
 
-The repository also includes a metadata pipeline in `metadata_pipeline/main.py` that extracts pipeline run metadata from PostgreSQL and loads it into BigQuery table `instant-medium-491107-t6.prod_metadata.raw_pipeline_runs` for dbt consumption.
+The repository also includes a metadata system in `metadata_system/orchestrator/orchestrator.py` that loads run metadata from PostgreSQL and writes it to BigQuery using `metadata_system/job_executors/dests/bq_dest.py`.
 
 ## Current status
 
