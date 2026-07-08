@@ -65,7 +65,7 @@ jobs:
 
       - name: Run Container Image Code
         run: |
-          docker run -rm \
+          docker run --rm \
            -e DB_URL \
            -e TRIGGERED_BY \
            -e ENV \
