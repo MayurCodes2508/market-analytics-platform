@@ -5,7 +5,7 @@ import os
 from google.cloud.run_v2 import ExecutionsClient
 from google.api_core.exceptions import GoogleAPIError, NotFound, InvalidArgument
 import time
-import google.cloud.logging_v2
+from google.cloud import logging_v2 as lv2
 import json
 
 
@@ -158,7 +158,7 @@ class Job_Metadata:
 
             is_retry = bool(execution.retried_count)
 
-            logging_client = google.cloud.logging_v2.Client(
+            logging_client = lv2.Client(
                 project="instant-medium-491107-t6"
             )
 
