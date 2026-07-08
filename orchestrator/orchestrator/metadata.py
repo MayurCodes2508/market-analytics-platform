@@ -1,12 +1,15 @@
 from loguru import logger as log
 
-from datetime import datetime as dt
-import os
 from google.cloud.run_v2 import ExecutionsClient
 from google.api_core.exceptions import GoogleAPIError, NotFound, InvalidArgument
-import time
 from google.cloud import logging_v2 as lv2
+
+from datetime import datetime as dt
 import json
+import time
+import os
+
+
 
 
 class Pipeline_Metadata:
@@ -172,6 +175,8 @@ class Job_Metadata:
                 textPayload:"METADATA_DUMP"
 
                 '''
+            
+            time.sleep(5)
 
             entries = logging_client.list_entries(
                 filter_=job_filter
