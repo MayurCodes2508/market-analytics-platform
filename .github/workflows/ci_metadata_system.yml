@@ -10,7 +10,7 @@ on:
       - 'feature/**'
 
     paths:
-      - 'orchestrator/**'
+      - 'metadata_system/**'
       - '.github/workflows/ci_metadata_system.yml'
   
   pull_request:
@@ -20,7 +20,7 @@ on:
       - 'feature/**'
 
     paths:
-      - 'orchestrator/**'
+      - 'metadata_system/**'
       - '.github/workflows/ci_metadata_system.yml'
 
 ######################## Jobs #######################################

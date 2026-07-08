@@ -10,7 +10,7 @@ on:
       - 'feature/**'
 
     paths:
-      - 'orchestrator/**'
+      - 'el_system/**'
       - '.github/workflows/ci_el_system.yml'
   
   pull_request:
@@ -20,7 +20,7 @@ on:
       - 'feature/**'
 
     paths:
-      - 'orchestrator/**'
+      - 'el_system/**'
       - '.github/workflows/ci_el_system.yml'
 
 ######################## Jobs #######################################
