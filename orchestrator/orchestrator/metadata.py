@@ -10,8 +10,6 @@ import time
 import os
 
 
-
-
 class Pipeline_Metadata:
     def __init__(
         self,
@@ -173,7 +171,7 @@ class Job_Metadata:
                 textPayload:"METADATA_DUMP"
 
                 '''
-            
+
             time.sleep(5)
 
             entries = logging_client.list_entries(filter_=job_filter)
