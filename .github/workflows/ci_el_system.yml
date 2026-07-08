@@ -1,19 +1,29 @@
 name: CI - EL CONFIG SYSTEM
 
+####################### Triggers ###############################
+
 on:
   push:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
+      - 'feature/**'
 
     paths:
-      - '**el_system/**'
-      - '**.github/workflows/ci_el_system.yml**'
+      - 'el_system/**'
+      - '.github/workflows/ci_el_system.yml'
   
   pull_request:
-    branches: [main, dev]
+    branches:
+      - main
+      - dev
+      - 'feature/**'
 
     paths:
-      - '**el_system/**'
-      - '**.github/workflows/ci_el_system.yml**'
+      - 'el_system/**'
+      - '.github/workflows/ci_el_system.yml'
+
+######################## Jobs #######################################
 
 jobs:
   validate_elt_system:
@@ -25,6 +35,10 @@ jobs:
     defaults:
       run:
         working-directory: ./el_system
+
+################################ Steps #########################################
+
+############################### Runtime Setup ###################################
 
     steps:
       - name: Checkout Code
@@ -43,28 +57,46 @@ jobs:
           cache: 'pip'
           cache-dependency-path: 'el_system/requirements.txt'
 
-      - name: Install System Dependencies
-        run: |
-          pip install -r requirements.txt
+###################### Dependency Setup #######################
 
-      - name: Run System Python Code
+      - name: Check For Pip Existance
+        run: |
+          python -m ensurepip --default-pip
+
+      - name: Install Pip Tools
+        run: |
+          pip install pip-tools
+
+      - name: Compile Dependencies
+        run: |
+          pip-compile requirements.in 
+          pip-compile dev-requirements.in 
+
+      - name: Sync Dependencies
+        run: |
+          pip-sync requirements.txt dev-requirements.txt
+
+      - name: Check for Broken Dependencies
+        run: |
+          pip check
+
+###################### Code QT ##########################################
+
+      - name: Code Linting Check
+        run: |
+          ruff check .
+
+      - name: Code Formatting Check
+        run: |
+          ruff format --check .
+
+########################### Run Code ##########################################
+
+      - name: Run Code
         run: |
           python -u -m orchestrator.orchestrator
         env:
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
           ENV: ${{ vars.ENV }}
 
-      - name: Build System Container Image
-        run: |
-          docker build -t el-job:CI .
-
-      - name: Run Container Image Code
-        run: |
-          docker run \
-           -e COINGECKO_API_KEY \
-           -e ENV \
-           el-job:CI
-        env:
-          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
-          ENV: ${{ vars.ENV }}
           

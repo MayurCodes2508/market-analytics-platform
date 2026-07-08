@@ -1,43 +1,34 @@
 from loguru import logger as log
 
 
-
-
-
 class Metadata:
-
-
     def __init__(self, loader):
-        
+
         self.loader = loader
 
         self.job_cfg = loader.job_cfg
 
-        self.job_name = self.job_cfg['job_name']
+        self.job_name = self.job_cfg["job_name"]
 
-        self.system = self.job_cfg['system']
+        self.system = self.job_cfg["system"]
 
-        self.job_type = self.job_cfg['job_type']
+        self.job_type = self.job_cfg["job_type"]
 
-        self.sub_jobtype = self.job_cfg['sub_jobtype']
+        self.sub_jobtype = self.job_cfg["sub_jobtype"]
 
-        self.exec_cfg = self.job_cfg['exec']
+        self.exec_cfg = self.job_cfg["exec"]
 
-        self.metadata_cfg = self.job_cfg.get('metadata', {})
+        self.metadata_cfg = self.job_cfg.get("metadata", {})
 
-        self.dest_cfg = self.job_cfg.get('dest', {})
-
+        self.dest_cfg = self.job_cfg.get("dest", {})
 
         log.info("Metadata Loading Completed...")
 
-
         log.info("Obj: metadata | Instance Initialized Successfully...")
-
 
     def build_job_metadata(self, job_run_id, status, error_message, rows_processed):
 
         metadata_dump = {
-            
             "job_run_id": job_run_id,
             "job_name": self.job_name,
             "system": self.system,
@@ -45,7 +36,7 @@ class Metadata:
             "sub_jobtype": self.sub_jobtype,
             "status": status,
             "error_message": error_message,
-            "rows_processed": rows_processed
+            "rows_processed": rows_processed,
         }
-        
+
         return metadata_dump

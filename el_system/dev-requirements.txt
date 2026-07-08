@@ -8,11 +8,11 @@ ast-serialize==0.6.0
     # via mypy
 astroid==4.0.4
     # via pylint
-certifi==2026.5.20
+certifi==2026.6.17
     # via
     #   -c requirements.txt
     #   requests
-charset-normalizer==3.4.7
+charset-normalizer==3.4.9
     # via
     #   -c requirements.txt
     #   requests
@@ -35,7 +35,7 @@ librt==0.12.0
     # via mypy
 mccabe==0.7.0
     # via pylint
-mypy==2.1.0
+mypy==2.2.0
     # via -r dev-requirements.in
 mypy-extensions==1.1.0
     # via mypy
@@ -65,12 +65,8 @@ ruff==0.15.20
     # via -r dev-requirements.in
 tomlkit==0.15.0
     # via pylint
-types-psycopg2==2.9.21.20260518
-    # via -r dev-requirements.in
-typing-extensions==4.15.0
-    # via
-    #   -c requirements.txt
-    #   mypy
+typing-extensions==4.16.0
+    # via mypy
 urllib3==2.7.0
     # via
     #   -c requirements.txt

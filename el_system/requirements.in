@@ -1,0 +1,7 @@
+loguru
+uuid6
+jsonschema_rs
+jsonschema
+google-cloud-storage
+pandas
+pyarrow
