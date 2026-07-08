@@ -158,9 +158,7 @@ class Job_Metadata:
 
             is_retry = bool(execution.retried_count)
 
-            logging_client = lv2.Client(
-                project="instant-medium-491107-t6"
-            )
+            logging_client = lv2.Client(project="instant-medium-491107-t6")
 
             exec_name = execution_name.rsplit("/", 1)[-1]
 
@@ -173,9 +171,7 @@ class Job_Metadata:
 
                 '''
 
-            entries = logging_client.list_entries(
-                filter_=job_filter
-                )
+            entries = logging_client.list_entries(filter_=job_filter)
 
             job_metadata_dumps = []
 
