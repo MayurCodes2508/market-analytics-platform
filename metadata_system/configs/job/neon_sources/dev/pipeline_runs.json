@@ -18,7 +18,7 @@
 
         "exec_type": "DBExecCmd",
         "table": "{dataset}",
-        "query": "SELECT * FROM {table}",
+        "query": "SELECT * FROM {table} WHERE status != 'RUNNING'",
 
         "auth": {
 

@@ -14,8 +14,7 @@
 
         "schema": {
 
-            "type": "string",
-            "const": "dev_metadata"
+            "type": "string"
         },
 
         "table": {
