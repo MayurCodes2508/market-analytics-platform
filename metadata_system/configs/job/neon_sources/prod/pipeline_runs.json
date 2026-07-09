@@ -30,7 +30,7 @@
     "dest": {
 
         "dest_type": "BQ",
-        "schema": "dev_metadata",
+        "schema": "prod_metadata",
         "table": "raw_pipeline_runs"
     }
 }
