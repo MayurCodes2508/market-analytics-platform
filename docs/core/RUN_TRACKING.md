@@ -23,6 +23,7 @@ Run Tracking provides observability into pipeline executions by recording metada
 2. The job executes
 3. The runner updates the record to `SUCCESS` or `FAILED`
 4. Errors are stored for debugging
+5. A separate metadata system can ingest the run history into BigQuery dataset `prod_metadata.raw_pipeline_runs` for downstream dbt reporting
 
 ## Benefits
 

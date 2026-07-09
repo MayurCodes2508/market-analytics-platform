@@ -8,22 +8,27 @@ This repository contains the Market Analytics Platform, a production-ready, vers
 
 - A config-driven ingestion pipeline using JSON job definitions
 - Schema validation to enforce correct pipeline configuration
-- API extraction engine in `pipeline/exec_cmds/api_exec.py`
-- Destination engine for Parquet output to Google Cloud Storage in `pipeline/destinations/gcs.py`
-- Production orchestration and run tracking in `orchestrator/runner.py`
-- Infrastructure setup codified in `terraform/main.tf`
-- Production Cloud Run job image tagged `market-job:prod_v1`
-- Hourly Cloud Scheduler deployment for production ingestion
-- Separate dev and prod configurations, storage, and secrets
+- API extraction engine in `el_system/job_executors/exec_cmds/api_exec.py`
+- Destination engine for Parquet output to Google Cloud Storage in `el_system/job_executors/dests/gcs.py`
+- Production ingestion orchestration in `el_system/orchestrator/orchestrator.py`
+- Metadata ingestion orchestration in `metadata_system/orchestrator/orchestrator.py`
+- Infrastructure setup codified in `terraform/cloud_run.tf`, `terraform/buckets.tf`, and `terraform/scheduler.tf`
+- Artifact Registry repository `market-analytics-platform-repository` for container images
+- Production Cloud Run jobs for EL ingestion, dbt execution, pipeline orchestration, and metadata ingestion
+- dbt models for pipeline observability and SLO reporting in `dbt_transformations/`
+- Separate dev and prod configurations, storage, and secrets managed by Terraform
 
 ## Current production status
 
 - Released production version: `prod_v1`
-- Production config file: `configs/coingecko_sources/prod_market_price.json`
+- Production config file: `el_system/configs/job/coingecko_sources/prod/market_price.json`
 - Production destination bucket: `prod-market-analytics-platform-bucket`
-- Production Cloud Run job: `prod-market-analytics-platform-run`
-- Production scheduler: `prod-market-analytics-platform-scheduler`
-- Production secret: `prod-market-analytics-platform-secret`
+- Production EL ingestion Cloud Run job: `prod-el-system-run`
+- Production dbt Cloud Run job: `prod-dbt-transformations-run`
+- Production pipeline orchestration Cloud Run job: `prod-pipeline-run`
+- Production metadata ingestion Cloud Run job: `prod-metadata-system-run`
+- Production scheduler: `prod-pipeline-run-scheduler`
+- Production secrets: `prod-market-analytics-platform-coingecko-api-key-secret` and `prod-market-analytics-platform-neon-db-url-secret`
 
 ## Release model
 
@@ -36,27 +41,50 @@ This project uses a SaaS-style versioning pattern:
 
 ## How the platform is organized
 
-- `orchestrator/runner.py` — main runner, schema validation, run metadata tracking
-- `pipeline/exec_cmds/api_exec.py` — API extraction logic
-- `pipeline/destinations/gcs.py` — destination persistence logic
-- `schemas/api_exec_schema.json` — job configuration schema
-- `configs/coingecko_sources/` — environment-specific ingestion jobs
+- `el_system/orchestrator/orchestrator.py` — ingestion orchestration, validation, and run lifecycle logging
+- `el_system/job_executors/exec_cmds/api_exec.py` — API extraction logic
+- `el_system/job_executors/dests/gcs.py` — destination persistence logic
+- `metadata_system/orchestrator/orchestrator.py` — metadata ingestion orchestration and BigQuery loading
+- `metadata_system/job_executors/dests/bq_dest.py` — BigQuery metadata loader
+- `dbt_transformations/` — dbt models for pipeline observability, SLO reporting, and analytics artifacts
+- `el_system/schemas/root_schema.json` — ingestion job configuration schema
+- `el_system/configs/job/coingecko_sources/` — environment-specific EL ingestion jobs
 - `terraform/` — infrastructure deployment definitions
 - `docs/` — architecture, design, environment, and operational documentation
 
 ## How to run locally
 
+Ensure `dev.env` contains `COINGECKO_API_KEY` and `DB_URL`.
+
+Run the ingestion pipeline locally from the `el_system/` folder:
+
 ```bash
-python -m orchestrator.runner --file_path configs/coingecko_sources/dev_market_price.json --schema_path schemas/api_exec_schema.json
+cd el_system
+python -m orchestrator.orchestrator
+```
+
+Run the metadata ingestion pipeline locally from the `metadata_system/` folder:
+
+```bash
+cd metadata_system
+python -m orchestrator.orchestrator
+```
+
+Run dbt observability models locally from the `dbt_transformations/` folder:
+
+```bash
+cd dbt_transformations
+dbt deps
+dbt build --target dev
 ```
 
 ## Next planned milestones
 
 - Add reliable retry and backoff for API failures
 - Add incremental ingestion and delta loads
-- Add downstream warehouse integration with BigQuery or dbt
-- Add monitoring, alerting, and SLA reporting
+- Expand dbt analytics beyond pipeline observability into broader market analytics
+- Strengthen automated SLA reporting
 
 ## Notes
 
-This release is scoped to ingestion, storage, and run tracking. `prod_v1` represents the first production deployment of the platform with a clear path for future analytics and transformation releases.
+This release is scoped to ingestion, storage, run tracking, metadata ingestion, and dbt observability. `prod_v1` represents the first production deployment of the platform with a clear path for broader analytics and warehouse transformation releases.
