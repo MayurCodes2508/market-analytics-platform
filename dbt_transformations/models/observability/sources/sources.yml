@@ -8,9 +8,10 @@ sources:
       - name: raw_pipeline_runs
 
         description: |
-          This table stores metadata about the execution of various data pipelines. It captures essential details
-          about each pipeline run, including its operational status and any encountered issues.
-          The table supports monitoring pipeline health and performance, and facilitates auditing of data processing activities.
+          This table stores comprehensive records of automated process executions.
+          It tracks the initiation and completion of these processes, along with their operational outcomes.
+          The table provides a historical log of process activity, including any issues encountered.
+          It supports monitoring and analysis of process performance and reliability.
         
         config:
           loaded_at_field: ingestion_ts
@@ -24,15 +25,16 @@ sources:
 
 
         columns:
+
           - name: run_id
-            description: Unique identifier for each pipeline run event.
+            description: A unique identifier for each individual pipeline execution.
             data_tests:
               - not_null:
                   config:
                     tags: ['prod', 'dev']
 
           - name: pipeline_name
-            description: Name of the pipeline executed.
+            description: The name of the pipeline that was executed.
             data_tests:
               - not_null:
                   config:
@@ -56,21 +58,21 @@ sources:
                     values: ['SUCCESS', 'FAILED']
 
           - name: start_time
-            description: Timestamp when the pipeline run started.
+            description: The timestamp when the pipeline execution began.
             data_tests:
               - not_null:
                   config:
                     tags: ['prod', 'dev']
 
           - name: end_time
-            description: Timestamp when the pipeline run finished.
+            description: The timestamp when the pipeline execution concluded.
             data_tests:
               - not_null:
                   config:
                     tags: ['prod', 'dev']
 
           - name: created_at
-            description: Timestamp when the pipeline run record was created.
+            description: The timestamp when the record of the pipeline execution was first created.
             data_tests:
               - not_null:
                   config:
@@ -89,10 +91,10 @@ sources:
                     values: ['scheduler']
 
           - name: error_message
-            description: Error text captured when the pipeline run failed or encountered an issue.
+            description: A detailed message describing any error that occurred during the pipeline execution.
 
           - name: job_counts
-            description: 	"{{ doc('pipeline_runs_job_counts') }}"
+            description: A JSON object containing counts related to the jobs within the pipeline execution.
 
           - name: ingestion_ts
             description: Timestamp when this record was ingested into the warehouse.
@@ -100,3 +102,128 @@ sources:
               - not_null:
                   config:
                     tags: ['prod', 'dev']
+
+
+      - name: raw_job_runs
+
+        description: |
+          This table stores comprehensive records of individual executions of jobs.
+          It captures details about the execution of these jobs, including their initiation, completion, and operational status.
+          The table supports analysis of execution performance and identification of operational issues.
+          It provides a historical log of all processing activities.
+
+        config:
+          loaded_at_field: ingestion_ts
+          freshness:
+            warn_after:
+              count: 3
+              period: hour
+            error_after:
+              count: 6
+              period: hour
+
+        columns:
+
+          - name: run_id
+            description: A unique identifier for each individual job execution.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['dev', 'prod']
+
+          - name: pipeline_run_id
+            description: A unique identifier of the pipeline execution the job belongs to.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['dev', 'prod']
+              - relationships:
+                  config:
+                    tags: ['dev', 'prod']
+                  to: source('metadata', 'raw_pipeline_runs')
+                  field: run_id
+
+          - name: job_name
+            description: The descriptive name of the processing job. 
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['dev', 'prod']
+
+          - name: system
+            description: The originating system where the processing job belongs to.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['dev', 'prod']
+              - accepted_values:
+                  config:
+                    tags: ['dev', 'prod']
+                  arguments:
+                    values: ['el', 'metadata']
+
+          - name: job_type
+            description: The general category or classification of the processing job.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['dev', 'prod']
+
+          - name: sub_jobtype
+            description: A more specific classification or sub-category of the processing job.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['dev', 'prod']
+
+          - name: status
+            description: "{{ doc('job_runs_status') }}"
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+              - accepted_values:
+                  config:
+                    tags: ['prod', 'dev']
+                  arguments:
+                    values: ['SUCCESS', 'FAILED']
+            
+          - name: start_time
+            description: The timestamp when the job execution began.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+
+          - name: end_time
+            description: The timestamp when the job execution concluded.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+
+          - name: created_at
+            description: The timestamp when the record of the job execution was first created.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+
+          - name: error_message
+            description: A detailed message describing any error that occurred during the job execution.
+
+          - name: job_metrics
+            description: A JSON object containing performance indicators and statistical data related to the processing job's execution.
+
+          - name: extra_metadata
+            description: A JSON object containing additional, unstructured information pertinent to the processing job.
+
+          - name: ingestion_ts
+            description: Timestamp when this record was ingested into the warehouse.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+
+
+

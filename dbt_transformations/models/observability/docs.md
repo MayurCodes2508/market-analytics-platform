@@ -8,19 +8,21 @@ The `status` column indicates the final execution state of a pipeline run.
 
 | Status   | Description                                                             |
 |----------|-------------------------------------------------------------------------|
-| SUCCESS  | `The pipeline run completed successfully and rows were processed.`      |
+| SUCCESS  | `The pipeline run completed successfully and jobs were executed.`       |
 | FAILED   | `The pipeline run terminated with an error.`                            |
 
 {% enddocs %}
 
-{% docs pipeline_runs_rows_processed %}
+{% docs job_runs_status %}
 
-## Pipeline Run Rows Processed
+## Job Run Status
 
-The `rows_processed` column records the number of rows delivered by a pipeline run.  
+The `status` column indicates the final execution state of a job run.  
 
-- In **dev**, `valid values range between 0 and 250.`  
-- In **prod**, `valid values must equal 250.`  
+| Status   | Description                                                             |
+|----------|-------------------------------------------------------------------------|
+| SUCCESS  | `The job run completed successfully and rows were processed.`           |
+| FAILED   | `The job run terminated with an error.`                                 |
 
 {% enddocs %}
 
@@ -73,21 +75,5 @@ The `is_slo_threshold_over_30_days_breached` column indicates whether the over 3
 |--------------------------------------------------------------------------------------------------------------------------------------------|
 | TRUE  | `success_rate_over_30_days < 0.99`          | `The over 30 days success‑rate target (≥=99%) was missed; SLO considered breached.`  |
 | FALSE | `success_rate_over_30_days >= 0.99`         | `The over 30 days success‑rate target was met; SLO not breached.`                    |
-
-{% enddocs %}
-
-{% docs pipeline_runs_job_counts %}
-
-## Pipeline Run Job Counts
-
-The `job_counts` column contains a JSON object with counts related to the jobs within the process execution.
-
-It includes 3 fields in total:
-
-- `total_jobs` represents the total number of jobs that were part of the process execution.
-- `successful_jobs` represents the number of jobs that completed successfully.
-- `failed_jobs` represents the number of jobs that failed during the process execution.
-
-All of these fields are integers.
 
 {% enddocs %}
