@@ -1,0 +1,102 @@
+version: 2
+
+sources:
+  - name: metadata
+    database: instant-medium-491107-t6
+    schema: "{{ target.schema }}"
+    tables:
+      - name: raw_pipeline_runs
+
+        description: |
+          This table stores metadata about the execution of various data pipelines. It captures essential details
+          about each pipeline run, including its operational status and any encountered issues.
+          The table supports monitoring pipeline health and performance, and facilitates auditing of data processing activities.
+        
+        config:
+          loaded_at_field: ingestion_ts
+          freshness:
+            warn_after:
+              count: 3
+              period: hour
+            error_after:
+              count: 6
+              period: hour
+
+
+        columns:
+          - name: run_id
+            description: Unique identifier for each pipeline run event.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+
+          - name: pipeline_name
+            description: Name of the pipeline executed.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+              - accepted_values:
+                  config:
+                    tags: ['prod']
+                  arguments:
+                    values: ['prod-market-analytics-pipeline', 'prod-platform-observability-pipeline']
+
+          - name: status
+            description: "{{ doc('pipeline_runs_status') }}"
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+              - accepted_values:
+                  config:
+                    tags: ['prod', 'dev']
+                  arguments:
+                    values: ['SUCCESS', 'FAILED']
+
+          - name: start_time
+            description: Timestamp when the pipeline run started.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+
+          - name: end_time
+            description: Timestamp when the pipeline run finished.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+
+          - name: created_at
+            description: Timestamp when the pipeline run record was created.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+
+          - name: triggered_by
+            description: The entity or mechanism responsible for initiating the process execution.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
+              - accepted_values:
+                  config:
+                    tags: ['prod']
+                  arguments:
+                    values: ['scheduler']
+
+          - name: error_message
+            description: Error text captured when the pipeline run failed or encountered an issue.
+
+          - name: job_counts
+            description: 	"{{ doc('pipeline_runs_job_counts') }}"
+
+          - name: ingestion_ts
+            description: Timestamp when this record was ingested into the warehouse.
+            data_tests:
+              - not_null:
+                  config:
+                    tags: ['prod', 'dev']
