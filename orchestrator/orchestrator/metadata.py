@@ -47,9 +47,9 @@ class Pipeline_Metadata:
                 "pipeline_run_id": self.pipeline_run_id,
                 "pipeline_run_name": self.pipeline_run_name,
                 "pipeline_run_status": self.status,
-                "pipeline_run_start_time": dt.now().isoformat(),
-                "pipeline_run_end_time": None,
                 "pipeline_run_created_at": dt.now().isoformat(),
+                "pipeline_run_end_time": None,
+                "pipeline_run_start_time": dt.now().isoformat(),
                 "pipeline_run_triggered_by": os.getenv("TRIGGERED_BY", "manual"),
                 "pipeline_run_error_message": self.error_message,
                 "pipeline_run_job_counts": {
@@ -139,7 +139,7 @@ class Job_Metadata:
 
                     break
 
-                time.sleep(3)
+                time.sleep(5)
 
             start_time = execution.start_time
 
@@ -172,7 +172,7 @@ class Job_Metadata:
 
                 '''
 
-            time.sleep(5)
+            time.sleep(10)
 
             entries = logging_client.list_entries(filter_=job_filter)
 
