@@ -140,8 +140,9 @@ sources:
               - relationships:
                   config:
                     tags: ['dev', 'prod']
-                  to: source('metadata', 'raw_pipeline_runs')
-                  field: run_id
+                  arguments:
+                    to: source('metadata', 'raw_pipeline_runs')
+                    field: run_id
 
           - name: job_name
             description: The descriptive name of the processing job. 

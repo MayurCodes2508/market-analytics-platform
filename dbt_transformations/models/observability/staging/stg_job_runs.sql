@@ -1,0 +1,18 @@
+SELECT run_id,
+       pipeline_run_id,
+       trim(job_name) AS job_name,
+       trim(system) AS system,
+       trim(job_type) AS job_type,
+       trim(sub_jobtype) AS sub_jobtype,
+       trim(status) AS status,
+       start_time,
+       end_time,
+       created_at,
+       trim(error_message) AS error_message,
+       job_metrics,
+       extra_metadata,
+       ingestion_ts
+
+FROM {{ source('metadata', 'raw_job_runs') }}
+
+QUALIFY row_number() OVER(PARTITION BY run_id ORDER BY ingestion_ts DESC) = 1
