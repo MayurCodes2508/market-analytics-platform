@@ -9,7 +9,7 @@ class ApiExecCommand:
 
         self.exec_cfg = exec_cfg
 
-        self.base_url = exec_cfg["base_url"]
+        self.base_url = exec_cfg["root_url"]
         self.path = exec_cfg["path"]
 
         pagination_config = exec_cfg["pagination"]

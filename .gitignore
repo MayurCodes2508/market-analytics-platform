@@ -4,7 +4,8 @@ __pycache__/
 *.pyc*
 .env
 .DS_Store
-*dev_testing.py*
+dev_test*
+test*
 *.ruff_cache*
 *.mypy_cache*
 dev_testing/

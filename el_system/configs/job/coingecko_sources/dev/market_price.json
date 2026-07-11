@@ -1,7 +1,4 @@
 {
-    "job_name": "dev_coingecko_market_price",
-
-    "system": "el",
 
     "job_type": "ingestion",
 
@@ -17,7 +14,7 @@
     "exec": {
 
         "exec_type": "ApiExecCmd",
-        "base_url": "https://api.coingecko.com/api/v3",
+        "root_url": "https://api.coingecko.com/api/v3",
         "path": "/coins/markets",
         "pagination": {
 

@@ -2,19 +2,15 @@ from loguru import logger as log
 
 
 class Metadata:
-    def __init__(self, loader):
+    def __init__(self, loader, name):
 
         self.loader = loader
 
         self.job_cfg = loader.job_cfg
 
-        self.job_name = self.job_cfg["job_name"]
+        self.job_name = name
 
-        self.system = self.job_cfg["system"]
-
-        self.job_type = self.job_cfg["job_type"]
-
-        self.sub_jobtype = self.job_cfg["sub_jobtype"]
+        self.system = "el"
 
         self.exec_cfg = self.job_cfg["exec"]
 
@@ -40,3 +36,6 @@ class Metadata:
         }
 
         return metadata_dump
+
+
+    
