@@ -18,7 +18,7 @@ class Orchestrator:
         try:
             job_run_id = str(uid())
 
-            log.info(f"Job: {job_name} | ID: {job_run_id} | System: el | Created...")
+            log.info(f"Job: {job_name} | ID: {job_run_id} | System: el | CREATED...")
 
             job_cfg_loader = JobConfigLoader(fp=fp)
 
@@ -76,36 +76,28 @@ class Orchestrator:
             log.error(f"Details: {str(object=valid_err)}")
 
             return
-        
+    
 
-        try:
-            metadata = Metadata(loader=job_cfg_loader, name=job_name)
-
-            log.info(
-                f"Job Execution: {job_name} | ID: {job_run_id} | System: el | RUNNING..."
-            )
-
-        except Exception as meta_err:
-
-            log.error(f"Job Execution: {job_name} | ID: {job_run_id} | System: el | Job Metadata Building Failed")
-
-            log.error(f"Details: {str(object=meta_err)}")
-
+        log.info(
+            f"Job Execution: {job_name} | ID: {job_run_id} | System: el | RUNNING..."
+        )
 
         try:
 
-            runner = Runner(metadata=metadata)
+            runner = Runner(loader=job_cfg_loader)
 
             runner.runner_run()
 
-        except Exception as execution_error:
-            error_message = str(execution_error)
+        except Exception as exec_err:
+
+            metadata = Metadata()
 
             job_metadata_dump = metadata.build_job_metadata(
                 job_run_id=job_run_id,
+                job_name=job_name,
                 status="FAILED",
-                error_message=error_message,
-                rows_processed=getattr(runner, "rows_processed", None),
+                error_message=str(object=exec_err),
+                rows_processed=getattr(runner, "rows_processed", None) if runner else None,
             )
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
@@ -114,14 +106,18 @@ class Orchestrator:
                 f"Job Execution: {metadata.job_name} | ID: {job_run_id} | System: el | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}"
             )
 
-            log.error(f"Details: {error_message}")
+            log.error(f"Details: {str(object=exec_err)}")
 
         else:
+            
+            metadata = Metadata()
+
             job_metadata_dump = metadata.build_job_metadata(
                 job_run_id=job_run_id,
+                job_name=job_name,
                 status="SUCCESS",
                 error_message=None,
-                rows_processed=getattr(runner, "rows_processed", None),
+                rows_processed=getattr(runner, "rows_processed", None) if runner else None,
             )
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
@@ -151,19 +147,19 @@ if __name__ == "__main__":
     
     try:
 
+        log.info("All Job Executions Started...")
+
         orchestrator = Orchestrator()
 
         with tpe(max_workers=5) as executor:
 
-            paths = [job['path'] for job in job_catalog_loader.jobs]
+            for job in job_catalog_loader.jobs:
 
-            names = [job['job_name'] for job in job_catalog_loader.jobs]
-
-            results = list(executor.map(
-                orchestrator.run_concurrent_job,
-                paths,
-                names
-            ))
+                future = executor.submit(
+                    orchestrator.run_concurrent_job,
+                    job['path'],
+                    job['job_name']
+                )
 
         log.info("All Job Executions Completed...")
 

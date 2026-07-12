@@ -3,10 +3,20 @@ from job_executors.exec_cmds.api_exec import ApiExecCommand
 
 
 class APIExec:
-    @classmethod
-    def run(cls, exec_cfg, *args, **kwargs):
 
-        return ApiExecCommand(exec_cfg=exec_cfg)
+    root_url_registry = {
+
+        "coingecko": "https://api.coingecko.com/api/v3"
+    }
+
+    @classmethod
+    def run(cls, exec_cfg, metadata_cfg, *args, **kwargs):
+
+        source = metadata_cfg['source']
+
+        root_url = cls.root_url_registry[source]
+
+        return ApiExecCommand(exec_cfg=exec_cfg, url=root_url)
 
 
 class ExecCmdType:

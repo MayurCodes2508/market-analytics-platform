@@ -1,9 +1,5 @@
 {
 
-    "job_type": "ingestion",
-
-    "sub_jobtype": "api",
-
     "metadata": {
 
         "source": "coingecko",
@@ -14,7 +10,6 @@
     "exec": {
 
         "exec_type": "ApiExecCmd",
-        "root_url": "https://api.coingecko.com/api/v3",
         "path": "/coins/markets",
         "pagination": {
 

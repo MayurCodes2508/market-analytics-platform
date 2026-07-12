@@ -7,8 +7,6 @@ from pathlib import Path
 class Validator:
     def __init__(self, loader):
 
-        self.loader = loader
-
         self.job_cfg = loader.job_cfg
 
         self.schema_cfg = loader.schema_cfg

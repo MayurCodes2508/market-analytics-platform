@@ -4,22 +4,14 @@
 
     "type": "object",
 
-    "required": ["exec_type", "root_url", "path", "pagination", "page_size", "query_params"],
+    "required": ["exec_type", "path", "pagination", "page_size", "query_params"],
 
     "properties": {
 
-      "exec_type": {
+        "exec_type": {
 
-        "const": "ApiExecCmd" 
-    },
-
-      "root_url": {
-
-        "type": "string",
-        "format": "uri",
-        "minLength": 2,
-        "maxLength": 50
-      },
+          "const": "ApiExecCmd" 
+        },
 
         "path": {
 

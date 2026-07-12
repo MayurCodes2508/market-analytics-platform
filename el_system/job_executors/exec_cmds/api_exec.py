@@ -5,12 +5,12 @@ from job_executors.auth.auth import Auth
 
 
 class ApiExecCommand:
-    def __init__(self, exec_cfg):
+    def __init__(self, exec_cfg, url):
 
         self.exec_cfg = exec_cfg
 
-        self.base_url = exec_cfg["root_url"]
-        self.path = exec_cfg["path"]
+        
+        self.root_url = url
 
         pagination_config = exec_cfg["pagination"]
         self.pagination_strategy = pagination_config["strategy"]
@@ -61,11 +61,11 @@ class ApiExecCommand:
     def build_url(self):
 
         try:
-            url = f"{self.base_url}{self.path}"
+            full_url = f"{self.root_url}{self.exec_cfg["path"]}"
 
-            log.info(f"Built URL: {url}")
+            log.info(f"Built URL: {full_url}")
 
-            return url
+            return full_url
 
         except Exception as e:
             log.error(f"Error building URL: {e}")
