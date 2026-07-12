@@ -10,21 +10,15 @@ class Runner:
 
         self.exec_cfg = self.job_cfg['exec']
 
-        self.exec_type = self.exec_cfg["exec_type"]
-
         self.metadata_cfg = self.job_cfg['metadata']
-
-        self.dest_cfg = self.job_cfg.get('dest', {})
-
-        self.dest_type = self.dest_cfg.get("dest_type", None)
-
-        self.is_dest = True if self.dest_cfg and self.dest_type else False
 
         log.info("Runner Loading Completed...")
 
         log.info("Obj: runner | Instance Initialized Successfully...")
 
     def run_exec_cmd(self):
+
+        self.exec_type = self.exec_cfg["exec_type"]
 
         exec_cmd = ExecCmdType.get_exec_type(
             exec_type=self.exec_type,
@@ -35,8 +29,12 @@ class Runner:
         self.data, self.rows_processed = exec_cmd.run()
 
     def run_dest_target(self):
-            
-        if not self.is_dest:
+
+        self.dest_cfg = self.job_cfg.get('dest', {})
+
+        self.dest_type = self.dest_cfg.get("dest_type", None)
+
+        if not self.dest_type:
 
             log.info("Dest Not Provided, Skipping...")
 
