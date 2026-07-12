@@ -90,7 +90,9 @@ class Orchestrator:
 
         except Exception as exec_err:
 
-            metadata = Metadata()
+            metadata = Metadata(
+                loader=job_cfg_loader
+            )
 
             job_metadata_dump = metadata.build_job_metadata(
                 job_run_id=job_run_id,
@@ -103,14 +105,18 @@ class Orchestrator:
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
 
             log.error(
-                f"Job Execution: {metadata.job_name} | ID: {job_run_id} | System: el | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}"
+                f"Job Execution: {job_name} | ID: {job_run_id} | System: el | Job Type: {job_metadata_dump['job_type']} | Sub JobType: {job_metadata_dump['sub_jobtype']}"
             )
 
             log.error(f"Details: {str(object=exec_err)}")
 
         else:
             
-            metadata = Metadata()
+            metadata = Metadata(
+                loader=job_cfg_loader
+            )
+
+            metadata.get_metadata()
 
             job_metadata_dump = metadata.build_job_metadata(
                 job_run_id=job_run_id,
@@ -123,7 +129,7 @@ class Orchestrator:
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
 
             log.success(
-                f"Job Execution: {metadata.job_name}| ID: {job_run_id} | System: el | Job Type: {metadata.job_type} | Sub JobType: {metadata.sub_jobtype}"
+                f"Job Execution: {job_name} | ID: {job_run_id} | System: el | Job Type: {job_metadata_dump['job_type']} | Sub JobType: {job_metadata_dump['sub_jobtype']}"
             )
 
 

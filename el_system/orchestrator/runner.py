@@ -8,8 +8,6 @@ class Runner:
 
         self.job_cfg = loader.job_cfg
 
-        self.exec_cfg = self.job_cfg['exec']
-
         self.metadata_cfg = self.job_cfg['metadata']
 
         log.info("Runner Loading Completed...")
@@ -17,6 +15,8 @@ class Runner:
         log.info("Obj: runner | Instance Initialized Successfully...")
 
     def run_exec_cmd(self):
+
+        self.exec_cfg = self.job_cfg['exec']
 
         self.exec_type = self.exec_cfg["exec_type"]
 

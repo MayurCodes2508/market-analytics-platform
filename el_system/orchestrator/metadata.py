@@ -2,9 +2,29 @@ from loguru import logger as log
 
 
 class Metadata:
-    def __init__(self):
+    def __init__(self, loader):
 
-        pass
+        self.job_cfg = loader.job_cfg
+
+
+    def get_metadata(self):
+
+        exec_cfg = self.job_cfg['exec']
+
+        dest_cfg = self.job_cfg.get('dest', {})
+
+
+        self.job_type = None
+
+        if dest_cfg:
+
+            self.job_type = 'ingestion'
+
+
+        exec_type = exec_cfg['exec_type']
+
+        self.sub_jobtype = exec_type.split('ExecCmd', 1)[0]
+
 
     def build_job_metadata(self, job_run_id, job_name, status, error_message, rows_processed):
 
@@ -12,8 +32,8 @@ class Metadata:
             "job_run_id": job_run_id,
             "job_name": job_name,
             "system": "el",
-            "job_type": None,
-            "sub_jobtype": None,
+            "job_type": self.job_type,
+            "sub_jobtype": self.sub_jobtype,
             "status": status,
             "error_message": error_message,
             "rows_processed": rows_processed,
