@@ -1,11 +1,4 @@
 {
-    "job_name": "prod_neon_pipeline_runs",
-
-    "system": "metadata",
-
-    "job_type": "ingestion",
-
-    "sub_jobtype": "db",
 
     "metadata": {
 

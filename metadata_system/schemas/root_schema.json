@@ -4,38 +4,9 @@
 
     "type": "object",
 
-    "required": ["job_name", "system", "job_type", "sub_jobtype", "exec"],
+    "required": ["metadata", "exec"],
 
     "properties": {
-
-        "job_name": {
-
-            "type": "string",
-            "pattern": "^(dev_|prod_)[a-z0-9_]+$",
-            "minLength": 7,
-            "maxLength": 30
-        },
-
-        "system": {
-
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 30
-        },
-
-        "job_type": {
-
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 30
-        },
-
-        "sub_jobtype": {
-
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 30
-        },
 
         "metadata": {
 
@@ -95,28 +66,6 @@
             "then": {
 
                 "required": ["dest"]
-            }
-        },
-
-        {
-
-            "if": {
-
-                "properties": {
-
-                    "exec": {
-
-                        "properties": {
-
-                            "exec_type": {"const": "DBExecCmd"}
-                        }
-                    }
-                }
-            },
-
-            "then": {
-
-                "required": ["metadata"]
             }
         }
     ],

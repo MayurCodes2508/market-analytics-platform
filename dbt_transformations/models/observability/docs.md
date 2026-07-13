@@ -1,30 +1,34 @@
+# Column Descriptions
+
 {% docs pipeline_runs_status %}
 
-### Pipeline Run Status
+## Pipeline Run Status
 
 The `status` column indicates the final execution state of a pipeline run.  
 
 | Status   | Description                                                             |
 |----------|-------------------------------------------------------------------------|
-| SUCCESS  | `The pipeline run completed successfully and rows were processed.`      |
-| FAILED   | `The pipeline run terminated with an error.`                            | 
+| SUCCESS  | `The pipeline run completed successfully and jobs were executed.`       |
+| FAILED   | `The pipeline run terminated with an error.`                            |
 
 {% enddocs %}
 
-{% docs pipeline_runs_rows_processed %}
+{% docs job_runs_status %}
 
-### Pipeline Run Rows Processed
+## Job Run Status
 
-The `rows_processed` column records the number of rows delivered by a pipeline run.  
+The `status` column indicates the final execution state of a job run.  
 
-- In **dev**, `valid values range between 0 and 250.`  
-- In **prod**, `valid values must equal 250.`  
+| Status   | Description                                                             |
+|----------|-------------------------------------------------------------------------|
+| SUCCESS  | `The job run completed successfully and rows were processed.`           |
+| FAILED   | `The job run terminated with an error.`                                 |
 
 {% enddocs %}
 
 {% docs pipeline_runs_run_success_rate_slo_breached_for_the_day %}
 
-### Daily SLO Breach Flag
+## Daily Pipeline Runs Run Success Rate SLO Breach Flag
 
 The `is_slo_threshold_for_the_day_breached` column indicates whether the daily run success‑rate SLO was breached.  
 
@@ -37,7 +41,7 @@ The `is_slo_threshold_for_the_day_breached` column indicates whether the daily r
 
 {% docs pipeline_runs_run_success_rate_slo_breached_over_30_days %}
 
-### Over 30 Days SLO Breach Flag
+## Over 30 Days Pipeline Runs Run Success Rate SLO Breach Flag
 
 The `is_slo_threshold_over_30_days_breached` column indicates whether the over 30 days run success‑rate SLO was breached.  
 
@@ -50,7 +54,7 @@ The `is_slo_threshold_over_30_days_breached` column indicates whether the over 3
 
 {% docs pipeline_runs_runtime_success_rate_in_seconds_slo_breached_for_the_day %}
 
-### Daily SLO Breach Flag
+## Daily Pipeline Runs Runtime Success Rate in Seconds SLO Breach Flag
 
 The `is_slo_threshold_for_the_day_breached` column indicates whether the daily runtime success‑rate SLO was breached.  
 
@@ -63,7 +67,7 @@ The `is_slo_threshold_for_the_day_breached` column indicates whether the daily r
 
 {% docs pipeline_runs_runtime_success_rate_in_seconds_slo_breached_over_30_days %}
 
-### Over 30 Days SLO Breach Flag
+## Over 30 Days Pipeline Runs Runtime Success Rate in Seconds SLO Breach Flag
 
 The `is_slo_threshold_over_30_days_breached` column indicates whether the over 30 days runtime success‑rate SLO was breached.  
 

@@ -9,9 +9,9 @@ class APIKey:
 
         self.key_env = self.auth_cfg["key_env"]
 
-        log.info("Auth Metadata Loading Completed...")
-
         log.info("Obj: apikey | Instance Initialized Successfully...")
+
+        log.info("Auth Metadata Loading Completed...")
 
     def load_db_creds(self):
 

@@ -16,9 +16,9 @@ class BQ:
 
         self.data = data
 
-        log.info("Dest Metadata Loading Completed...")
-
         log.info("Obj: bqdest | Instance Initialized Successfully...")
+
+        log.info("Dest Metadata Loading Completed...")
 
     def write_to_dest(self):
 

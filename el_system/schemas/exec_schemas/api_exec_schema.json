@@ -4,28 +4,20 @@
 
     "type": "object",
 
-    "required": ["exec_type", "base_url", "path", "pagination", "page_size", "query_params"],
+    "required": ["exec_type", "path", "pagination", "page_size", "query_params"],
 
     "properties": {
 
-      "exec_type": {
+        "exec_type": {
 
-        "const": "ApiExecCmd" 
-    },
-
-      "base_url": {
-
-        "type": "string",
-        "format": "uri",
-        "minLength": 1,
-        "maxLength": 50
-      },
+          "const": "ApiExecCmd" 
+        },
 
         "path": {
 
           "type": "string",
-          "minLength": 1,
-          "maxLength": 30
+          "minLength": 2,
+          "maxLength": 50
         },
 
         "pagination": {
@@ -44,8 +36,8 @@
 
               "type": "string",
               "default": "page",
-              "minLength": 1,
-              "maxLength": 30
+              "minLength": 2,
+              "maxLength": 50
             }   
           },
 
@@ -84,7 +76,7 @@
             "vs_currency": {
 
               "type": "string",
-              "enum": ["usd", "eur", "inr"]
+              "const": "inr"
             }
           },
 

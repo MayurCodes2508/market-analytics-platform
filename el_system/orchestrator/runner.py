@@ -4,25 +4,21 @@ from job_executors.dests.registries.dest_targets import DestType
 
 
 class Runner:
-    def __init__(self, metadata):
+    def __init__(self, loader):
 
-        self.metadata = metadata
+        self.job_cfg = loader.job_cfg
 
-        self.exec_cfg = metadata.exec_cfg
-
-        self.exec_type = self.exec_cfg["exec_type"]
-
-        self.metadata_cfg = metadata.metadata_cfg
-
-        self.dest_cfg = metadata.dest_cfg
-
-        self.dest_type = self.dest_cfg.get("dest_type", None)
-
-        log.info("Runner Loading Completed...")
+        self.metadata_cfg = self.job_cfg["metadata"]
 
         log.info("Obj: runner | Instance Initialized Successfully...")
 
+        log.info("Runner Loading Completed...")
+
     def run_exec_cmd(self):
+
+        self.exec_cfg = self.job_cfg["exec"]
+
+        self.exec_type = self.exec_cfg["exec_type"]
 
         exec_cmd = ExecCmdType.get_exec_type(
             exec_type=self.exec_type,
@@ -34,7 +30,11 @@ class Runner:
 
     def run_dest_target(self):
 
-        if not self.dest_cfg and self.dest_type:
+        self.dest_cfg = self.job_cfg.get("dest", {})
+
+        self.dest_type = self.dest_cfg.get("dest_type", None)
+
+        if not self.dest_type:
             log.info("Dest Not Provided, Skipping...")
 
             return

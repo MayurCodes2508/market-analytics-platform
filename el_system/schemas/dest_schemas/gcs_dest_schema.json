@@ -16,7 +16,7 @@
             "bucket": {
 
                 "type": "string",
-                "minLength": 1,
+                "minLength": 2,
                 "maxLength": 50
             },
 
@@ -29,7 +29,7 @@
             "format": {
 
                 "type": "string",
-                "minLength": 1,
+                "minLength": 2,
                 "maxLength": 50
             },
 

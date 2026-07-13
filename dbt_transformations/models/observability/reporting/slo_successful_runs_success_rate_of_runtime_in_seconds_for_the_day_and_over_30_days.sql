@@ -12,7 +12,7 @@ runtime_breach_threshold_flag AS (
 SELECT pipeline_name,
        created_at,
        runtime,
-       COALESCE(runtime > 15, TRUE) is_runtime_threshold_breached
+       COALESCE(runtime > 120, TRUE) is_runtime_threshold_breached
 
 FROM base
 ),
