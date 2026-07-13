@@ -8,7 +8,7 @@ class Runner:
 
         self.job_cfg = loader.job_cfg
 
-        self.metadata_cfg = self.job_cfg['metadata']
+        self.metadata_cfg = self.job_cfg["metadata"]
 
         log.info("Obj: runner | Instance Initialized Successfully...")
 
@@ -16,7 +16,7 @@ class Runner:
 
     def run_exec_cmd(self):
 
-        self.exec_cfg = self.job_cfg['exec']
+        self.exec_cfg = self.job_cfg["exec"]
 
         self.exec_type = self.exec_cfg["exec_type"]
 
@@ -30,16 +30,15 @@ class Runner:
 
     def run_dest_target(self):
 
-        self.dest_cfg = self.job_cfg.get('dest', {})
+        self.dest_cfg = self.job_cfg.get("dest", {})
 
         self.dest_type = self.dest_cfg.get("dest_type", None)
 
         if not self.dest_type:
-
             log.info("Dest Not Provided, Skipping...")
 
             return
-        
+
         dest = DestType.get_dest_type(
             dest_type=self.dest_type,
             dest_cfg=self.dest_cfg,
@@ -48,7 +47,6 @@ class Runner:
         )
 
         dest.run()
-
 
     def runner_run(self):
 

@@ -9,7 +9,6 @@ class ApiExecCommand:
 
         self.exec_cfg = exec_cfg
 
-        
         self.root_url = url
 
         pagination_config = exec_cfg["pagination"]
@@ -61,7 +60,7 @@ class ApiExecCommand:
     def build_url(self):
 
         try:
-            full_url = f"{self.root_url}{self.exec_cfg["path"]}"
+            full_url = f"{self.root_url}{self.exec_cfg['path']}"
 
             log.info(f"Built URL: {full_url}")
 

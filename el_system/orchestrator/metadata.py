@@ -10,27 +10,24 @@ class Metadata:
 
         log.info("Metadata Loading Completed...")
 
-
     def get_metadata(self):
 
-        exec_cfg = self.job_cfg['exec']
+        exec_cfg = self.job_cfg["exec"]
 
-        dest_cfg = self.job_cfg.get('dest', {})
-
+        dest_cfg = self.job_cfg.get("dest", {})
 
         self.job_type = None
 
         if dest_cfg:
+            self.job_type = "ingestion"
 
-            self.job_type = 'ingestion'
+        exec_type = exec_cfg["exec_type"]
 
+        self.sub_jobtype = exec_type.split("ExecCmd", 1)[0]
 
-        exec_type = exec_cfg['exec_type']
-
-        self.sub_jobtype = exec_type.split('ExecCmd', 1)[0]
-
-
-    def build_job_metadata(self, job_run_id, job_name, status, error_message, rows_processed):
+    def build_job_metadata(
+        self, job_run_id, job_name, status, error_message, rows_processed
+    ):
 
         metadata_dump = {
             "job_run_id": job_run_id,
@@ -46,6 +43,3 @@ class Metadata:
         log.info("Metadata Building Completed...")
 
         return metadata_dump
-
-
-    

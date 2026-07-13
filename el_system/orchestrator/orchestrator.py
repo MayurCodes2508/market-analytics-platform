@@ -23,9 +23,8 @@ class Orchestrator:
             job_cfg_loader = JobConfigLoader(fp=fp)
 
             job_cfg_loader.job_cfg_loader_run()
-        
-        except Exception as load_err:
 
+        except Exception as load_err:
             dump = {
                 "job_run_id": job_run_id,
                 "job_name": job_name,
@@ -34,7 +33,7 @@ class Orchestrator:
                 "sub_jobtype": None,
                 "status": "FAILED",
                 "error_message": str(object=load_err),
-                "rows_processed": None
+                "rows_processed": None,
             }
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=dump)}")
@@ -47,15 +46,12 @@ class Orchestrator:
 
             return
 
-        
         try:
-
             validator = Validator(loader=job_cfg_loader)
 
             validator.validator_run()
 
         except Exception as valid_err:
-
             dump = {
                 "job_run_id": job_run_id,
                 "job_name": job_name,
@@ -64,7 +60,7 @@ class Orchestrator:
                 "sub_jobtype": None,
                 "status": "FAILED",
                 "error_message": str(object=valid_err),
-                "rows_processed": None
+                "rows_processed": None,
             }
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=dump)}")
@@ -76,30 +72,27 @@ class Orchestrator:
             log.error(f"Details: {str(object=valid_err)}")
 
             return
-    
 
         log.info(
             f"Job Execution: {job_name} | ID: {job_run_id} | System: el | RUNNING..."
         )
 
         try:
-
             runner = Runner(loader=job_cfg_loader)
 
             runner.runner_run()
 
         except Exception as exec_err:
-
-            metadata = Metadata(
-                loader=job_cfg_loader
-            )
+            metadata = Metadata(loader=job_cfg_loader)
 
             job_metadata_dump = metadata.build_job_metadata(
                 job_run_id=job_run_id,
                 job_name=job_name,
                 status="FAILED",
                 error_message=str(object=exec_err),
-                rows_processed=getattr(runner, "rows_processed", None) if runner else None,
+                rows_processed=getattr(runner, "rows_processed", None)
+                if runner
+                else None,
             )
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
@@ -111,10 +104,7 @@ class Orchestrator:
             log.error(f"Details: {str(object=exec_err)}")
 
         else:
-            
-            metadata = Metadata(
-                loader=job_cfg_loader
-            )
+            metadata = Metadata(loader=job_cfg_loader)
 
             metadata.get_metadata()
 
@@ -123,7 +113,9 @@ class Orchestrator:
                 job_name=job_name,
                 status="SUCCESS",
                 error_message=None,
-                rows_processed=getattr(runner, "rows_processed", None) if runner else None,
+                rows_processed=getattr(runner, "rows_processed", None)
+                if runner
+                else None,
             )
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
@@ -134,61 +126,50 @@ class Orchestrator:
 
 
 if __name__ == "__main__":
-
     try:
-
         job_catalog_loader = JobCatalog()
 
         job_catalog_loader.job_catalog_run()
 
-
     except Exception as load_err:
-
         log.critical("System: el | Failed to Load Job Catalog, Aborting Job Executions")
 
         log.error(f"Details: {str(object=load_err)}")
 
         raise
 
-    
     try:
-
         log.info("All Job Executions Started...")
 
         orchestrator = Orchestrator()
 
         with tpe(max_workers=5) as executor:
-
             for job in job_catalog_loader.jobs:
-
                 future = executor.submit(
-                    orchestrator.run_concurrent_job,
-                    job['path'],
-                    job['job_name']
+                    orchestrator.run_concurrent_job, job["path"], job["job_name"]
                 )
 
         log.info("All Job Executions Completed...")
 
     except Exception as strt_err:
-        
         for job in job_catalog_loader.jobs:
-
             dump = {
                 "job_run_id": str(object=uid()),
-                "job_name": job.get('job_name'),
+                "job_name": job.get("job_name"),
                 "system": "el",
                 "job_type": None,
                 "sub_jobtype": None,
                 "status": "FAILED",
                 "error_message": str(object=strt_err),
-                "rows_processed": None
+                "rows_processed": None,
             }
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=dump)}")
 
-
-        log.critical("System: el | Failed to Start the Thread Pool Executor, Aborting Job Executions")
+        log.critical(
+            "System: el | Failed to Start the Thread Pool Executor, Aborting Job Executions"
+        )
 
         log.error(f"Details: {str(object=strt_err)}")
-        
+
         raise

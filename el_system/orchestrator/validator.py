@@ -17,7 +17,6 @@ class Validator:
 
         log.info("Validation Requirements Loading Completed...")
 
-
     def validate_job_cfg(self):
 
         try:
@@ -36,21 +35,15 @@ class Validator:
                 f"Validation Error: {self.job_cfg} | Provide a Valid Job Cfg | Details: {e}"
             )
 
-            
-
         except SchemaError as e:
             log.error(
                 f"Schema Error: {self.schema_cfg} | Provide a Valid Schema | Details: {e}"
             )
 
-            
-
         except Exception:
             log.exception(
                 "Unknown Error Occured While Validating Job Cfg Againt Given Schema"
             )
-
-            
 
     def validator_run(self):
 
