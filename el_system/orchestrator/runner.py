@@ -10,9 +10,9 @@ class Runner:
 
         self.metadata_cfg = self.job_cfg['metadata']
 
-        log.info("Runner Loading Completed...")
-
         log.info("Obj: runner | Instance Initialized Successfully...")
+
+        log.info("Runner Loading Completed...")
 
     def run_exec_cmd(self):
 

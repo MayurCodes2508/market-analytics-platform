@@ -67,28 +67,6 @@
 
                 "required": ["dest"]
             }
-        },
-
-        {
-
-            "if": {
-
-                "properties": {
-
-                    "dest": {
-
-                       "properties": {
-
-                        "dest_type": {"const": "GCS"}
-                       } 
-                    }
-                }
-            },
-
-            "then": {
-
-                "required": ["metadata"]
-            }
         }
     ],
     

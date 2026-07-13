@@ -38,9 +38,9 @@ class ApiExecCommand:
         if not auth_cfg and auth_type:
             log.info("Auth not Provided, Skipping...")
 
-            log.info("Exec Metadata Loading Completed...")
-
             log.info("Obj: apiexeccmd | Instance Initialization Completed...")
+
+            log.info("Exec Metadata Loading Completed...")
 
             return
 
@@ -54,9 +54,9 @@ class ApiExecCommand:
 
         self.secret = Auth.get_auth(auth_cfg=self.auth_cfg, auth_type=self.auth_type)
 
-        log.info("Exec Metadata Loading Completed...")
-
         log.info("Obj: apiexeccmd | Instance Initialization Completed...")
+
+        log.info("Exec Metadata Loading Completed...")
 
     def build_url(self):
 

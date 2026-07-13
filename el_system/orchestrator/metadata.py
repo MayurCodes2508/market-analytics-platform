@@ -6,6 +6,10 @@ class Metadata:
 
         self.job_cfg = loader.job_cfg
 
+        log.info("Obj: metadata | Instance Initialized Successfully...")
+
+        log.info("Metadata Loading Completed...")
+
 
     def get_metadata(self):
 
