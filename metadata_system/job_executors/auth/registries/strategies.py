@@ -9,9 +9,9 @@ class DBUrl:
 
         self.key_env = auth_cfg["key_env"]
 
-        log.info("Auth Metadata Loading Completed...")
-
         log.info("Obj: dburl | Instance Initialized Successfully...")
+
+        log.info("Auth Metadata Loading Completed...")
 
     def load_db_creds(self):
 

@@ -31,9 +31,9 @@ class DBExecCommand:
 
         self.secret = Auth.get_auth(auth_cfg=self.auth_cfg, auth_type=self.auth_type)
 
-        log.info("Exec Metadata Loading Completed...")
-
         log.info("Obj: dbexeccmd | Instance Initialization Completed...")
+
+        log.info("Exec Metadata Loading Completed...")
 
     def query_db(self):
 

@@ -31,9 +31,9 @@ class JobCatalog:
         else:
             raise ValueError(f"Unknown Env: {env} | Provide a Valid Env")
 
-        log.info("JSON Job Catalog Path Loading Completed...")
-
         log.info("Obj: job_catalog | Instance Initialized Successfully...")
+
+        log.info("JSON Job Catalog Path Loading Completed...")
 
     def load_job_catalog(self):
 
@@ -50,26 +50,18 @@ class JobCatalog:
                 f"File Not Found Error: {self.file_path} | Provide a Valid JSON Job Catalog File Path"
             )
 
-            raise
-
         except JSONDecodeError as e:
             log.error(
                 f"JSON Parsing/Decoding Error: {self.file_path} | Provide Valid JSON Format | Details: {e}"
             )
 
-            raise
-
         except UnicodeDecodeError:
             log.error(f"Unicode Decoding Error: {self.file_path} | Expected UTF-8")
-
-            raise
 
         except Exception:
             log.exception(
                 f"Unknown Error Occured While Loading Job Catalog: {self.file_path}"
             )
-
-            raise
 
     def job_catalog_run(self):
 
@@ -77,15 +69,15 @@ class JobCatalog:
 
 
 class JobConfigLoader:
-    def __init__(self, file_path):
+    def __init__(self, fp):
 
-        self.file_path = file_path
+        self.file_path = fp
 
         self.schema_path = Path(__file__).parent.parent / "schemas" / "root_schema.json"
 
-        log.info("JSON Job & Schema Cfg Paths Loading Completed...")
-
         log.info("Obj: job_cfg_loader | Instance Initialized Successfully...")
+
+        log.info("JSON Job & Schema Cfg Paths Loading Completed...")
 
     def load_job_cfg(self):
 
