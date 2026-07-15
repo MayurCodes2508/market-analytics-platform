@@ -70,10 +70,15 @@ jobs:
         env:
           DBT_TARGET: ${{ vars.DBT_TARGET }}
 
+      - name: Download dbt Artifacts
+        uses: actions/download-artifact@v5
+        with:
+          name: dbt-target
+          path: dbt_transformations/target/
 
       - name: dbt Build
         run: |
-          dbt build -s observability,tag:prod --profiles-dir .   
+          dbt build -s state:modified,tag:observability,tag:prod --profiles-dir .   
         env:
           DBT_TARGET: ${{ vars.DBT_TARGET }}  
 
