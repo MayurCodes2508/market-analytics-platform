@@ -19,7 +19,6 @@ on:
 
     paths:
       - 'dbt_transformations/**'
-      - '.github/workflows/ci_dbt_transformations.yml'
   
   pull_request:
     branches:
@@ -70,25 +69,12 @@ jobs:
         env:
           DBT_TARGET: ${{ vars.DBT_TARGET }}
 
-      - name: Download dbt Artifacts
-        uses: actions/download-artifact@v5
-        with:
-          name: dbt-target
-          path: dbt_transformations/artifacts/
-
       - name: dbt Build
         run: |
-          dbt build -s state:modified,tag:observability,tag:prod \
-          --profiles-dir . \
-          --state artifacts/
+          dbt build -s tag:observability,tag:prod \
+          --profiles-dir .
         env:
-          DBT_TARGET: ${{ vars.DBT_TARGET }}  
-
-      - name: Upload dbt Artifacts
-        uses: actions/upload-artifact@v5
-        with:
-          name: dbt-target
-          path: dbt_transformations/target/
+          DBT_TARGET: ${{ vars.DBT_TARGET }}
 
 ######################## Test #######################################
 

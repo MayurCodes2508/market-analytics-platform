@@ -23,6 +23,8 @@ on:
       - 'orchestrator/**'
       - '.github/workflows/ci_orchestrator_run.yml'
 
+  workflow_dispatch:
+
 ######################## Jobs #######################################
 
 jobs:
