@@ -70,7 +70,7 @@ jobs:
 
       - name: dbt Build
         run: |
-          dbt build -s observability,tag:prod    
+          dbt build -s observability,tag:prod --profiles-dir .   
         env:
           DBT_TARGET: ${{ vars.DBT_TARGET }}   
 
