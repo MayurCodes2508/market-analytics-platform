@@ -16,4 +16,4 @@ COPY . .
 
 ENTRYPOINT [ "/bin/bash", "-c" ]
 
-CMD [ "dbt source freshness -s tag:observability,tag:prod && dbt test -s +exposure:*,tag:observability && dbt run -s +exposure:*,tag:observability" ]
+CMD [ "dbt source freshness -s tag:observability,tag:prod --profiles-dir . && dbt test -s +exposure:*,tag:observability --profiles-dir . && dbt run -s +exposure:*,tag:observability --profiles-dir ." ]
