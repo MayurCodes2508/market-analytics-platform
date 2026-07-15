@@ -19,7 +19,7 @@ on:
 
     paths:
       - 'dbt_transformations/**'
-      - '.github\workflows\ci_dbt_transformations.yml'
+      - '.github/workflows/ci_dbt_transformations.yml'
   
   pull_request:
     branches:
