@@ -1,3 +1,11 @@
+{{
+  config(
+    tags=['prod'],
+    )
+}}
+
+
+
 SELECT run_id,
        trim(pipeline_name) AS pipeline_name,
        trim(status) AS status,

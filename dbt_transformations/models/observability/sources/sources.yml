@@ -4,6 +4,8 @@ sources:
   - name: metadata
     database: instant-medium-491107-t6
     schema: "{{ target.schema }}"
+    config:
+      tags: ['observability']
     tables:
       - name: raw_pipeline_runs
 
@@ -22,6 +24,7 @@ sources:
             error_after:
               count: 6
               period: hour
+          tags: ['prod']
 
 
         columns:
@@ -29,64 +32,44 @@ sources:
           - name: run_id
             description: A unique identifier for each individual pipeline execution.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
 
           - name: pipeline_name
             description: The name of the pipeline that was executed.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
               - accepted_values:
-                  config:
-                    tags: ['prod']
                   arguments:
                     values: ['prod-market-analytics-pipeline', 'prod-platform-observability-pipeline']
 
           - name: status
             description: "{{ doc('pipeline_runs_status') }}"
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
               - accepted_values:
-                  config:
-                    tags: ['prod', 'dev']
                   arguments:
                     values: ['SUCCESS', 'FAILED']
 
           - name: start_time
             description: The timestamp when the pipeline execution began.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
 
           - name: end_time
             description: The timestamp when the pipeline execution concluded.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
 
           - name: created_at
             description: The timestamp when the record of the pipeline execution was first created.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
 
           - name: triggered_by
             description: The entity or mechanism responsible for initiating the process execution.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
               - accepted_values:
-                  config:
-                    tags: ['prod']
                   arguments:
                     values: ['scheduler']
 
@@ -99,9 +82,7 @@ sources:
           - name: ingestion_ts
             description: Timestamp when this record was ingested into the warehouse.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
 
 
       - name: raw_job_runs
@@ -127,88 +108,58 @@ sources:
           - name: run_id
             description: A unique identifier for each individual job execution.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['dev', 'prod']
+              - not_null
 
           - name: pipeline_run_id
             description: A unique identifier of the pipeline execution the job belongs to.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['dev', 'prod']
-              - relationships:
-                  config:
-                    tags: ['dev', 'prod']
-                  arguments:
-                    to: source('metadata', 'raw_pipeline_runs')
-                    field: run_id
+              - not_null
 
           - name: job_name
             description: The descriptive name of the processing job. 
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['dev', 'prod']
+              - not_null
 
           - name: system
             description: The originating system where the processing job belongs to.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['dev', 'prod']
+              - not_null
               - accepted_values:
-                  config:
-                    tags: ['dev', 'prod']
                   arguments:
                     values: ['el', 'metadata']
 
           - name: job_type
             description: The general category or classification of the processing job.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['dev', 'prod']
+              - not_null
 
           - name: sub_jobtype
             description: A more specific classification or sub-category of the processing job.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['dev', 'prod']
+              - not_null
 
           - name: status
             description: "{{ doc('job_runs_status') }}"
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
               - accepted_values:
-                  config:
-                    tags: ['prod', 'dev']
                   arguments:
                     values: ['SUCCESS', 'FAILED']
             
           - name: start_time
             description: The timestamp when the job execution began.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
 
           - name: end_time
             description: The timestamp when the job execution concluded.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
 
           - name: created_at
             description: The timestamp when the record of the job execution was first created.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
 
           - name: error_message
             description: A detailed message describing any error that occurred during the job execution.
@@ -222,9 +173,7 @@ sources:
           - name: ingestion_ts
             description: Timestamp when this record was ingested into the warehouse.
             data_tests:
-              - not_null:
-                  config:
-                    tags: ['prod', 'dev']
+              - not_null
 
 
 

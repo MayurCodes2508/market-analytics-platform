@@ -6,7 +6,7 @@ exposures:
     description: "SLO Report for monitoring SLO's"
 
     config:
-      tags: ['dev', 'prod']
+      tags: ['observability']
 
     type: dashboard
 
