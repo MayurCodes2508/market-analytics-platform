@@ -74,17 +74,15 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: dbt-target
-          path: dbt_transformations/target/
-        continue-on-error: true
+          path: dbt_transformations/artifacts/
 
       - name: dbt Build
         run: |
           dbt build -s state:modified,tag:observability,tag:prod \
           --profiles-dir . \
-          --state dbt_transformations/target/
+          --state artifacts/
         env:
           DBT_TARGET: ${{ vars.DBT_TARGET }}  
-        continue-on-error: true
 
       - name: Upload dbt Artifacts
         uses: actions/upload-artifact@v5
