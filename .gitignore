@@ -5,7 +5,6 @@ __pycache__/
 .env
 .DS_Store
 dev_test*
-test*
 *.ruff_cache*
 *.mypy_cache*
 dev_testing/

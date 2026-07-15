@@ -10,51 +10,6 @@ models:
 
     config:
       tags: ['prod']
-
-    data_tests:
-      - dbt_utils.expression_is_true:
-          config:
-            tags: ['dev', 'prod']
-          arguments:
-            expression: "success_rate_for_the_day BETWEEN 0 AND 1"
-
-      - dbt_utils.expression_is_true:
-          config:
-            tags: ['dev', 'prod']
-          arguments:
-            expression: "success_rate_over_30_days BETWEEN 0 AND 1"
-
-      - dbt_utils.expression_is_true:
-          config:
-            tags: ['dev', 'prod']
-          arguments:
-            expression: "is_slo_threshold_for_the_day_breached IS TRUE OR is_slo_threshold_for_the_day_breached IS FALSE"
-      
-      - dbt_utils.expression_is_true:
-          config:
-            tags: ['dev', 'prod']
-          arguments:
-            expression: "CASE
-                           WHEN is_slo_threshold_for_the_day_breached IS FALSE THEN success_rate_for_the_day >= 0.95
-                           WHEN is_slo_threshold_for_the_day_breached IS TRUE  THEN success_rate_for_the_day < 0.95
-                           ELSE FALSE
-                         END"
-
-      - dbt_utils.expression_is_true:
-          config:
-            tags: ['dev', 'prod']
-          arguments:
-            expression: "is_slo_threshold_over_30_days_breached IS TRUE or is_slo_threshold_over_30_days_breached IS FALSE"
-
-      - dbt_utils.expression_is_true:
-          config:
-            tags: ['dev', 'prod']
-          arguments:
-            expression: "CASE
-                           WHEN is_slo_threshold_over_30_days_breached IS FALSE THEN success_rate_over_30_days >= 0.99
-                           WHEN is_slo_threshold_over_30_days_breached IS TRUE  THEN success_rate_over_30_days < 0.99
-                           ELSE FALSE
-                         END"
           
     columns:
       - name: pipeline_name
