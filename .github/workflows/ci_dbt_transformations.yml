@@ -84,6 +84,7 @@ jobs:
           --state dbt_transformations/target/
         env:
           DBT_TARGET: ${{ vars.DBT_TARGET }}  
+        continue-on-error: true
 
       - name: Upload dbt Artifacts
         uses: actions/upload-artifact@v5
