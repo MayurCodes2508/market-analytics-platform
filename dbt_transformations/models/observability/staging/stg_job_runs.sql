@@ -15,4 +15,4 @@ SELECT run_id,
 
 FROM {{ source('metadata', 'raw_job_runs') }}
 
-QUALIFY row_number() OVER(PARTITION BY run_id ORDER BY ingestion_ts DESC) = 1
+QUALIFY row_number() OVER(PARTITION BY run_id ORDER BY ingestion_ts) = 1

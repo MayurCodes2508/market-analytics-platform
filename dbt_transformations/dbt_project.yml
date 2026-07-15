@@ -39,6 +39,10 @@ models:
         +schema: reporting
         +materialized: table
 
+      alerts:
+        +schema: alerts
+        +materialized: table
+
 
 data_tests:
   market_analytics_platform:
