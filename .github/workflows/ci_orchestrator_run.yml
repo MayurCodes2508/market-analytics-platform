@@ -11,17 +11,14 @@ on:
 
     paths:
       - 'orchestrator/**'
-      - '.github/workflows/ci_orchestrator_run.yml'
   
   pull_request:
     branches:
       - main
       - dev
-      - 'feature/**'
 
     paths:
       - 'orchestrator/**'
-      - '.github/workflows/ci_orchestrator_run.yml'
 
   workflow_dispatch:
 
