@@ -74,6 +74,12 @@ jobs:
         env:
           DBT_TARGET: ${{ vars.DBT_TARGET }}   
 
+      - name: Upload dbt Artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: dbt-target
+          path: target/
+
 ######################## Test #######################################
 
   test:
