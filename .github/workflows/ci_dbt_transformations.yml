@@ -29,7 +29,7 @@ on:
       - 'dbt_transformations/**'
 
   workflow_dispatch:
-
+    
 ######################## Jobs #######################################
 
 jobs:
