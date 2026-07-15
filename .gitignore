@@ -23,7 +23,6 @@ target/
 state/
 macros/
 snapshots/
-tests/
 dbt_packages/
 alerts_system/
 *.user.yml*

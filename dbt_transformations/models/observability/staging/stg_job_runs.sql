@@ -1,3 +1,10 @@
+{{
+  config(
+    tags=['dev'],
+    )
+}}
+
+
 SELECT run_id,
        pipeline_run_id,
        trim(job_name) AS job_name,

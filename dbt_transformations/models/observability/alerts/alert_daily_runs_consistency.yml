@@ -1,0 +1,30 @@
+version: 2
+
+models: 
+
+    - name: alert_daily_runs_consistency
+      description: |
+        This table tracks the operational consistency of various automated processes.
+        It records daily execution counts for these processes.
+        The table also indicates if the daily execution volume deviates significantly from historical averages.
+        This data supports monitoring and alerting for process stability.
+
+      config:
+        tags: ['dev']
+
+      columns:
+
+        - name: pipeline_name
+          description: The name of the pipeline that was executed.
+
+        - name: _day
+          description: The date when the record of the pipeline execution was first created.
+
+        - name: total_runs
+          description: Total Pipeline Execution Count
+
+        - name: avg_total_runs_over_30_days
+          description: Rolling 30-day Average Total Pipeline Execution Count
+
+        - name: is_alert_threshold_for_the_day_breached
+          description: "{{ doc('is_alert_threshold_for_the_day_breached') }}"

@@ -8,6 +8,9 @@ models:
       and a rolling 30-day window. Supports reliability reporting, operational efficiency analysis,
       and identifies when service level objectives (SLOs) are breached.
 
+    config:
+      tags: ['prod']
+
     data_tests:
       - dbt_utils.expression_is_true:
           config:
@@ -56,9 +59,17 @@ models:
     columns:
       - name: pipeline_name
         description: "Name of the monitored automated pipeline or process."
+        data_tests:
+          - not_null:
+              config:
+                tags: ['prod', 'dev']
 
       - name: created_at
         description: "Date on which the performance metric row was recorded."
+        data_tests:
+          - not_null:
+              config:
+                tags: ['prod', 'dev']
 
       - name: success_rate_for_the_day
         description: "Daily ratio of pipeline runs that completed successfully within the runtime SLO."
