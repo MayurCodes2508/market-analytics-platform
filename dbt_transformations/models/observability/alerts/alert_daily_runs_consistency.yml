@@ -4,13 +4,13 @@ models:
 
     - name: alert_daily_runs_consistency
       description: |
-        This table tracks the operational consistency of various automated processes.
-        It records daily execution counts for these processes.
+        This table tracks the operational consistency of various pipelines.
+        It records daily execution counts for these pipelines.
         The table also indicates if the daily execution volume deviates significantly from historical averages.
-        This data supports monitoring and alerting for process stability.
+        This data supports monitoring and alerting for pipeline stability.
 
       config:
-        tags: ['dev']
+        tags: ['prod']
 
       columns:
 
