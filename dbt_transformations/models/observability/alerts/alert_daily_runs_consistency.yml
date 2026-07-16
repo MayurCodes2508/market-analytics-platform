@@ -12,6 +12,14 @@ models:
       config:
         tags: ['prod']
 
+      data_tests:
+
+        - dbt_utils.unique_combination_of_columns:
+            arguments:
+              combination_of_columns:
+                - pipeline_name
+                - _day
+
       columns:
 
         - name: pipeline_name
