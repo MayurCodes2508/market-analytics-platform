@@ -6,6 +6,20 @@ from orchestrator.loader import JobCatalog, JobConfigLoader
 from orchestrator.validator import Validator
 from orchestrator.metadata import Metadata
 from orchestrator.runner import Runner
+import sys
+
+
+log.remove()
+
+log.add(
+    sink=sys.stdout,
+    filter=lambda record: record["level"].name in {"INFO", "SUCCESS"}
+)
+
+log.add(
+    sink=sys.stderr,
+    filter=lambda record: record["level"].name in ("ERROR", "CRITICAL", "WARNING")
+)
 
 
 class Orchestrator:
