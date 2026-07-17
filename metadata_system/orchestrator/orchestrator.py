@@ -9,20 +9,17 @@ from orchestrator.runner import Runner
 import sys
 
 
-
-
-
 log.remove()
 
 log.add(
     sink=sys.stdout,
-    filter=lambda record: record["level"].name in {"INFO", "SUCCESS", "ERROR", "WARNING", "DEBUG", "TRACE"}
+    filter=lambda record: (
+        record["level"].name
+        in {"INFO", "SUCCESS", "ERROR", "WARNING", "DEBUG", "TRACE"}
+    ),
 )
 
-log.add(
-    sink=sys.stderr,
-    filter=lambda record: record["level"].name == "CRITICAL"
-)
+log.add(sink=sys.stderr, filter=lambda record: record["level"].name == "CRITICAL")
 
 
 class Orchestrator:
