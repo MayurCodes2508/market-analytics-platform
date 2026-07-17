@@ -10,16 +10,18 @@ import sys
 
 
 
+
+
 log.remove()
 
 log.add(
     sink=sys.stdout,
-    filter=lambda record: record["level"].name in {"INFO", "SUCCESS"}
+    filter=lambda record: record["level"].name in {"INFO", "SUCCESS", "ERROR", "WARNING", "DEBUG", "TRACE"}
 )
 
 log.add(
     sink=sys.stderr,
-    filter=lambda record: record["level"].name in {"ERROR", "CRITICAL", "WARNING"}
+    filter=lambda record: record["level"].name == "CRITICAL"
 )
 
 
@@ -33,7 +35,9 @@ class Orchestrator:
         try:
             job_run_id = str(uid())
 
-            log.info(f"Job: {job_name} | ID: {job_run_id} | System: el | CREATED...")
+            log.info(
+                f"Job: {job_name} | ID: {job_run_id} | System: el | CREATED..."
+            )
 
             job_cfg_loader = JobConfigLoader(fp=fp)
 
