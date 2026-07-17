@@ -9,16 +9,19 @@ from orchestrator.runner import Runner
 import sys
 
 
+
+
+
 log.remove()
 
 log.add(
     sink=sys.stdout,
-    filter=lambda record: record["level"].name in {"INFO", "SUCCESS"}
+    filter=lambda record: record["level"].name in {"INFO", "SUCCESS", "ERROR", "WARNING", "DEBUG", "TRACE"}
 )
 
 log.add(
     sink=sys.stderr,
-    filter=lambda record: record["level"].name in ("ERROR", "CRITICAL", "WARNING")
+    filter=lambda record: record["level"].name == "CRITICAL"
 )
 
 
