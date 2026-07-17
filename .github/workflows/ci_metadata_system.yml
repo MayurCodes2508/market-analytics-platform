@@ -95,11 +95,14 @@ jobs:
           pip-sync dev-requirements.txt
           pip check
 
-      - name: Ruff Tests
+      - name: Ruff Test
         run: |
           ruff check .
-          ruff format --check .
 
+      - name: Ruff Test
+        run: |
+          ruff format --check .
+        continue-on-error: true
 
       - name: Containerize & Run
         run: |

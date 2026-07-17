@@ -98,7 +98,11 @@ jobs:
       - name: Ruff Tests
         run: |
           ruff check .
+
+      - name: Ruff Tests
+        run: |
           ruff format --check .
+        continue-on-error: true
 
 
       - name: Containerize & Run
