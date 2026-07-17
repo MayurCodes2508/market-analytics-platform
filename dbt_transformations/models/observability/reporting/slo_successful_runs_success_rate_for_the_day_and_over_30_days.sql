@@ -1,3 +1,12 @@
+{{
+  config(
+    tags=['prod'],
+    )
+}}
+
+
+
+
 WITH base AS (
 SELECT pipeline_name,
        DATE(created_at) AS created_at,

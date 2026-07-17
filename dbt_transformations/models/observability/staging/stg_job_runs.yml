@@ -13,15 +13,14 @@ models:
     config:
       contract:
         enforced: true
+      tags: ['dev']
 
     columns:
 
       - name: run_id
         description: A unique identifier for each individual job execution.
         data_tests:
-          - unique:
-              config:
-                tags: ['dev', 'prod']
+          - unique
         data_type: string
 
       - name: pipeline_run_id

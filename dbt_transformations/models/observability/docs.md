@@ -45,7 +45,7 @@ The `is_slo_threshold_for_the_day_breached` column indicates whether the daily r
 
 The `is_slo_threshold_over_30_days_breached` column indicates whether the over 30 days run success‑rate SLO was breached.  
 
-| Value | Condition                                  | Meaning                                                                               |
+| Value | Condition                                   | Meaning                                                                              |
 |--------------------------------------------------------------------------------------------------------------------------------------------|
 | TRUE  | `success_rate_over_30_days < 0.99`          | `The over 30 days success‑rate target (≥=99%) was missed; SLO considered breached.`  |
 | FALSE | `success_rate_over_30_days >= 0.99`         | `The over 30 days success‑rate target was met; SLO not breached.`                    |
@@ -71,9 +71,22 @@ The `is_slo_threshold_for_the_day_breached` column indicates whether the daily r
 
 The `is_slo_threshold_over_30_days_breached` column indicates whether the over 30 days runtime success‑rate SLO was breached.  
 
-| Value | Condition                                  | Meaning                                                                               |
+| Value | Condition                                   | Meaning                                                                              |
 |--------------------------------------------------------------------------------------------------------------------------------------------|
 | TRUE  | `success_rate_over_30_days < 0.99`          | `The over 30 days success‑rate target (≥=99%) was missed; SLO considered breached.`  |
 | FALSE | `success_rate_over_30_days >= 0.99`         | `The over 30 days success‑rate target was met; SLO not breached.`                    |
+
+{% enddocs %}
+
+{% docs is_alert_threshold_for_the_day_breached %}
+
+## Daily Total Pipeline Runs Alert Breach Flag
+
+The `is_alert_threshold_for_the_day_breached` column indicates whether the daily execution count for a pipeline alert threshold was breached.
+
+| Value | Condition                                   | Meaning                                                                                                                                 |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| TRUE  | `total_runs < avg_total_runs_over_30_days`  | `The daily execution count has fallen below the threshold; threshold alert considered breached.`                                        |
+| FALSE | `total_runs >= avg_total_runs_over_30_days` | `The daily execution count is above threshold (>=avg_total_runs_over_30_days); threshold alert not breached.`                           |
 
 {% enddocs %}

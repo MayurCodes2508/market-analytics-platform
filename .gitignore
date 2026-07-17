@@ -5,7 +5,6 @@ __pycache__/
 .env
 .DS_Store
 dev_test*
-test*
 *.ruff_cache*
 *.mypy_cache*
 dev_testing/
@@ -20,9 +19,9 @@ gcloud
 dev.env
 logs/
 target/
+state/
 macros/
 snapshots/
-tests/
 dbt_packages/
 alerts_system/
 *.user.yml*

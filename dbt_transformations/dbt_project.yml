@@ -34,12 +34,14 @@ models:
       staging:
         +schema: staging
         +materialized: view
-        +tags: ['dev', 'prod']
 
       reporting:
         +schema: reporting
         +materialized: table
-        +tags: ['dev', 'prod']
+
+      alerts:
+        +schema: alerts
+        +materialized: table
 
 
 data_tests:

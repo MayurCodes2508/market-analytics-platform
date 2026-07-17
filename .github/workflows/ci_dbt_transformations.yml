@@ -69,22 +69,12 @@ jobs:
         env:
           DBT_TARGET: ${{ vars.DBT_TARGET }}
 
-
       - name: dbt Build
         run: |
-          dbt build -s observability,tag:prod --profiles-dir .   
+          dbt build -s tag:observability,tag:prod \
+          --profiles-dir .
         env:
-          DBT_TARGET: ${{ vars.DBT_TARGET }}  
-
-      - name: List all Files
-        run: |
-          ls -a target
-
-      - name: Upload dbt Artifacts
-        uses: actions/upload-artifact@v5
-        with:
-          name: dbt-target
-          path: target/
+          DBT_TARGET: ${{ vars.DBT_TARGET }}
 
 ######################## Test #######################################
 

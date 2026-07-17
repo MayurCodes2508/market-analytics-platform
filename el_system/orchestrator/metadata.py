@@ -16,7 +16,7 @@ class Metadata:
 
         dest_cfg = self.job_cfg.get("dest", {})
 
-        self.job_type = None
+        self.job_type = "extraction"
 
         if dest_cfg:
             self.job_type = "ingestion"

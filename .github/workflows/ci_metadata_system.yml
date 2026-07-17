@@ -28,6 +28,8 @@ on:
     paths:
       - 'metadata_system/**'
 
+  workflow_dispatch:
+
 ######################## Jobs #######################################
 
 jobs:
