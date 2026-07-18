@@ -1,5 +1,5 @@
 market-analytics-platform:
-  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+  target: "{{ env_var('DBT_TARGET') }}"
   outputs: 
     dev:
       type: bigquery
