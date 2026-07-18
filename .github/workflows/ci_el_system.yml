@@ -43,6 +43,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Authenticate to GCP
+        id: auth
         uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: "projects/144449440045/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider"
@@ -69,6 +70,7 @@ jobs:
         env:
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
           ENV: ${{ vars.ENV }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
 
 ######################## Test #######################################
 
@@ -81,6 +83,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Authenticate to GCP
+        id: auth
         uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: "projects/144449440045/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider"
@@ -117,7 +120,9 @@ jobs:
           docker run \
           -e COINGECKO_API_KEY \
           -e ENV \
+          -e GOOGLE_APPLICATION_CREDENTIALS \
           el-job
         env:
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
           ENV: ${{ vars.ENV }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
