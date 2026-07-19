@@ -18,7 +18,7 @@ on:
       - 'feature/**'
 
     paths:
-      - 'el_system/**'
+      - './el_system/**'
   
   pull_request:
     branches:
@@ -26,7 +26,7 @@ on:
       - dev
 
     paths:
-      - 'el_system/**'
+      - './el_system/**'
 
   workflow_dispatch:
 
@@ -54,7 +54,7 @@ jobs:
         with:
           python-version: '3.12.3'
           cache: 'pip'
-          cache-dependency-path: 'el_system/requirements.txt'
+          cache-dependency-path: './el_system/requirements.txt'
 
       - name: Setup Dependencies & Validate
         run: |
@@ -76,7 +76,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    if: github.ref_name == 'dev' || github.ref_name == 'main'
+    if: github.ref_name == 'dev' || github.ref_name == 'main' || startsWith(github.ref_name, 'feature/')
     needs: build
     steps:
       - name: Checkout Code
@@ -94,7 +94,7 @@ jobs:
         with:
           python-version: '3.12.3'
           cache: 'pip'
-          cache-dependency-path: 'el_system/requirements.txt'
+          cache-dependency-path: './el_system/requirements.txt'
 
       - name: Setup Dependencies & Validate
         run: |
@@ -118,11 +118,8 @@ jobs:
         run: |
           docker build -t el-job .
           docker run \
-          -e COINGECKO_API_KEY \
-          -e ENV \
-          -e GOOGLE_APPLICATION_CREDENTIALS \
+          -e COINGECKO_API_KEY="${{ secrets.COINGECKO_API_KEY }}" \
+          -e ENV="${{ vars.ENV }}" \
+          -e GOOGLE_APPLICATION_CREDENTIALS="./creds.json" \
+          -v "${{ steps.auth.outputs.credentials_file_path }}":./creds.json \
           el-job
-        env:
-          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
-          ENV: ${{ vars.ENV }}
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
