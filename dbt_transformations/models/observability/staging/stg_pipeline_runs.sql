@@ -7,13 +7,13 @@
 
 
 SELECT run_id,
-       trim(pipeline_name) AS pipeline_name,
-       trim(status) AS status,
+       lower(trim(pipeline_name)) AS pipeline_name,
+       lower(trim(status)) AS status,
        start_time,
        end_time,
        created_at,
-       trim(triggered_by) AS triggered_by,
-       trim(error_message) AS error_message,
+       lower(trim(triggered_by)) AS triggered_by,
+       lower(trim(error_message)) AS error_message,
        job_counts,
        ingestion_ts
 
