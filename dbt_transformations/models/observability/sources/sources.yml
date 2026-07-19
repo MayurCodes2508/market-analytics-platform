@@ -102,7 +102,7 @@ sources:
             error_after:
               count: 6
               period: hour
-          tags: ['dev']
+          tags: ['prod']
 
         columns:
 

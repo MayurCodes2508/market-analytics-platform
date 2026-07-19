@@ -1,6 +1,6 @@
 {{
   config(
-    tags=['dev'],
+    tags=['prod'],
     )
 }}
 
