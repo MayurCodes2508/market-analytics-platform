@@ -102,6 +102,7 @@ sources:
             error_after:
               count: 6
               period: hour
+          tags: ['dev']
 
         columns:
 
@@ -114,6 +115,10 @@ sources:
             description: A unique identifier of the pipeline execution the job belongs to.
             data_tests:
               - not_null
+              - relationships:
+                  arguments:
+                    to: source('metadata', 'raw_pipeline_runs')
+                    field: run_id
 
           - name: job_name
             description: The descriptive name of the processing job. 
