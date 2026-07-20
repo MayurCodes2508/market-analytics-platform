@@ -2,38 +2,29 @@
 .vscode/
 __pycache__/
 *.pyc*
-.env
 .DS_Store
-dev_test*
 *.ruff_cache*
 *.mypy_cache*
-dev_testing/
 *.terraform*
 *.code-workspace*
 LICENSE.txt
 *.exe*
 *.backup*
 *.tfstate*
-*.tfvars
-gcloud
-dev.env
+*.tfvars*
+*.gcloudignore*
 logs/
 target/
 state/
 macros/
 snapshots/
 dbt_packages/
-alerts_system/
-.user.yml
+*.user.yml*
 
 
 
 !docs/
-!terraform/
+!platform/
 !.gitignore
 !README.md
 !.github/
-!el_system/
-!dbt_project/
-!metadata_system/
-!package-lock.yml
