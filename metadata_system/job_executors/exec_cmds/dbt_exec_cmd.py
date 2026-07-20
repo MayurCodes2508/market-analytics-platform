@@ -33,7 +33,6 @@ class dbtExecCommand:
                 ["dbt",
                 *self.cmd,
                 "--fail-fast",
-                "--store-failures",
                 "--project-dir", str(Path(__file__).parent.parent.parent / 'dbt/'),
                 "--profiles-dir", str(Path(__file__).parent.parent.parent / 'dbt/')],
                 text=True,
