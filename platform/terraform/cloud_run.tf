@@ -99,7 +99,7 @@ resource "google_cloud_run_v2_job" "dev_metadata_system_run" {
           name = "NEON_DB_URL"
           value_source {
             secret_key_ref {
-              secret  = "dev-market-analytics-platform-neon-db-url-secret"
+              secret  = "prod-market-analytics-platform-neon-db-url-secret"
               version = "1"
             }
           }
