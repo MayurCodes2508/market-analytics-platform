@@ -43,7 +43,13 @@
 
         "exec": {
 
-            "$ref": "exec_cmd_schemas/db_exec_cmd_schema.json"
+            "anyOf": [
+
+                {"$ref": "exec_cmd_schemas/db_exec_cmd_schema.json"},
+                {"$ref": "exec_cmd_schemas/dbt_exec_cmd_schema.json"}
+            ]
+
+            
         },
 
         "dest": {
@@ -51,26 +57,6 @@
             "$ref": "dest_schemas/bq_dest_schema.json"
         }
     },
-
-    "allOf": [
-        {
-
-            "if": {
-
-                "properties": {
-
-                    "job_type": {"const": "ingestion"}
-                }
-            },
-
-            "then": {
-
-                "required": ["dest"]
-            }
-        }
-    ],
-
-
 
     "additionalProperties": false
 }
