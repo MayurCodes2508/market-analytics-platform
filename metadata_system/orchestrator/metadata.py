@@ -16,7 +16,7 @@ class Metadata:
 
         dest_cfg = self.job_cfg.get("dest", {})
 
-        self.job_type = "extraction"
+        self.job_type = "transformation"
 
         if dest_cfg:
             self.job_type = "ingestion"
@@ -26,7 +26,7 @@ class Metadata:
         self.sub_jobtype = exec_type.split("ExecCmd", 1)[0]
 
     def build_job_metadata(
-        self, job_run_id, job_name, status, error_message, rows_processed
+        self, job_run_id, job_name, status, error_message, job_metrics
     ):
 
         metadata_dump = {
@@ -37,7 +37,7 @@ class Metadata:
             "sub_jobtype": self.sub_jobtype,
             "status": status,
             "error_message": error_message,
-            "rows_processed": rows_processed,
+            "job_metrics": job_metrics,
         }
 
         log.info("Metadata Building Completed...")

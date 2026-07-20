@@ -49,7 +49,7 @@ class Orchestrator:
                 "sub_jobtype": None,
                 "status": "FAILED",
                 "error_message": str(object=load_err),
-                "rows_processed": None,
+                "job_metrics": None,
             }
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=dump)}")
@@ -76,7 +76,7 @@ class Orchestrator:
                 "sub_jobtype": None,
                 "status": "FAILED",
                 "error_message": str(object=valid_err),
-                "rows_processed": None,
+                "job_metri": None,
             }
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=dump)}")
@@ -106,7 +106,7 @@ class Orchestrator:
                 job_name=job_name,
                 status="FAILED",
                 error_message=str(object=exec_err),
-                rows_processed=getattr(runner, "rows_processed", None)
+                job_metrics=getattr(runner, "job_metrics", None)
                 if runner
                 else None,
             )
@@ -129,7 +129,7 @@ class Orchestrator:
                 job_name=job_name,
                 status="SUCCESS",
                 error_message=None,
-                rows_processed=getattr(runner, "rows_processed", None)
+                job_metrics=getattr(runner, "job_metrics", None)
                 if runner
                 else None,
             )
@@ -179,7 +179,7 @@ if __name__ == "__main__":
                 "sub_jobtype": None,
                 "status": "FAILED",
                 "error_message": str(object=strt_err),
-                "rows_processed": None,
+                "job_metrics": None,
             }
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=dump)}")

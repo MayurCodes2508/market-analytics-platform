@@ -4,3 +4,5 @@ jsonschema_rs
 jsonschema
 uuid6
 google-cloud-bigquery
+dbt-core
+dbt-bigquery

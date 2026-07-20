@@ -26,7 +26,7 @@ class Runner:
             metadata_cfg=self.metadata_cfg,
         )
 
-        self.data, self.rows_processed = exec_cmd.run()
+        self.data, self.job_metrics = exec_cmd.run()
 
     def run_dest_target(self):
 

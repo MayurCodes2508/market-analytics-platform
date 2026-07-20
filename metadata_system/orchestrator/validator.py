@@ -35,21 +35,15 @@ class Validator:
                 f"Validation Error: {self.job_cfg} | Provide a Valid Job Cfg | Details: {e}"
             )
 
-            raise
-
         except SchemaError as e:
             log.error(
                 f"Schema Error: {self.schema_cfg} | Provide a Valid Schema | Details: {e}"
             )
 
-            raise
-
         except Exception:
             log.exception(
                 "Unknown Error Occured While Validating Job Cfg Againt Given Schema"
             )
-
-            raise
 
     def validator_run(self):
 
