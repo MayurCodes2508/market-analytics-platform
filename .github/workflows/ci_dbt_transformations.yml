@@ -2,7 +2,7 @@ name: CI - dbt Transformations
 
 defaults:
   run:
-    working-directory: ./dbt_transformations
+    working-directory: './metadata_system/dbt/'
 
 permissions:
   id-token: write
@@ -18,7 +18,7 @@ on:
       - 'feature/**'
 
     paths:
-      - './dbt_transformations/**'
+      - './metadata_system/dbt/**'
   
   pull_request:
     branches:
@@ -26,7 +26,7 @@ on:
       - dev
 
     paths:
-      - './dbt_transformations/**'
+      - './metadata_system/dbt/**'
 
   workflow_dispatch:
     
@@ -54,7 +54,7 @@ jobs:
         with:
           python-version: '3.12.3'
           cache: 'pip'
-          cache-dependency-path: './dbt_transformations/requirements.txt'
+          cache-dependency-path: './metadata_system/dbt/requirements.txt'
 
       - name: Setup Dependencies & Validate
         run: |
@@ -72,7 +72,7 @@ jobs:
 
       - name: dbt Build
         run: |
-          dbt build -s tag:observability,tag:prod \
+          dbt build -s "tag:observability,tag:prod" \
           --profiles-dir .
         env:
           DBT_TARGET: ${{ vars.DBT_TARGET }}
@@ -100,6 +100,6 @@ jobs:
           docker build -t dbt-job .
           docker run \
           -e DBT_TARGET="${{ vars.DBT_TARGET }}" \
-          -e GOOGLE_APPLICATION_CREDENTIALS="./creds.json" \
-          -v "${{ steps.auth.outputs.credentials_file_path }}":./creds.json \
+          -e GOOGLE_APPLICATION_CREDENTIALS="./tmp/creds.json" \
+          -v "${{ steps.auth.outputs.credentials_file_path }}":./tmp/creds.json \
           dbt-job
