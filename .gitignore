@@ -24,7 +24,7 @@ macros/
 snapshots/
 dbt_packages/
 alerts_system/
-*.user.yml*
+.user.yml
 
 
 
