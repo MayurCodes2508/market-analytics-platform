@@ -2,3 +2,13 @@ __pycache__/
 *.pyc*
 .venv/
 .vscode/
+logs/
+dev-requirements*
+dbt_packages/
+dbt_modules/
+target/
+state/
+macros/
+snapshots/
+*.user.yml*
+*package-lock.yml*
