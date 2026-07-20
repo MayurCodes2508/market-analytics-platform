@@ -40,8 +40,6 @@ class BQ:
         except Exception:
             log.exception("Unknown BigQuery Client Error Occured")
 
-            raise
-
     def run(self):
 
         self.write_to_dest()
