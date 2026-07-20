@@ -1,5 +1,6 @@
 from loguru import logger as log
 from job_executors.exec_cmds.db_exec_cmd import DBExecCommand
+from job_executors.exec_cmds.dbt_exec_cmd import dbtExecCommand
 
 
 class DBExec:
@@ -9,8 +10,16 @@ class DBExec:
         return DBExecCommand(exec_cfg=exec_cfg, metadata_cfg=metadata_cfg)
 
 
+class dbtExec:
+    @classmethod
+    def run(cls, exec_cfg, *args, **kwargs):
+
+        return dbtExecCommand(exec_cfg=exec_cfg)
+
+
 class ExecCmdType:
-    registry = {"DBExecCmd": DBExec}
+    registry = {"DBExecCmd": DBExec,
+                "dbtExecCmd": dbtExec}
 
     @classmethod
     def get_exec_type(cls, exec_type, *args, **kwargs):

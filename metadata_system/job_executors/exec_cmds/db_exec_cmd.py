@@ -57,12 +57,15 @@ class DBExecCommand:
                 db_exception, "Unexpected Database Error"
             )
 
-            log.exception(f"{error_message}")
-
-            raise
+            log.error(f"{error_message}")
+             
 
     def run(self):
 
         self.query_db()
 
-        return self.data, self.rows_processed
+        job_metrics = {
+            "rows_processed": self.rows_processed
+        }
+
+        return self.data, job_metrics
