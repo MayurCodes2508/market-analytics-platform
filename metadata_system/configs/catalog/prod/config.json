@@ -16,6 +16,12 @@
 
             "job_name": "prod_bigquery_test_exposures",
             "path": "configs/job/bigquery_sources/prod/test_exposures.json"
+        },
+
+        {
+
+            "job_name": "prod_bigquery_run_exposures",
+            "path": "configs/job/bigquery_sources/prod/run_exposures.json"
         }
     ]
 }

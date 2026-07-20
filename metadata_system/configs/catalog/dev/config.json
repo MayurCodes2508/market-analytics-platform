@@ -16,6 +16,12 @@
 
             "job_name": "dev_bigquery_test_exposures",
             "path": "configs/job/bigquery_sources/dev/test_exposures.json"
+        },
+
+        {
+
+            "job_name": "dev_bigquery_run_exposures",
+            "path": "configs/job/bigquery_sources/dev/run_exposures.json"
         }
     ]
 }
