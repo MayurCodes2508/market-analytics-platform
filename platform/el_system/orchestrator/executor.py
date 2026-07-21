@@ -1,12 +1,16 @@
-from concurrent.futures import ThreadPoolExecutor as tpe
 from loguru import logger as log
 from uuid6 import uuid7 as uid
+import argparse as arg
 import json
-from orchestrator.loader import JobCatalog, JobConfigLoader
-from orchestrator.validator import Validator
-from orchestrator.metadata import Metadata
-from orchestrator.runner import Runner
 import sys
+from el_system.orchestrator.loader import JobConfigLoader
+from el_system.orchestrator.validator import Validator
+from el_system.orchestrator.metadata import Metadata
+from el_system.orchestrator.runner import Runner
+
+
+
+
 
 
 log.remove()
@@ -22,12 +26,15 @@ log.add(
 log.add(sink=sys.stderr, filter=lambda record: record["level"].name == "CRITICAL")
 
 
-class Orchestrator:
+
+class Executor:
+
     def __init__(self):
 
         pass
 
-    def run_concurrent_job(self, fp, job_name):
+
+    def execute_job(self, fp, job_name):
 
         try:
             job_run_id = str(uid())
@@ -47,7 +54,7 @@ class Orchestrator:
                 "sub_jobtype": None,
                 "status": "FAILED",
                 "error_message": str(object=load_err),
-                "rows_processed": None,
+                "job_metrics": None,
             }
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=dump)}")
@@ -74,7 +81,7 @@ class Orchestrator:
                 "sub_jobtype": None,
                 "status": "FAILED",
                 "error_message": str(object=valid_err),
-                "rows_processed": None,
+                "job_metrics": None,
             }
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=dump)}")
@@ -104,7 +111,7 @@ class Orchestrator:
                 job_name=job_name,
                 status="FAILED",
                 error_message=str(object=exec_err),
-                rows_processed=getattr(runner, "rows_processed", None)
+                job_metrics=getattr(runner, "job_metrics", None)
                 if runner
                 else None,
             )
@@ -127,7 +134,7 @@ class Orchestrator:
                 job_name=job_name,
                 status="SUCCESS",
                 error_message=None,
-                rows_processed=getattr(runner, "rows_processed", None)
+                job_metrics=getattr(runner, "job_metrics", None)
                 if runner
                 else None,
             )
@@ -139,51 +146,30 @@ class Orchestrator:
             )
 
 
-if __name__ == "__main__":
-    try:
-        job_catalog_loader = JobCatalog()
 
-        job_catalog_loader.job_catalog_run()
 
-    except Exception as load_err:
-        log.critical("System: el | Failed to Load Job Catalog, Aborting Job Executions")
 
-        log.error(f"Details: {str(object=load_err)}")
+if __name__ == '__main__':
 
-        raise
 
-    try:
-        log.info("All Job Executions Started...")
+    parser = arg.ArgumentParser()
 
-        orchestrator = Orchestrator()
-
-        with tpe(max_workers=5) as executor:
-            for job in job_catalog_loader.jobs:
-                future = executor.submit(
-                    orchestrator.run_concurrent_job, job["path"], job["job_name"]
-                )
-
-        log.info("All Job Executions Completed...")
-
-    except Exception as strt_err:
-        for job in job_catalog_loader.jobs:
-            dump = {
-                "job_run_id": str(object=uid()),
-                "job_name": job.get("job_name"),
-                "system": "el",
-                "job_type": None,
-                "sub_jobtype": None,
-                "status": "FAILED",
-                "error_message": str(object=strt_err),
-                "rows_processed": None,
-            }
-
-            log.info(f"METADATA_DUMP: {json.dumps(obj=dump)}")
-
-        log.critical(
-            "System: el | Failed to Start the Thread Pool Executor, Aborting Job Executions"
+    parser.add_argument(
+        '--job_name',
+        type=str,
+        help='Name of the Job',
+        required=True
         )
+    
+    parser.add_argument(
+        '--file_path',
+        type=str,
+        help='Path to the JSON Job Cfg File',
+        required=True
+    )
 
-        log.error(f"Details: {str(object=strt_err)}")
+    args = parser.parse_args()
 
-        raise
+    executor = Executor()
+
+    executor.execute_job(fp=args.file_path, job_name=args.job_name)

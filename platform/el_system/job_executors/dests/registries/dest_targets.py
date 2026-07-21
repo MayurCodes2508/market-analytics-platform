@@ -1,5 +1,5 @@
 from loguru import logger as log
-from job_executors.dests.gcs import GCS
+from el_system.job_executors.dests.gcs import GCS
 
 
 class GCSDest:

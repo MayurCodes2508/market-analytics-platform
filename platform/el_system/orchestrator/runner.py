@@ -1,6 +1,6 @@
 from loguru import logger as log
-from job_executors.exec_cmds.registries.exec_cmds import ExecCmdType
-from job_executors.dests.registries.dest_targets import DestType
+from el_system.job_executors.exec_cmds.registries.exec_cmds import ExecCmdType
+from el_system.job_executors.dests.registries.dest_targets import DestType
 
 
 class Runner:
@@ -26,7 +26,7 @@ class Runner:
             metadata_cfg=self.metadata_cfg,
         )
 
-        self.data, self.rows_processed = exec_cmd.run()
+        self.data, self.job_metrics = exec_cmd.run()
 
     def run_dest_target(self):
 

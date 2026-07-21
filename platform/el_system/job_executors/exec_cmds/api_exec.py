@@ -1,7 +1,7 @@
 from loguru import logger as log
 import requests
 import os
-from job_executors.auth.auth import Auth
+from el_system.job_executors.auth.auth import Auth
 
 
 class ApiExecCommand:
@@ -171,4 +171,8 @@ class ApiExecCommand:
 
         data, rows_processed = self.handle_response(response=response)
 
-        return data, rows_processed
+        job_metrics = {
+            "rows_processed": rows_processed
+        }
+
+        return data, job_metrics
