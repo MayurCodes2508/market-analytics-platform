@@ -19,8 +19,8 @@ state/
 macros/
 snapshots/
 dbt_packages/
-*.user.yml*
-
+*user*
+*lock*
 
 
 !docs/
