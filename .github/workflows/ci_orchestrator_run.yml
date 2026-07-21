@@ -67,7 +67,7 @@ jobs:
 
       - name: Run Code
         run: |
-          python -u -m orchestrator.orchestrator
+          python -u -m orchestrator.main
         env:
           DB_URL: ${{ secrets.DB_URL }}
           ENV: ${{ vars.ENV }}
