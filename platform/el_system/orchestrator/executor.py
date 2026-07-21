@@ -21,6 +21,7 @@ log.add(
 
 log.add(sink=sys.stderr, filter=lambda record: record["level"].name == "CRITICAL")
 
+log.info("Hi")
 
 class Executor:
     def __init__(self):

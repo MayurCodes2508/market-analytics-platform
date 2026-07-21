@@ -1,6 +1,7 @@
 from loguru import logger as log
 from uuid6 import uuid7 as uid
-from subprocess import run as sp, CalledProcessError as spe
+import subprocess
+from subprocess import Popen as sp, CalledProcessError as spe
 import json
 import sys
 from concurrent.futures import ThreadPoolExecutor as tpe
@@ -29,30 +30,49 @@ class Orchestrator:
     def run_concurrent_jobs(self, path, job_name):
 
         try:
-            result = sp(
+
+            processes = []
+
+            process = sp(
                 [
-                    sys.executable,
-                    "-u",
-                    "-m",
+                    "docker",
+                    "run",
+                    "--rm",
+                    "-e", "ENV",
+                    "-e", "COINGECKO_API_KEY",
+                    "el-job:latest",
                     "el_system.orchestrator.executor",
                     "--job_name",
                     str(object=job_name),
                     "--file_path",
                     str(object=path),
                 ],
-                check=True,
-                capture_output=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
                 text=True,
             )
 
-            log.info(result.stdout)
+            log.info("HI")
 
-        except spe as e:
-            if e.stderr:
-                log.error(f"{e.stderr}")
+            processes.append(process)
 
-            if e.stdout:
-                log.error(f"{e.stdout}")
+            for process in processes:
+
+                stdout, stderr = process.communicate()
+
+                log.info("HI")
+
+                if process.returncode != 0:
+                    log.error(stderr)
+
+                else:
+                    log.info(stdout)
+
+            log.info("HI")
+
+        except Exception as e:
+
+            log.exception(e)
 
 
 if __name__ == "__main__":
