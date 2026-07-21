@@ -26,6 +26,7 @@ class Metadata:
 
         self.sub_jobtype = exec_type.split("ExecCmd", 1)[0]
 
+
     def build_job_metadata(
         self, job_run_id, job_name, status, error_message, job_metrics
     ):
