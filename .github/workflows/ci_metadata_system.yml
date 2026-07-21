@@ -2,7 +2,7 @@ name: CI - METADATA CONFIG SYSTEM
 
 defaults:
   run:
-    working-directory: ./platform/metadata_system/
+    working-directory: ./platform/
 
 permissions:
   id-token: write
@@ -54,10 +54,9 @@ jobs:
         with:
           python-version: '3.12.3'
           cache: 'pip'
-          cache-dependency-path: './platform/requirements.txt'
+          cache-dependency-path: './requirements.txt'
 
       - name: Setup Dependencies & Validate
-        working-directory: './platform/'
         run: |
           python -m ensurepip --default-pip
           pip install pip-tools
@@ -67,7 +66,7 @@ jobs:
 
       - name: Run Code
         run: |
-          python -u -m orchestrator.main
+          python -u -m metadata_system.orchestrator.main
         env:
           NEON_DB_URL: ${{ secrets.NEON_DB_URL }}
           ENV: ${{ vars.ENV }}

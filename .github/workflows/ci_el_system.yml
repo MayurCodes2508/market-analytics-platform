@@ -2,7 +2,7 @@ name: CI - EL CONFIG SYSTEM
 
 defaults:
   run:
-    working-directory: ./platform/el_system/
+    working-directory: ./platform/
 
 permissions:
   id-token: write
@@ -54,10 +54,9 @@ jobs:
         with:
           python-version: '3.12.3'
           cache: 'pip'
-          cache-dependency-path: './platform/requirements.txt'
+          cache-dependency-path: './requirements.txt'
 
       - name: Setup Dependencies & Validate
-        working-directory: './platform/'
         run: |
           python -m ensurepip --default-pip
           pip install pip-tools
@@ -67,7 +66,7 @@ jobs:
 
       - name: Run Code
         run: |
-          python -u -m orchestrator.main
+          python -u -m el_system.orchestrator.main
         env:
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
           ENV: ${{ vars.ENV }}
