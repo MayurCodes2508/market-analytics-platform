@@ -17,6 +17,7 @@ log.add(
     ),
 )
 
+
 log.add(sink=sys.stderr, filter=lambda record: record["level"].name == "CRITICAL")
 
 
