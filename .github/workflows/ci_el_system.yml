@@ -15,10 +15,10 @@ on:
     branches:
       - main
       - dev
-      - 'feature/**'
+      - feature/**
 
     paths:
-      - './platform/el_system/**'
+      - platform/el_system/**
   
   pull_request:
     branches:
@@ -26,7 +26,7 @@ on:
       - dev
 
     paths:
-      - './platform/el_system/**'
+      - platform/el_system/**
 
   workflow_dispatch:
 

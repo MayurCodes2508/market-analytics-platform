@@ -15,10 +15,10 @@ on:
     branches:
       - main
       - dev
-      - 'feature/**'
+      - feature/**
 
     paths:
-      - './platform/orchestrator/**'
+      - platform/orchestrator/**
   
   pull_request:
     branches:
@@ -26,7 +26,7 @@ on:
       - dev
 
     paths:
-      - './platform/orchestrator/**'
+      - platform/orchestrator/**
 
   workflow_dispatch:
 

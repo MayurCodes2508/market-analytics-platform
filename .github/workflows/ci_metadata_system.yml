@@ -15,10 +15,10 @@ on:
     branches:
       - main
       - dev
-      - 'feature/**'
+      - feature/**
 
     paths:
-      - './platform/metadata_system/**'
+      - platform/metadata_system/**
   
   pull_request:
     branches:
@@ -26,7 +26,7 @@ on:
       - dev
 
     paths:
-      - './platform/metadata_system/**'
+      - platform/metadata_system/**
 
   workflow_dispatch:
 
