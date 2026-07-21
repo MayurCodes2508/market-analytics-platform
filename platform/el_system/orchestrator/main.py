@@ -7,11 +7,6 @@ from concurrent.futures import ThreadPoolExecutor as tpe
 from el_system.orchestrator.loader import JobCatalog
 
 
-
-
-
-
-
 log.remove()
 
 log.add(
@@ -30,39 +25,33 @@ class Orchestrator:
 
         pass
 
-
     def run_concurrent_jobs(self, path, job_name):
 
         try:
-
             result = sp(
                 [
                     sys.executable,
                     "-u",
                     "-m",
                     "el_system.orchestrator.executor",
-                    "--job_name", str(object=job_name),
-                    "--file_path", str(object=path)
+                    "--job_name",
+                    str(object=job_name),
+                    "--file_path",
+                    str(object=path),
                 ],
                 check=True,
                 capture_output=True,
-                text=True
+                text=True,
             )
 
             log.info(result.stdout)
 
-
         except spe as e:
-
             if e.stderr:
-
                 log.error(f"{e.stderr}")
 
             if e.stdout:
-
                 log.error(f"{e.stdout}")
-
-
 
 
 if __name__ == "__main__":

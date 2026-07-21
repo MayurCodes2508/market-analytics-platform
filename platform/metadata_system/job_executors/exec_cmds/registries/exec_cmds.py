@@ -18,8 +18,7 @@ class dbtExec:
 
 
 class ExecCmdType:
-    registry = {"DBExecCmd": DBExec,
-                "dbtExecCmd": dbtExec}
+    registry = {"DBExecCmd": DBExec, "dbtExecCmd": dbtExec}
 
     @classmethod
     def get_exec_type(cls, exec_type, *args, **kwargs):

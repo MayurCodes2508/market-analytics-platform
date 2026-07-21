@@ -58,14 +58,11 @@ class DBExecCommand:
             )
 
             log.error(f"{error_message}")
-             
 
     def run(self):
 
         self.query_db()
 
-        job_metrics = {
-            "rows_processed": self.rows_processed
-        }
+        job_metrics = {"rows_processed": self.rows_processed}
 
         return self.data, job_metrics

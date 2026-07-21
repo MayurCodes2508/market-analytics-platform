@@ -171,8 +171,6 @@ class ApiExecCommand:
 
         data, rows_processed = self.handle_response(response=response)
 
-        job_metrics = {
-            "rows_processed": rows_processed
-        }
+        job_metrics = {"rows_processed": rows_processed}
 
         return data, job_metrics

@@ -37,7 +37,7 @@ class Metadata:
             "sub_jobtype": self.sub_jobtype,
             "status": status,
             "error_message": error_message,
-            "job_metrics": job_metrics
+            "job_metrics": job_metrics,
         }
 
         log.info("Metadata Building Completed...")

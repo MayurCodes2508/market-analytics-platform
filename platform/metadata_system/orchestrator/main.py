@@ -106,9 +106,7 @@ class Orchestrator:
                 job_name=job_name,
                 status="FAILED",
                 error_message=str(object=exec_err),
-                job_metrics=getattr(runner, "job_metrics", None)
-                if runner
-                else None,
+                job_metrics=getattr(runner, "job_metrics", None) if runner else None,
             )
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
@@ -129,9 +127,7 @@ class Orchestrator:
                 job_name=job_name,
                 status="SUCCESS",
                 error_message=None,
-                job_metrics=getattr(runner, "job_metrics", None)
-                if runner
-                else None,
+                job_metrics=getattr(runner, "job_metrics", None) if runner else None,
             )
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")

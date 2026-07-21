@@ -9,10 +9,6 @@ from el_system.orchestrator.metadata import Metadata
 from el_system.orchestrator.runner import Runner
 
 
-
-
-
-
 log.remove()
 
 log.add(
@@ -26,13 +22,10 @@ log.add(
 log.add(sink=sys.stderr, filter=lambda record: record["level"].name == "CRITICAL")
 
 
-
 class Executor:
-
     def __init__(self):
 
         pass
-
 
     def execute_job(self, fp, job_name):
 
@@ -111,9 +104,7 @@ class Executor:
                 job_name=job_name,
                 status="FAILED",
                 error_message=str(object=exec_err),
-                job_metrics=getattr(runner, "job_metrics", None)
-                if runner
-                else None,
+                job_metrics=getattr(runner, "job_metrics", None) if runner else None,
             )
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
@@ -134,9 +125,7 @@ class Executor:
                 job_name=job_name,
                 status="SUCCESS",
                 error_message=None,
-                job_metrics=getattr(runner, "job_metrics", None)
-                if runner
-                else None,
+                job_metrics=getattr(runner, "job_metrics", None) if runner else None,
             )
 
             log.info(f"METADATA_DUMP: {json.dumps(obj=job_metadata_dump)}")
@@ -146,26 +135,13 @@ class Executor:
             )
 
 
-
-
-
-if __name__ == '__main__':
-
-
+if __name__ == "__main__":
     parser = arg.ArgumentParser()
 
+    parser.add_argument("--job_name", type=str, help="Name of the Job", required=True)
+
     parser.add_argument(
-        '--job_name',
-        type=str,
-        help='Name of the Job',
-        required=True
-        )
-    
-    parser.add_argument(
-        '--file_path',
-        type=str,
-        help='Path to the JSON Job Cfg File',
-        required=True
+        "--file_path", type=str, help="Path to the JSON Job Cfg File", required=True
     )
 
     args = parser.parse_args()
